@@ -25,14 +25,14 @@ apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'signing'
 
-def POM_NAME = 'recyclerview-proxy'
-def POM_ARTIFACT_ID = 'recyclerview-proxy'
+def POM_NAME = 'peasy-recyclerview'
+def POM_ARTIFACT_ID = 'peasy-recyclerview'
 def POM_GROUP_ID = 'com.github.kopihao'
 def POM_VERSION = project._versionName
 def POM_DESCRIPTION = POM_GROUP_ID + ':' + POM_ARTIFACT_ID + ':' + POM_VERSION
-def POM_URL = 'https://github.com/kopihao/recyclerview-proxy'
-def POM_GIT_URL = 'https://github.com/kopihao/recyclerview-proxy.git'
-def POM_CONNECTION = 'scm:git@github.com:kopihao/recyclerview-proxy.git'
+def POM_URL = 'https://github.com/kopihao/peasy-recyclerview'
+def POM_GIT_URL = 'https://github.com/kopihao/peasy-recyclerview.git'
+def POM_CONNECTION = 'scm:git@github.com:kopihao/peasy-recyclerview.git'
 def POM_LICENSE_ALL = ["Apache-2.0"]
 def POM_LICENSE_NAME = 'The Apache Software License, Version 2.0'
 def POM_LICENSE_URL = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
