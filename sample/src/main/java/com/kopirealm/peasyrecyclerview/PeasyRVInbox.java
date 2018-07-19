@@ -36,7 +36,7 @@ public class PeasyRVInbox extends PeasyRecyclerView.VerticalList<PeasyRVInbox.Mo
 
     @Override
     protected void onBindViewHolder(Context context, PeasyPodHolder holder, int position, ModelInbox item) {
-        if (holder instanceof ModelInboxViewHolder) {
+        if (holder.isInstance(ModelInboxViewHolder.class)) {
             ((ModelInboxViewHolder) holder).createView(item);
         }
     }

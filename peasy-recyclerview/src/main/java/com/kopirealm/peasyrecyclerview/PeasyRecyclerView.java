@@ -266,7 +266,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
             });
         }
 
-        public boolean checkInstance(Class cls) {
+        public boolean isInstance(Class cls) {
             return cls.isInstance(this);
         }
 
