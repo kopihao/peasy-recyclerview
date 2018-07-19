@@ -94,7 +94,7 @@ public class PeasyRVInbox extends PeasyRecyclerView.VerticalList<PeasyRVInbox.Mo
         ModelInbox(String title, String message, String sender, boolean read) {
             this.title = title;
             this.message = message;
-            this.sender = sender + "@subscribe.com";
+            this.sender = sender + "@scmp.com";
             this.read = read;
         }
     }
