@@ -16,8 +16,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        final PeasyRVInbox proxy = new PeasyRVInbox(this, (RecyclerView) findViewById(R.id.rvSample), fab, inboxMessages);
+        final FloatingActionButton fab = findViewById(R.id.fab);
+        final PeasyRVInbox prvInbox = new PeasyRVInbox(this, (RecyclerView) findViewById(R.id.rvSample), fab, inboxMessages);
         forgingInboxMessage();
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(View v) {
                                 forgingInboxMessage();
-                                proxy.setContent(inboxMessages);
+                                prvInbox.setContent(inboxMessages);
                             }
                         }).show();
             }

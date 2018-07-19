@@ -1,1 +1,1 @@
-include ':sample', ':peasy-recyclerview'
+include ':sample', ':peasyrecyclerview'
