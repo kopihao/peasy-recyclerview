@@ -101,17 +101,17 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        final PeasyPodHolder vh = onCreateViewHolder(inflater, parent, viewType);
+        final PeasyViewHolder vh = onCreateViewHolder(inflater, parent, viewType);
         vh.bindWith(this, viewType);
         return vh;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        onBindViewHolder((PeasyPodHolder) holder, position);
+        onBindViewHolder((PeasyViewHolder) holder, position);
     }
 
-    private void onBindViewHolder(PeasyPodHolder holder, int position) {
+    private void onBindViewHolder(PeasyViewHolder holder, int position) {
         onBindViewHolder(getContext(), holder, position, getItem(position));
     }
 
@@ -203,11 +203,11 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
         }
     }
 
-    protected abstract PeasyPodHolder onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType);
+    protected abstract PeasyViewHolder onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType);
 
     protected abstract int getItemViewType(int position, T item);
 
-    protected abstract void onBindViewHolder(Context context, PeasyPodHolder holder, int position, T item);
+    protected abstract void onBindViewHolder(Context context, PeasyViewHolder holder, int position, T item);
 
     public static abstract class VerticalList<T> extends PeasyRecyclerView<T> {
 
@@ -238,11 +238,11 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
         }
     }
 
-    public static abstract class PeasyPodHolder extends RecyclerView.ViewHolder {
+    public static abstract class PeasyViewHolder extends RecyclerView.ViewHolder {
 
         public static final int VIEWTYPE_NOTHING = Integer.MAX_VALUE * -1;
 
-        public PeasyPodHolder(View itemView) {
+        public PeasyViewHolder(View itemView) {
             super(itemView);
         }
 

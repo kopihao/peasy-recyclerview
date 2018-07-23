@@ -25,7 +25,7 @@ public class PeasyRVInbox extends PeasyRecyclerView.VerticalList<PeasyRVInbox.Mo
     }
 
     @Override
-    protected PeasyPodHolder onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
+    protected PeasyViewHolder onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
         return new ModelInboxViewHolder(ModelInboxViewHolder.inflateView(inflater, parent, ModelInboxViewHolder.INBOX_LAYOUT_ID));
     }
 
@@ -35,7 +35,7 @@ public class PeasyRVInbox extends PeasyRecyclerView.VerticalList<PeasyRVInbox.Mo
     }
 
     @Override
-    protected void onBindViewHolder(Context context, PeasyPodHolder holder, int position, ModelInbox item) {
+    protected void onBindViewHolder(Context context, PeasyViewHolder holder, int position, ModelInbox item) {
         if (holder.isInstance(ModelInboxViewHolder.class)) {
             ((ModelInboxViewHolder) holder).createView(item);
         }
@@ -99,7 +99,7 @@ public class PeasyRVInbox extends PeasyRecyclerView.VerticalList<PeasyRVInbox.Mo
         }
     }
 
-    public class ModelInboxViewHolder extends PeasyPodHolder {
+    public class ModelInboxViewHolder extends PeasyViewHolder {
 
         public final static int INBOX_BASIC_TYPE = 1;
         public final static int INBOX_LAYOUT_ID = R.layout.li_inbox_model;
