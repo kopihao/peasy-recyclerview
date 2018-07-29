@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -105,26 +106,42 @@ public class PeasyRVInbox extends PeasyRecyclerView.VerticalList<PeasyRVInbox.Mo
         public final static int INBOX_LAYOUT_ID = R.layout.li_inbox_model;
 
         final TextView tvTitle, tvMessage, tvSender;
+        final LinearLayout llInboxContainer;
 
         public ModelInboxViewHolder(View itemView) {
             super(itemView);
+            llInboxContainer = itemView.findViewById(R.id.llInboxContainer);
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvMessage = itemView.findViewById(R.id.tvMessage);
             tvSender = itemView.findViewById(R.id.tvSender);
         }
 
         public void createView(ModelInbox item) {
+            if (getStaggeredGridLayoutManager() != null) {
+                llInboxContainer.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            } else {
+                llInboxContainer.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            }
             if (!item.read) {
                 tvTitle.setSingleLine(false);
                 tvTitle.setTextColor(Color.parseColor("#ffcc0000"));
-                tvTitle.setText("[NEW] " + item.title);
+                if (getStaggeredGridLayoutManager() != null) {
+                    final String unreadTitle = (item.message.length() <= 5) ? "[NEW] " + item.message : item.message.substring(0, 5).concat("...");
+                    tvTitle.setText(unreadTitle);
+                    final String snapshot = (item.message.length() <= 5) ? item.message : item.message.substring(0, 5).concat("...");
+                    tvMessage.setText(snapshot);
+                } else {
+                    tvTitle.setText(item.title);
+                    final String snapshot = (item.message.length() <= 20) ? item.message : item.message.substring(0, 20).concat("...");
+                    tvMessage.setText(snapshot);
+                }
             } else {
                 tvTitle.setText(item.title);
                 tvTitle.setSingleLine(true);
                 tvTitle.setTextColor(Color.parseColor("#ff0099cc"));
+                final String snapshot = (item.message.length() <= 20) ? item.message : item.message.substring(0, 20).concat("...");
+                tvMessage.setText(snapshot);
             }
-            final String snapshot = (item.message.length() <= 20) ? item.message : item.message.substring(0, 20).concat("...");
-            tvMessage.setText(snapshot);
             tvMessage.setSingleLine(true);
             tvMessage.setEllipsize(TextUtils.TruncateAt.MIDDLE);
             tvSender.setText(item.sender);

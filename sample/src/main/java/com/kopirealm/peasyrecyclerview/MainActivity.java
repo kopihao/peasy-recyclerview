@@ -6,6 +6,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -15,9 +16,11 @@ public class MainActivity extends AppCompatActivity {
         VerticalListView,
         HorizontalListView,
         GridView,
-        // StaggeredGridView,
+        VerticalStaggeredGridView,
+        HorizontalStaggeredGridView,
     }
 
+    private TextView tvPresentation;
     final ArrayList<PeasyRVInbox.ModelInbox> inboxMessages = new ArrayList<>();
     private PRVPresentation inboxPresentation = null;
 
@@ -25,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        tvPresentation = findViewById(R.id.tvPresentation);
         final FloatingActionButton fab = findViewById(R.id.fab);
         final PeasyRVInbox prvInbox = new PeasyRVInbox(this, (RecyclerView) findViewById(R.id.rvSample), fab, inboxMessages);
         changePeasyRVInboxLayout(prvInbox);
@@ -53,7 +57,13 @@ public class MainActivity extends AppCompatActivity {
             prvInbox.asHorizontalListView();
         } else if (inboxPresentation.equals(PRVPresentation.GridView)) {
             prvInbox.asGridView(3);
+        } else if (inboxPresentation.equals(PRVPresentation.VerticalStaggeredGridView)) {
+            prvInbox.asVerticalStaggeredGridView(4);
+        } else if (inboxPresentation.equals(PRVPresentation.HorizontalStaggeredGridView)) {
+            prvInbox.asHorizontalStaggeredGridView(5);
         }
+        tvPresentation.setText(inboxPresentation.name());
+        // Toast.makeText(this, inboxPresentation.name(), Toast.LENGTH_SHORT).show();
     }
 
     private void showSnackbarToResetContent(final View view, final PeasyRVInbox prvInbox) {
