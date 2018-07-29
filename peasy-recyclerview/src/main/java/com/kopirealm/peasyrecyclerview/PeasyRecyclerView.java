@@ -407,7 +407,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     /**
      * Method to navigate to top of recycler view with smooth scroll
      */
-    public void smoothScrollToTop() {
+    public void smoothScrollToFirst() {
         if (getLinearLayoutManager() != null) {
             final RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(this.recyclerView.getContext()) {
                 @Override
@@ -423,7 +423,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     /**
      * Method to navigate to top of recycler view with smooth scroll
      */
-    public void scrollPositionToTop() {
+    public void setPositionToFirst() {
         if (getLinearLayoutManager() != null) {
             getLinearLayoutManager().scrollToPositionWithOffset(0, 0);
         }
@@ -513,6 +513,67 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      */
     protected abstract int getItemViewType(int position, T item);
 
+
+    /**
+     * To reset added {@link android.support.v7.widget.RecyclerView.ItemDecoration}
+     */
+    public void resetItemDecorations() {
+        for (int i = 0; i < getRecyclerView().getItemDecorationCount(); i++) {
+            try {
+                getRecyclerView().removeItemDecoration(getRecyclerView().getItemDecorationAt(i));
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    /**
+     * To reset added {@link android.support.v7.widget.RecyclerView.ItemAnimator}
+     */
+    public void resetItemAnimator() {
+        try {
+            getRecyclerView().setItemAnimator(new DefaultItemAnimator());
+        } catch (Exception e) {
+        }
+    }
+
+    /**
+     * Present as Vertical List View
+     * <p>
+     * Execute {@link #resetItemDecorations()}
+     * Execute {@link #resetItemAnimator()}
+     *
+     * @return LinearLayoutManager
+     */
+    public LinearLayoutManager asVerticalListView() {
+        resetItemDecorations();
+        resetItemAnimator();
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        getRecyclerView().setLayoutManager(layoutManager);
+        getRecyclerView().addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+        getRecyclerView().setItemAnimator(new DefaultItemAnimator());
+        return layoutManager;
+    }
+
+    /**
+     * Present as Horizontal List View
+     * <p>
+     * Execute {@link #resetItemDecorations()}
+     * Execute {@link #resetItemAnimator()}
+     *
+     * @return LinearLayoutManager
+     */
+    public LinearLayoutManager asHorizontalListView() {
+        resetItemDecorations();
+        resetItemAnimator();
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        getRecyclerView().setLayoutManager(layoutManager);
+        getRecyclerView().addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.HORIZONTAL));
+        getRecyclerView().setItemAnimator(new DefaultItemAnimator());
+        return layoutManager;
+    }
+
     //==========================================================================================
 
     /**
@@ -595,11 +656,37 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
         @Override
         protected void configureRecyclerView(RecyclerView recyclerView) {
             super.configureRecyclerView(recyclerView);
-            this.layoutManager = new LinearLayoutManager(getContext());
-            this.layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-            recyclerView.setLayoutManager(layoutManager);
-            recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-            recyclerView.setItemAnimator(new DefaultItemAnimator());
+            this.layoutManager = this.asVerticalListView();
+        }
+
+        @Override
+        public int getLastVisibleItemPosition() {
+            return this.layoutManager.findLastCompletelyVisibleItemPosition();
+        }
+
+        @Override
+        public int getFirstVisibleItemPosition() {
+            return this.layoutManager.findFirstCompletelyVisibleItemPosition();
+        }
+
+        @Override
+        public LinearLayoutManager getLinearLayoutManager() {
+            return this.layoutManager;
+        }
+    }
+
+    public static abstract class HorizontalList<T> extends PeasyRecyclerView<T> {
+
+        private LinearLayoutManager layoutManager;
+
+        public HorizontalList(@NonNull Context context, RecyclerView recyclerView, ArrayList arrayList) {
+            super(context, recyclerView, arrayList);
+        }
+
+        @Override
+        protected void configureRecyclerView(RecyclerView recyclerView) {
+            super.configureRecyclerView(recyclerView);
+            this.layoutManager = this.asHorizontalListView();
         }
 
         @Override

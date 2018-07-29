@@ -10,7 +10,16 @@ import android.view.View;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+
+    public enum PRVPresentation {
+        VerticalListView,
+        HorizontalListView,
+        // GridView,
+        // StaggeredGridView,
+    }
+
     final ArrayList<PeasyRVInbox.ModelInbox> inboxMessages = new ArrayList<>();
+    private PRVPresentation inboxPresentation = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,22 +27,43 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         final FloatingActionButton fab = findViewById(R.id.fab);
         final PeasyRVInbox prvInbox = new PeasyRVInbox(this, (RecyclerView) findViewById(R.id.rvSample), fab, inboxMessages);
+        changePeasyRVInboxLayout(prvInbox);
         forgingInboxMessage();
+        fab.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                showSnackbarToResetContent(view, prvInbox);
+                return false;
+            }
+        });
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Reset Sample Inbox", Snackbar.LENGTH_LONG)
-                        .setAction("RESET", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                forgingInboxMessage();
-                                prvInbox.setContent(inboxMessages);
-                            }
-                        }).show();
+                changePeasyRVInboxLayout(prvInbox);
             }
         });
+    }
 
+    private void changePeasyRVInboxLayout(final PeasyRVInbox prvInbox) {
+        final int nextOrdinal = (inboxPresentation == null) ? 0 : (inboxPresentation.ordinal() + 1) % PRVPresentation.values().length;
+        inboxPresentation = PRVPresentation.values()[nextOrdinal];
+        if (inboxPresentation.equals(PRVPresentation.VerticalListView)) {
+            prvInbox.asVerticalListView();
+        } else if (inboxPresentation.equals(PRVPresentation.HorizontalListView)) {
+            prvInbox.asHorizontalListView();
+        }
+    }
 
+    private void showSnackbarToResetContent(final View view, final PeasyRVInbox prvInbox) {
+        Snackbar.make(view, "Reset Sample Inbox", Snackbar.LENGTH_LONG)
+                .setAction("RESET", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        forgingInboxMessage();
+                        prvInbox.setContent(inboxMessages);
+                        prvInbox.setPositionToFirst();
+                    }
+                }).show();
     }
 
     private void forgingInboxMessage() {
