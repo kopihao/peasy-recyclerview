@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class PeasyRVInbox extends PeasyRecyclerView.HorizontalList<PeasyRVInbox.ModelInbox> {
+public class PeasyRVInbox extends PeasyRecyclerView.VerticalList<PeasyRVInbox.ModelInbox> {
 
     public PeasyRVInbox(@NonNull Context context, RecyclerView recyclerView, FloatingActionButton fab, ArrayList<ModelInbox> arrayList) {
         super(context, recyclerView, arrayList);

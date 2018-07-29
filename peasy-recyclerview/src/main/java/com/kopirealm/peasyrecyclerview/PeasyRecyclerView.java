@@ -1,7 +1,9 @@
 package com.kopirealm.peasyrecyclerview;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -30,9 +32,30 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     private ArrayList<T> recyclerDataSource;
     private FloatingActionButton fab;
     private boolean smartHiding = false;
+    private Bundle extraData = null;
 
     public PeasyRecyclerView(@NonNull Context context, RecyclerView recyclerView, ArrayList<T> arrayList) {
+        this(context, recyclerView, arrayList, new Bundle());
+    }
+
+    public PeasyRecyclerView(@NonNull Context context, RecyclerView recyclerView, ArrayList<T> arrayList, Bundle extraData) {
         this.context = context;
+        this.recyclerView = recyclerView;
+        this.extraData = extraData;
+        onCreate(context, recyclerView, arrayList, extraData);
+    }
+
+    /**
+     * On PeasyRecyclerView created
+     * Where you wish to execute some task before constructor run
+     * Overriding this method is not an encouraging recommendation
+     *
+     * @param context
+     * @param recyclerView
+     * @param arrayList
+     * @param extraData
+     */
+    public void onCreate(@NonNull Context context, RecyclerView recyclerView, ArrayList<T> arrayList, Bundle extraData) {
         setContent(arrayList, recyclerView);
     }
 
@@ -77,6 +100,15 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      */
     public RecyclerView getRecyclerView() {
         return this.recyclerView;
+    }
+
+    /**
+     * To host extra data
+     *
+     * @return
+     */
+    public Bundle getExtraData() {
+        return extraData;
     }
 
     /**
@@ -574,7 +606,112 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
         return layoutManager;
     }
 
+    /**
+     * Present as Grid View
+     * Be noted, columns will be {@value PeasyRecyclerView.GridView#DefaultColumnSize} if input columns is 0
+     * Default divider is {@link PeasyGridDividerItemDecoration}
+     * <p>
+     * <p>
+     * Execute {@link #resetItemDecorations()}
+     * Execute {@link #resetItemAnimator()}
+     *
+     * @return GridLayoutManager
+     */
+    public GridLayoutManager asGridView(final int columns) {
+        return asGridView(columns,
+                new PeasyGridDividerItemDecoration(
+                        getContext().getResources().getDimensionPixelSize(R.dimen.peasy_grid_divider_spacing),
+                        getContext().getResources().getInteger(R.integer.peasy_grid_divider_columns)
+                ));
+    }
+
+    /**
+     * Present as Grid View
+     * Be noted, columns will be {@value PeasyRecyclerView.GridView#DefaultColumnSize} if input columns is 0
+     * Default divider is {@link PeasyGridDividerItemDecoration}
+     * <p>
+     * <p>
+     * Execute {@link #resetItemDecorations()}
+     * Execute {@link #resetItemAnimator()}
+     *
+     * @param columns
+     * @param divider RecyclerView.ItemDecoration
+     * @return
+     */
+    public GridLayoutManager asGridView(final int columns, RecyclerView.ItemDecoration divider) {
+        resetItemDecorations();
+        resetItemAnimator();
+        final GridLayoutManager layoutManager = new GridLayoutManager(getContext(), (columns == 0) ? GridView.DefaultColumnSize : columns);
+        getRecyclerView().setLayoutManager(layoutManager);
+        if (divider != null) {
+            getRecyclerView().addItemDecoration(divider);
+        }
+        getRecyclerView().setItemAnimator(new DefaultItemAnimator());
+        return layoutManager;
+    }
+
     //==========================================================================================
+
+    /**
+     * Simple ItemDecoration designed for GridLayoutManager use within RecyclerView
+     * PeasyGridDividerItemDecoration require 2 parameters: int gridSpacingPx, int gridSize
+     * Please check out {@link PeasyGridDividerItemDecoration#PeasyGridDividerItemDecoration(int, int)}
+     * Credit to @see <a href="https://stackoverflow.com/a/29168276">decorating-recyclerview-with-gridlayoutmanager-to-display-divider-between-item</a>
+     */
+    public static class PeasyGridDividerItemDecoration extends RecyclerView.ItemDecoration {
+
+        private int mSizeGridSpacingPx;
+        private int mGridSize;
+
+        private boolean mNeedLeftSpacing = false;
+
+        public PeasyGridDividerItemDecoration(int gridSpacingPx, int gridSize) {
+            mSizeGridSpacingPx = gridSpacingPx;
+            mGridSize = gridSize;
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            drawDefaultDivider(outRect, view, parent, state);
+        }
+
+        private void drawDefaultDivider(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            int frameWidth = (int) ((parent.getWidth() - (float) mSizeGridSpacingPx * (mGridSize - 1)) / mGridSize);
+            int padding = parent.getWidth() / mGridSize - frameWidth;
+            int itemPosition = ((RecyclerView.LayoutParams) view.getLayoutParams()).getViewAdapterPosition();
+            if (itemPosition < mGridSize) {
+                outRect.top = 0;
+            } else {
+                outRect.top = mSizeGridSpacingPx;
+            }
+            if (itemPosition % mGridSize == 0) {
+                outRect.left = 0;
+                outRect.right = padding;
+                mNeedLeftSpacing = true;
+            } else if ((itemPosition + 1) % mGridSize == 0) {
+                mNeedLeftSpacing = false;
+                outRect.right = 0;
+                outRect.left = padding;
+            } else if (mNeedLeftSpacing) {
+                mNeedLeftSpacing = false;
+                outRect.left = mSizeGridSpacingPx - padding;
+                if ((itemPosition + 2) % mGridSize == 0) {
+                    outRect.right = mSizeGridSpacingPx - padding;
+                } else {
+                    outRect.right = mSizeGridSpacingPx / 2;
+                }
+            } else if ((itemPosition + 2) % mGridSize == 0) {
+                mNeedLeftSpacing = false;
+                outRect.left = mSizeGridSpacingPx / 2;
+                outRect.right = mSizeGridSpacingPx - padding;
+            } else {
+                mNeedLeftSpacing = false;
+                outRect.left = mSizeGridSpacingPx / 2;
+                outRect.right = mSizeGridSpacingPx / 2;
+            }
+            outRect.bottom = 0;
+        }
+    }
 
     /**
      * Blueprint to substitute RecyclerView.ViewHolder
@@ -656,7 +793,13 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
         @Override
         protected void configureRecyclerView(RecyclerView recyclerView) {
             super.configureRecyclerView(recyclerView);
-            this.layoutManager = this.asVerticalListView();
+            this.asVerticalListView();
+        }
+
+        @Override
+        public LinearLayoutManager asVerticalListView() {
+            this.layoutManager = super.asVerticalListView();
+            return this.layoutManager;
         }
 
         @Override
@@ -686,7 +829,13 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
         @Override
         protected void configureRecyclerView(RecyclerView recyclerView) {
             super.configureRecyclerView(recyclerView);
-            this.layoutManager = this.asHorizontalListView();
+            this.asHorizontalListView();
+        }
+
+        @Override
+        public LinearLayoutManager asHorizontalListView() {
+            this.layoutManager = super.asHorizontalListView();
+            return this.layoutManager;
         }
 
         @Override
@@ -704,5 +853,65 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
             return this.layoutManager;
         }
     }
+
+
+    public static abstract class GridView<T> extends PeasyRecyclerView<T> {
+
+        private static Bundle bundleColumnSize(Bundle bundle, int columnSize) {
+            final Bundle extraData = (bundle == null) ? new Bundle() : bundle;
+            extraData.putInt("columnSize", columnSize);
+            return extraData;
+        }
+
+        private GridLayoutManager layoutManager;
+        public static final int DefaultColumnSize = 2;
+        private int columnSize = 0;
+
+        public GridView(@NonNull Context context, RecyclerView recyclerView, ArrayList arrayList) {
+            this(context, recyclerView, arrayList, DefaultColumnSize);
+        }
+
+        public GridView(@NonNull Context context, RecyclerView recyclerView, ArrayList arrayList, int columnSize) {
+            super(context, recyclerView, arrayList, bundleColumnSize(new Bundle(), columnSize));
+        }
+
+        @Override
+        public void onCreate(@NonNull Context context, RecyclerView recyclerView, ArrayList<T> arrayList, Bundle extraData) {
+            this.columnSize = extraData.getInt("columnSize", DefaultColumnSize); // Assign extraData values
+            super.onCreate(context, recyclerView, arrayList, extraData);
+        }
+
+        @Override
+        protected void configureRecyclerView(RecyclerView recyclerView) {
+            super.configureRecyclerView(recyclerView);
+            this.asGridView(this.columnSize);
+        }
+
+        public int getColumnSize() {
+            return columnSize;
+        }
+
+        @Override
+        public GridLayoutManager asGridView(int columns) {
+            this.layoutManager = super.asGridView(columns);
+            return this.layoutManager;
+        }
+
+        @Override
+        public int getLastVisibleItemPosition() {
+            return this.layoutManager.findLastCompletelyVisibleItemPosition();
+        }
+
+        @Override
+        public int getFirstVisibleItemPosition() {
+            return this.layoutManager.findFirstCompletelyVisibleItemPosition();
+        }
+
+        @Override
+        public GridLayoutManager getGridLayoutManager() {
+            return this.layoutManager;
+        }
+    }
+
 
 }

@@ -14,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
     public enum PRVPresentation {
         VerticalListView,
         HorizontalListView,
-        // GridView,
+        GridView,
         // StaggeredGridView,
     }
 
@@ -51,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
             prvInbox.asVerticalListView();
         } else if (inboxPresentation.equals(PRVPresentation.HorizontalListView)) {
             prvInbox.asHorizontalListView();
+        } else if (inboxPresentation.equals(PRVPresentation.GridView)) {
+            prvInbox.asGridView(3);
         }
     }
 
