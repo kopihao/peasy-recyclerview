@@ -42,7 +42,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
         this.context = context;
         this.recyclerView = recyclerView;
         this.extraData = extraData;
-        onCreate(context, recyclerView, arrayList, extraData);
+        this.onCreate(context, recyclerView, arrayList, extraData);
     }
 
     /**
@@ -56,7 +56,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @param extraData
      */
     public void onCreate(@NonNull Context context, RecyclerView recyclerView, ArrayList<T> arrayList, Bundle extraData) {
-        setContent(arrayList, recyclerView);
+        this.setContent(arrayList, recyclerView);
     }
 
     /**
@@ -80,7 +80,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @param arrayList
      */
     public void setContent(ArrayList<T> arrayList) {
-        this.recyclerDataSource = (arrayList == null) ? new ArrayList<T>() : arrayList;
+        this.recyclerDataSource = (arrayList == null) ? new ArrayList<T>() : new ArrayList<T>(arrayList);
         this.notifyDataSetChanged();
     }
 
@@ -852,13 +852,40 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
         }
 
         /**
-         * To check instanceof
+         * To check this is instance of @{@link PeasyViewHolder}
          *
          * @param cls Class to check
          * @return
          */
         public boolean isInstance(Class cls) {
             return cls.isInstance(this);
+        }
+
+        /**
+         * To check this is instance of {@link PeasyHeaderViewHolder}
+         *
+         * @return
+         */
+        public boolean isHeaderView() {
+            return PeasyHeaderViewHolder.class.isInstance(this);
+        }
+
+        /**
+         * To check this is instance of {@link PeasyContentViewHolder}
+         *
+         * @return
+         */
+        public boolean isContentView() {
+            return PeasyContentViewHolder.class.isInstance(this);
+        }
+
+        /**
+         * To check this is instance of {@link PeasyContentViewHolder}
+         *
+         * @return
+         */
+        public boolean isFooterView() {
+            return PeasyFooterViewHolder.class.isInstance(this);
         }
 
         /**
@@ -871,6 +898,30 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
          */
         public static View inflateView(LayoutInflater inflater, ViewGroup parent, int layoutId) {
             return inflater.inflate(layoutId, parent, false);
+        }
+    }
+
+    public static abstract class PeasyHeaderViewHolder extends PeasyViewHolder {
+        public static final int VIEWTYPE_HEADER = Integer.MAX_VALUE - 1;
+
+        public PeasyHeaderViewHolder(View itemView) {
+            super(itemView);
+        }
+    }
+
+    public static abstract class PeasyContentViewHolder extends PeasyViewHolder {
+        public static final int VIEWTYPE_CONTENT = Integer.MAX_VALUE - 3;
+
+        public PeasyContentViewHolder(View itemView) {
+            super(itemView);
+        }
+    }
+
+    public static abstract class PeasyFooterViewHolder extends PeasyViewHolder {
+        public static final int VIEWTYPE_FOOTER = Integer.MAX_VALUE - 2;
+
+        public PeasyFooterViewHolder(View itemView) {
+            super(itemView);
         }
     }
 

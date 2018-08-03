@@ -26,19 +26,45 @@ public class PeasyRVInbox extends PeasyRecyclerView.VerticalList<PeasyRVInbox.Mo
     }
 
     @Override
+    public void setContent(ArrayList<ModelInbox> arrayList) {
+        arrayList.add(0, null); //add header
+        arrayList.add(null); //add footer
+        super.setContent(arrayList);
+    }
+
+    @Override
     protected PeasyViewHolder onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
-        return new ModelInboxViewHolder(ModelInboxViewHolder.inflateView(inflater, parent, ModelInboxViewHolder.INBOX_LAYOUT_ID));
+        if (viewType == InboxHeaderViewHolder.VIEWTYPE_HEADER) {
+            return new InboxHeaderViewHolder(InboxHeaderViewHolder.inflateView(inflater, parent, InboxHeaderViewHolder.LAYOUT_ID));
+        } else if (viewType == InboxFooterViewHolder.VIEWTYPE_FOOTER) {
+            return new InboxFooterViewHolder(InboxFooterViewHolder.inflateView(inflater, parent, InboxFooterViewHolder.LAYOUT_ID));
+        } else {
+            return new InboxModelViewHolder(InboxModelViewHolder.inflateView(inflater, parent, InboxModelViewHolder.LAYOUT_ID));
+        }
     }
 
     @Override
     protected int getItemViewType(int position, ModelInbox item) {
-        return ModelInboxViewHolder.INBOX_BASIC_TYPE;
+        // return InboxModelViewHolder.INBOX_BASIC_TYPE;
+        if (item == null) {
+            if (position == 0) {
+                return InboxHeaderViewHolder.VIEWTYPE_HEADER;
+            } else {
+                return InboxFooterViewHolder.VIEWTYPE_FOOTER;
+            }
+        } else {
+            return InboxModelViewHolder.VIEWTYPE_CONTENT;
+        }
     }
 
     @Override
     protected void onBindViewHolder(Context context, PeasyViewHolder holder, int position, ModelInbox item) {
-        if (holder.isInstance(ModelInboxViewHolder.class)) {
-            ((ModelInboxViewHolder) holder).createView(item);
+        if (holder.isHeaderView()) {
+
+        } else if (holder.isFooterView()) {
+
+        } else if (holder.isContentView() || holder.isInstance(InboxModelViewHolder.class)) {
+            ((InboxModelViewHolder) holder).createView(item);
         }
     }
 
@@ -100,15 +126,29 @@ public class PeasyRVInbox extends PeasyRecyclerView.VerticalList<PeasyRVInbox.Mo
         }
     }
 
-    public class ModelInboxViewHolder extends PeasyViewHolder {
+    public class InboxHeaderViewHolder extends PeasyHeaderViewHolder {
+        public final static int LAYOUT_ID = R.layout.li_inbox_header;
 
-        public final static int INBOX_BASIC_TYPE = 1;
-        public final static int INBOX_LAYOUT_ID = R.layout.li_inbox_model;
+        public InboxHeaderViewHolder(View itemView) {
+            super(itemView);
+        }
+    }
+
+    public class InboxFooterViewHolder extends PeasyFooterViewHolder {
+        public final static int LAYOUT_ID = R.layout.li_inbox_footer;
+
+        public InboxFooterViewHolder(View itemView) {
+            super(itemView);
+        }
+    }
+
+    public class InboxModelViewHolder extends PeasyContentViewHolder {
+        public final static int LAYOUT_ID = R.layout.li_inbox_model;
 
         final TextView tvTitle, tvMessage, tvSender;
         final LinearLayout llInboxContainer;
 
-        public ModelInboxViewHolder(View itemView) {
+        public InboxModelViewHolder(View itemView) {
             super(itemView);
             llInboxContainer = itemView.findViewById(R.id.llInboxContainer);
             tvTitle = itemView.findViewById(R.id.tvTitle);

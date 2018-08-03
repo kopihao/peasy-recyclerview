@@ -31,8 +31,9 @@ public class MainActivity extends AppCompatActivity {
         tvPresentation = findViewById(R.id.tvPresentation);
         final FloatingActionButton fab = findViewById(R.id.fab);
         final PeasyRVInbox prvInbox = new PeasyRVInbox(this, (RecyclerView) findViewById(R.id.rvSample), fab, inboxMessages);
-        changePeasyRVInboxLayout(prvInbox);
         forgingInboxMessage();
+        prvInbox.setContent(inboxMessages);
+        changePeasyRVInboxLayout(prvInbox);
         fab.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
