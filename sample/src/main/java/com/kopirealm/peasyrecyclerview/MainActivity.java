@@ -1,6 +1,9 @@
 package com.kopirealm.peasyrecyclerview;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -28,11 +31,22 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        findViewById(R.id.btnDismiss).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeHintBar();
+            }
+        });
+        new Handler(getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                removeHintBar();
+            }
+        }, 10 * 1000);
+
         tvPresentation = findViewById(R.id.tvPresentation);
         final FloatingActionButton fab = findViewById(R.id.fab);
         final PeasyRVInbox prvInbox = new PeasyRVInbox(this, (RecyclerView) findViewById(R.id.rvSample), fab, inboxMessages);
-        forgingInboxMessage();
-        prvInbox.setContent(inboxMessages);
         changePeasyRVInboxLayout(prvInbox);
         fab.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -49,6 +63,21 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void removeHintBar() {
+        final View view = findViewById(R.id.llHintBar);
+        view.animate()
+                .scaleX(0)
+                .alpha(0.0f)
+                .setDuration(300)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        view.setVisibility(View.GONE);
+                    }
+                });
+    }
+
     private void changePeasyRVInboxLayout(final PeasyRVInbox prvInbox) {
         final int nextOrdinal = (inboxPresentation == null) ? 0 : (inboxPresentation.ordinal() + 1) % PRVPresentation.values().length;
         inboxPresentation = PRVPresentation.values()[nextOrdinal];
@@ -63,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
         } else if (inboxPresentation.equals(PRVPresentation.HorizontalStaggeredGridView)) {
             prvInbox.asHorizontalStaggeredGridView(5);
         }
+        forgingInboxMessage();
+        prvInbox.setContent(inboxMessages);
         tvPresentation.setText(inboxPresentation.name());
         // Toast.makeText(this, inboxPresentation.name(), Toast.LENGTH_SHORT).show();
     }

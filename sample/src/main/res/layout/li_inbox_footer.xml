@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="left"
-        android:text="This is bottom"
+        android:text="This is footer"
         android:textColor="#ff0099cc"
         android:textSize="20sp" />
 

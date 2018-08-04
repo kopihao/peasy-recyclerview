@@ -15,10 +15,39 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class PeasyRVInbox extends PeasyRecyclerView.VerticalList<PeasyRVInbox.ModelInbox> {
+public class PeasyRVInbox extends PeasyRecyclerView<PeasyRVInbox.ModelInbox> {
+
+    private final PeasyHeaderContent<ModelInbox> headerContent = new PeasyHeaderContent<ModelInbox>(InboxHeaderViewHolder.VIEWTYPE_HEADER, null) {
+        @Override
+        PeasyHeaderViewHolder onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
+            return new InboxHeaderViewHolder(InboxHeaderViewHolder.inflateView(inflater, parent, InboxHeaderViewHolder.LAYOUT_ID));
+        }
+
+        @Override
+        void onBindViewHolder(Context context, PeasyHeaderViewHolder holder, int position, ModelInbox item) {
+            if (holder.isInstance(InboxHeaderViewHolder.class)) {
+                ((InboxHeaderViewHolder) holder).createView(item);
+            }
+        }
+    };
+
+    private final PeasyFooterContent<ModelInbox> footerContent = new PeasyFooterContent<ModelInbox>(InboxFooterViewHolder.VIEWTYPE_FOOTER, null) {
+        @Override
+        PeasyFooterViewHolder onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
+            return new InboxFooterViewHolder(InboxFooterViewHolder.inflateView(inflater, parent, InboxFooterViewHolder.LAYOUT_ID));
+        }
+
+        @Override
+        void onBindViewHolder(Context context, PeasyFooterViewHolder holder, int position, ModelInbox item) {
+            if (holder.isInstance(InboxFooterViewHolder.class)) {
+                ((InboxFooterViewHolder) holder).createView(item);
+            }
+        }
+    };
 
     public PeasyRVInbox(@NonNull Context context, RecyclerView recyclerView, FloatingActionButton fab, ArrayList<ModelInbox> arrayList) {
         super(context, recyclerView, arrayList);
@@ -27,61 +56,59 @@ public class PeasyRVInbox extends PeasyRecyclerView.VerticalList<PeasyRVInbox.Mo
 
     @Override
     public void setContent(ArrayList<ModelInbox> arrayList) {
-        arrayList.add(0, null); //add header
-        arrayList.add(null); //add footer
+        this.setHeaderContent(getPresentation().equals(Presentation.VerticalList) ? headerContent : null);
+        this.setFooterContent(getPresentation().equals(Presentation.VerticalList) ? footerContent : null);
         super.setContent(arrayList);
     }
 
     @Override
     protected PeasyViewHolder onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
-        if (viewType == InboxHeaderViewHolder.VIEWTYPE_HEADER) {
-            return new InboxHeaderViewHolder(InboxHeaderViewHolder.inflateView(inflater, parent, InboxHeaderViewHolder.LAYOUT_ID));
-        } else if (viewType == InboxFooterViewHolder.VIEWTYPE_FOOTER) {
-            return new InboxFooterViewHolder(InboxFooterViewHolder.inflateView(inflater, parent, InboxFooterViewHolder.LAYOUT_ID));
-        } else {
+        if (InboxModelViewHolder.VIEWTYPE_CONTENT == viewType) {
             return new InboxModelViewHolder(InboxModelViewHolder.inflateView(inflater, parent, InboxModelViewHolder.LAYOUT_ID));
         }
+        return null;
     }
 
     @Override
     protected int getItemViewType(int position, ModelInbox item) {
-        // return InboxModelViewHolder.INBOX_BASIC_TYPE;
-        if (item == null) {
-            if (position == 0) {
-                return InboxHeaderViewHolder.VIEWTYPE_HEADER;
-            } else {
-                return InboxFooterViewHolder.VIEWTYPE_FOOTER;
-            }
-        } else {
-            return InboxModelViewHolder.VIEWTYPE_CONTENT;
-        }
+        return InboxModelViewHolder.VIEWTYPE_CONTENT;
     }
 
     @Override
     protected void onBindViewHolder(Context context, PeasyViewHolder holder, int position, ModelInbox item) {
-        if (holder.isHeaderView()) {
-
-        } else if (holder.isFooterView()) {
-
-        } else if (holder.isContentView() || holder.isInstance(InboxModelViewHolder.class)) {
+        if (holder.isContentView() || holder.isInstance(InboxModelViewHolder.class)) {
             ((InboxModelViewHolder) holder).createView(item);
         }
     }
 
     @Override
-    public void onItemClick(View v, int viewType, final int position) {
-        final ModelInbox item = getItem(position);
-        new AlertDialog.Builder(getContext())
-                .setTitle(item.title)
-                .setMessage(item.message)
-                .setPositiveButton("Close", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        getItem(position).read = true;
-                        notifyItemChanged(position);
-                    }
-                })
-                .show();
+    public void onItemClick(View v, int viewType, final int position, final ModelInbox item, PeasyViewHolder vh) {
+        if (viewType == InboxModelViewHolder.VIEWTYPE_CONTENT) {
+            new AlertDialog.Builder(getContext())
+                    .setTitle(item.title)
+                    .setMessage(item.message)
+                    .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            getItem(position).read = true;
+                            notifyItemChanged(position);
+                        }
+                    })
+                    .show();
+        } else {
+            if (viewType == InboxHeaderViewHolder.VIEWTYPE_HEADER) {
+                if (vh != null && vh.isInstance(InboxHeaderViewHolder.class)) {
+                    final InboxHeaderViewHolder viewHolder = (InboxHeaderViewHolder) vh;
+                    Toast.makeText(getContext(), viewHolder.tvTitle.getText(), Toast.LENGTH_SHORT).show();
+                }
+            } else if (viewType == InboxFooterViewHolder.VIEWTYPE_FOOTER) {
+                if (vh != null && vh.isInstance(InboxFooterViewHolder.class)) {
+                    final InboxFooterViewHolder viewHolder = (InboxFooterViewHolder) vh;
+                    Toast.makeText(getContext(), viewHolder.tvTitle.getText(), Toast.LENGTH_SHORT).show();
+                    smoothScrollToFirst();
+                }
+            }
+        }
     }
 
     private Snackbar snackbar;
@@ -128,18 +155,31 @@ public class PeasyRVInbox extends PeasyRecyclerView.VerticalList<PeasyRVInbox.Mo
 
     public class InboxHeaderViewHolder extends PeasyHeaderViewHolder {
         public final static int LAYOUT_ID = R.layout.li_inbox_header;
+        final TextView tvTitle;
 
         public InboxHeaderViewHolder(View itemView) {
             super(itemView);
+            tvTitle = itemView.findViewById(R.id.tvTitle);
+        }
+
+        public void createView(ModelInbox item) {
+            tvTitle.setText("This is Top");
         }
     }
 
     public class InboxFooterViewHolder extends PeasyFooterViewHolder {
         public final static int LAYOUT_ID = R.layout.li_inbox_footer;
+        final TextView tvTitle;
 
         public InboxFooterViewHolder(View itemView) {
             super(itemView);
+            tvTitle = itemView.findViewById(R.id.tvTitle);
         }
+
+        public void createView(ModelInbox item) {
+            tvTitle.setText("You hit bottom, Click to Top");
+        }
+
     }
 
     public class InboxModelViewHolder extends PeasyContentViewHolder {
@@ -157,11 +197,7 @@ public class PeasyRVInbox extends PeasyRecyclerView.VerticalList<PeasyRVInbox.Mo
         }
 
         public void createView(ModelInbox item) {
-            if (getStaggeredGridLayoutManager() != null) {
-                llInboxContainer.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            } else {
-                llInboxContainer.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            }
+            if (item == null) return;
             if (!item.read) {
                 tvTitle.setSingleLine(false);
                 tvTitle.setTextColor(Color.parseColor("#ffcc0000"));
