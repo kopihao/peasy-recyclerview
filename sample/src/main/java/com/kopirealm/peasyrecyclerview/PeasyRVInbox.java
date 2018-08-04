@@ -51,7 +51,8 @@ public final class PeasyRVInbox extends PeasyRecyclerView<PeasyRVInbox.ModelInbo
     }
 
     // TODO Header Content of PeasyRVInbox
-    private final PeasyHeaderContent<ModelInbox> headerContent = new PeasyHeaderContent<ModelInbox>(InboxHeaderViewHolder.VIEWTYPE_HEADER, null) {
+    // private final PeasyHeaderContent<ModelInbox> headerContent = new PeasyHeaderContent<ModelInbox>(InboxHeaderViewHolder.VIEWTYPE_HEADER, null) {
+    private final PeasyHeaderContent<ModelInbox> headerContent = new PeasyHeaderContent<ModelInbox>(InboxHeaderViewHolder.VIEWTYPE_HEADER, PeasyRVInbox.ModelInbox.buildInboxHeader()) {
         @Override
         PeasyHeaderViewHolder onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
             // TODO Do Nothing but initializing view holder with layout_id
@@ -67,8 +68,9 @@ public final class PeasyRVInbox extends PeasyRecyclerView<PeasyRVInbox.ModelInbo
         }
     };
 
-    // TODO Footer Content of PeasyRVInbox
-    private final PeasyFooterContent<ModelInbox> footerContent = new PeasyFooterContent<ModelInbox>(InboxFooterViewHolder.VIEWTYPE_FOOTER, null) {
+    //  TODO Footer Content of PeasyRVInbox
+    // private final PeasyFooterContent<ModelInbox> footerContent = new PeasyFooterContent<ModelInbox>(InboxFooterViewHolder.VIEWTYPE_FOOTER, null) {
+    private final PeasyFooterContent<ModelInbox> footerContent = new PeasyFooterContent<ModelInbox>(InboxFooterViewHolder.VIEWTYPE_FOOTER, PeasyRVInbox.ModelInbox.buildInboxFooter()) {
         @Override
         PeasyFooterViewHolder onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
             // TODO Do Nothing but initializing view holder with layout_id
@@ -125,7 +127,7 @@ public final class PeasyRVInbox extends PeasyRecyclerView<PeasyRVInbox.ModelInbo
                     .setPositiveButton("Close", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            getItem(position).read = true;
+                            getItem(position).state = ModelInbox.InboxState.Read;
                             notifyItemChanged(position);
                         }
                     })
@@ -149,14 +151,14 @@ public final class PeasyRVInbox extends PeasyRecyclerView<PeasyRVInbox.ModelInbo
     @Override
     public boolean onItemLongClick(View view, int viewType, final int position, final ModelInbox item, PeasyViewHolder viewHolder) {
         // TODO Do Nothing but defining long click action on PeasyRVInbox item
-        if (item.read) {
+        if (item.state.equals(ModelInbox.InboxState.Read)) {
             new AlertDialog.Builder(getContext())
                     .setTitle(item.title)
                     .setMessage(item.message)
                     .setPositiveButton("Mark As Unread", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            getItem(position).read = false;
+                            getItem(position).state = ModelInbox.InboxState.Unread;
                             notifyItemChanged(position);
                         }
                     })
@@ -200,18 +202,37 @@ public final class PeasyRVInbox extends PeasyRecyclerView<PeasyRVInbox.ModelInbo
 
     // TODO Define data object represent PeasyRVInbox item, provide to PeasyRecyclerView as T(generic type)
     public final static class ModelInbox {
+
+        public enum InboxState {
+            Read, Unread, Header, Footer
+        }
+
         String title = "";
         String message = "";
         String sender = "";
-        boolean read = false;
+        InboxState state = InboxState.Unread;
 
-        ModelInbox(String title, String message, String sender, boolean read) {
+        private ModelInbox(String title, String message, String sender, InboxState state) {
             this.title = title;
             this.message = message;
             this.sender = sender + "@scmp.com";
-            this.read = read;
+            this.state = state;
         }
+
+        public static ModelInbox buildInboxMessage(String title, String message, String sender, boolean read) {
+            return new ModelInbox(title, message, sender, (read) ? InboxState.Read : InboxState.Unread);
+        }
+
+        public static ModelInbox buildInboxHeader() {
+            return new ModelInbox("", "", "", InboxState.Header);
+        }
+
+        public static ModelInbox buildInboxFooter() {
+            return new ModelInbox("", "", "", ModelInbox.InboxState.Footer);
+        }
+
     }
+
 
     // TODO Define view holder to PeasyRVInbox Header, find its views
     public final class InboxHeaderViewHolder extends PeasyHeaderViewHolder {
@@ -241,7 +262,7 @@ public final class PeasyRVInbox extends PeasyRecyclerView<PeasyRVInbox.ModelInbo
 
         // TODO Optional practice to define view population within view holder
         public void createView(ModelInbox item) {
-            tvTitle.setText("Click to Top");
+            tvTitle.setText("This is Bottom");
         }
 
     }
@@ -264,7 +285,7 @@ public final class PeasyRVInbox extends PeasyRecyclerView<PeasyRVInbox.ModelInbo
         // TODO Optional practice to define view population within view holder
         public void createView(ModelInbox item) {
             if (item == null) return;
-            if (!item.read) {
+            if (item.state.equals(ModelInbox.InboxState.Unread)) {
                 tvTitle.setSingleLine(false);
                 tvTitle.setTextColor(Color.parseColor("#ffcc0000"));
                 if (getStaggeredGridLayoutManager() != null) {

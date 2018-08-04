@@ -52,7 +52,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Hint: Performs click on FAB to change layout, long click to show reset contents Snackbar; Scroll to list bottom to show navigate top Snackbar"
+                android:text="Hint:\nPerforms click on list item to read message, long click to mark as unread.\nPerforms click on FAB to change layout, long click to show reset contents Snackbar;\nScroll to list bottom to show navigate top Snackbar."
                 android:textColor="?attr/editTextColor"
                 android:textSize="12sp" />
 
