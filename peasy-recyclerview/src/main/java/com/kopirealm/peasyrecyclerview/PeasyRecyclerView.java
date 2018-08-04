@@ -238,8 +238,8 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @see PeasyViewHolder#handleFAB(RecyclerView, FloatingActionButton, int, int)
      * @see PeasyViewHolder#handleFAB(RecyclerView, FloatingActionButton, MotionEvent, boolean)
      */
-    public void setFAB(FloatingActionButton fab) {
-        setFAB(fab, false);
+    public void anchorFAB(FloatingActionButton fab) {
+        anchorFAB(fab, false);
     }
 
     /**
@@ -250,7 +250,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @see PeasyViewHolder#handleFAB(RecyclerView, FloatingActionButton, int, int)
      * @see PeasyViewHolder#handleFAB(RecyclerView, FloatingActionButton, MotionEvent, boolean)
      */
-    public void setFAB(FloatingActionButton fab, boolean smartHiding) {
+    public void anchorFAB(FloatingActionButton fab, boolean smartHiding) {
         this.fab = fab;
         this.smartHiding = smartHiding;
     }
