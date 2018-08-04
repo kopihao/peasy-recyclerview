@@ -28,6 +28,9 @@ import java.util.Arrays;
  */
 public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
 
+    /**
+     * Available Presentations provided by PeasyRecyclerView
+     */
     public enum Presentation {
         undefined,
         VerticalList,
