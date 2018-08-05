@@ -136,7 +136,7 @@ Demostration
 ### `PeasyHeaderContent<ModelInbox>`,`PeasyFooterContent<ModelInbox>`
 * Serve as Coordinator Content to `PeasyRVInbox<T>` 
 
-### __Please checkout [source code][2]__
+##### __Please checkout [source code][2]__
 
 Add to your Android project
 --------
