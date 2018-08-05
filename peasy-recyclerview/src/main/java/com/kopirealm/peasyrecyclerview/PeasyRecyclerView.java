@@ -301,7 +301,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
         if (this.smartHiding && getFab() != null) {
             final FloatingActionButton mFloatingActionButton = this.fab;
             if (getLinearLayoutManager() != null) {
-                final int differential = dx;
+                final int differential = dy;
                 // final int differential = getLinearLayoutManager().getOrientation() == LinearLayoutManager.VERTICAL ? dy : dx;
                 if (differential > 0) {
                     if (mFloatingActionButton.getVisibility() == View.VISIBLE) {

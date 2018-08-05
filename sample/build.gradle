@@ -40,6 +40,6 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$_supportLibrary"
     implementation "com.android.support:recyclerview-v7:$_supportLibrary"
     implementation "com.android.support:design:$_supportLibrary"
-    implementation 'com.github.kopihao:peasy-recyclerview:1.0.4'
-    // implementation project(path: ':peasy-recyclerview')
+    // implementation 'com.github.kopihao:peasy-recyclerview:1.0.4'
+    implementation project(path: ':peasy-recyclerview')
 }
