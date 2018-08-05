@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 ext {
     _compileSdkVersion = 27
-    _minSdkVersion = 21
+    _minSdkVersion = 16
     _targetSdkVersion = 27
     _versionCode = 1
     _versionName = "1.0.5"

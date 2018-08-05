@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 ext {
     _compileSdkVersion = 27
-    _minSdkVersion = 21
+    _minSdkVersion = 16
     _targetSdkVersion = 27
     _versionCode = 1
     _versionName = "1.0.5"
@@ -11,20 +11,21 @@ ext {
 
 android {
     compileSdkVersion _compileSdkVersion
-
     defaultConfig {
         applicationId "com.kopirealm.peasyrecyclerview"
         minSdkVersion _minSdkVersion
         targetSdkVersion _targetSdkVersion
         versionCode _versionCode
         versionName _versionName
-        multiDexEnabled true
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
+        debug {
+            minifyEnabled true
+            useProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -40,6 +41,6 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$_supportLibrary"
     implementation "com.android.support:recyclerview-v7:$_supportLibrary"
     implementation "com.android.support:design:$_supportLibrary"
-    implementation 'com.github.kopihao:peasy-recyclerview:1.0.5'
-    // implementation project(path: ':peasy-recyclerview')
+    // implementation 'com.github.kopihao:peasy-recyclerview:1.0.5'
+    implementation project(path: ':peasy-recyclerview')
 }
