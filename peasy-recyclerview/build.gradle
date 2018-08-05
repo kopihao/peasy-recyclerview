@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 ext {
     _compileSdkVersion = 27
-    _minSdkVersion = 16
+    _minSdkVersion = 21
     _targetSdkVersion = 27
     _versionCode = 1
     _versionName = "1.0.3"
@@ -34,8 +34,10 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    androidTestImplementation "com.android.support:support-annotations:$_supportLibrary"
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    implementation "com.android.support:support-annotations:$_supportLibrary"
     implementation "com.android.support:appcompat-v7:$_supportLibrary"
+    implementation "com.android.support:recyclerview-v7:$_supportLibrary"
     implementation "com.android.support:design:$_supportLibrary"
 }
 
