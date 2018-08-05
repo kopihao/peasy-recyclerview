@@ -139,7 +139,7 @@ Demostration
 * Serve as Coordinator Content to `PeasyRVInbox<T>` 
 
 ##### __Please checkout [source code][3]__
-##### __Please checkout [preview][4]__
+##### __Please checkout [live demo][4]__
 
 Add to your Android project
 --------
