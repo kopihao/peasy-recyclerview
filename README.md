@@ -138,7 +138,8 @@ Demostration
 ### `PeasyHeaderContent<ModelInbox>`,`PeasyFooterContent<ModelInbox>`
 * Serve as Coordinator Content to `PeasyRVInbox<T>` 
 
-##### __Please checkout [source code][2]__
+##### __Please checkout [source code][3]__
+##### __Please checkout [preview][4]__
 
 Add to your Android project
 --------
@@ -175,3 +176,4 @@ License
  [1]: https://github.com/kopihao/peasy-recyclerview/
  [2]: https://stackoverflow.com/search?q=peasy-recyclerview
  [3]: https://github.com/kopihao/peasy-recyclerview/tree/master/sample/src/main/java/com/kopirealm/peasyrecyclerview
+ [4]: https://appetize.io/app/w4nevbxf2mmt8m6yxtjrg9bfbw?device=nexus5&scale=75&orientation=portrait&osVersion=6.0&deviceColor=black
