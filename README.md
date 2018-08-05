@@ -44,8 +44,8 @@ Easy hands on, easy peasy!
     3) `getItemViewType(...)`
 
 ## Intuitive, Better writability & readability:
-### Basic Template to set up RecyclerView as Vertical List
-
+### Basic Template
+* Let's set up RecyclerView as Vertical List
 ```java
 public final class SampleRV extends PeasyRecyclerView.VerticalList<PeasyRVInbox.ModelInbox> {
 
@@ -128,9 +128,10 @@ Demostration
 
 ## `PeasyRVInbox.java`
 ### `PeasyRVInbox`
-* Child class of `PeasyRecyclerView` which glue RecyclerView with RecyclerView.Adapter with desired `PeasyRecyclerView.Presentation`
+* Child class of `PeasyRecyclerView` 
+* Glue provided `RecyclerView` with `RecyclerView.Adapter` with desired `PeasyRecyclerView.Presentation`
 ### `ModelInbox`
-* Serve as model T to `PeasyRVInbox<T>`
+* Serves as model T to `PeasyRVInbox<T>`
 ### `InboxHeaderViewHolder`,`InboxFooterViewHolder`,`InboxModelViewHolder`
 * Serve as view holders to `PeasyRVInbox<T>`
 ### `PeasyHeaderContent<ModelInbox>`,`PeasyFooterContent<ModelInbox>`
