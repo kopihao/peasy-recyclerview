@@ -138,7 +138,7 @@ Demostration
 
 ### __Please checkout [source code][2]__
 
-Add to your project
+Add to your Android project
 --------
 <a href="https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.kopihao%22%20AND%20a%3A%22peasy-recyclerview%22"><img src="https://img.shields.io/maven-central/v/com.github.kopihao/peasy-recyclerview.svg"></a>
 
@@ -150,8 +150,8 @@ dependencies {
 
 More Information
 -------- 
-### For documentation and additional information please visit [official website][1]. 
-### For enquiries and solutions please visit [stackoverflow][2].
+##### For documentation and additional information please visit [official website][1]. 
+##### For enquiries and solutions please visit [stackoverflow][2].
 
 License
 -------
