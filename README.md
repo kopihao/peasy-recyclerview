@@ -181,4 +181,4 @@ License
  [1]: https://github.com/kopihao/peasy-recyclerview/
  [2]: https://stackoverflow.com/search?q=peasy-recyclerview
  [3]: https://github.com/kopihao/peasy-recyclerview/tree/master/sample/src/main/java/com/kopirealm/peasyrecyclerview
- [4]: https://appetize.io/app/5j5pz1043uhewk09z3dmzah0jw?device=nexus5&scale=75&orientation=portrait&osVersion=6.0&deviceColor=white
+ [4]: https://appetize.io/app/t8qxw721bcrmdudbf6ftjdpduw?device=nexus5&scale=75&orientation=portrait&osVersion=7.1
