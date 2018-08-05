@@ -118,6 +118,11 @@ public final class SampleRV extends PeasyRecyclerView.VerticalList<PeasyRVInbox.
             super.onViewScrollStateChanged(recyclerView, newState);
         }
 
+        @Override
+        public void onViewInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+            super.onViewInterceptTouchEvent(rv, e);
+        }
+
     }
 ```
 
@@ -176,4 +181,4 @@ License
  [1]: https://github.com/kopihao/peasy-recyclerview/
  [2]: https://stackoverflow.com/search?q=peasy-recyclerview
  [3]: https://github.com/kopihao/peasy-recyclerview/tree/master/sample/src/main/java/com/kopirealm/peasyrecyclerview
- [4]: https://appetize.io/app/w4nevbxf2mmt8m6yxtjrg9bfbw?device=nexus5&scale=75&orientation=portrait&osVersion=6.0&deviceColor=black
+ [4]: https://appetize.io/app/5j5pz1043uhewk09z3dmzah0jw?device=nexus5&scale=75&orientation=portrait&osVersion=6.0&deviceColor=white
