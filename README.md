@@ -6,7 +6,8 @@ Peasy RecyclerView
 # What's good?
 #### A not-so-powerful and yet easy peasy tool to setup your Android RecyclerView in a convenient way. Be practical, may not be fancy.
 
-#### Provides a lot override methods by handling a lot boilerplate behind the scene. Yes you can override them anytime. 
+#### Provides a lot override methods by handling a lot boilerplate behind the scene. 
+#### Yes you can override them anytime. 
 
 ### Easy hands on, easy peasy!
 
