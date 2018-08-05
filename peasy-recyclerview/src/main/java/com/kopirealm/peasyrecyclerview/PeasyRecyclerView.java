@@ -194,7 +194,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
                 if (smartHiding && getFab() != null) {
                     PeasyRecyclerView.this.handleFAB(rv, getFab(), e, hasAllContentsVisible());
                 }
-                PeasyRecyclerView.this.onInterceptTouchEvent(rv, e);
+                PeasyRecyclerView.this.onViewInterceptTouchEvent(rv, e);
                 return false;
             }
 
@@ -242,7 +242,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @see PeasyViewHolder#handleFAB(RecyclerView, FloatingActionButton, MotionEvent, boolean)
      */
     public void anchorFAB(FloatingActionButton fab) {
-        anchorFAB(fab, false);
+        anchorFAB(fab, true);
     }
 
     /**
@@ -629,7 +629,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @param rv
      * @param e
      */
-    public void onInterceptTouchEvent(final RecyclerView rv, final MotionEvent e) {
+    public void onViewInterceptTouchEvent(final RecyclerView rv, final MotionEvent e) {
     }
 
     /**
