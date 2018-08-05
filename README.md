@@ -152,7 +152,7 @@ Add to your Android project
 
 ```gradle
 dependencies {
-  implementation 'com.github.kopihao:peasy-recyclerview:1.0.4'
+  implementation 'com.github.kopihao:peasy-recyclerview:1.0.+'
 } 
 ```
 
