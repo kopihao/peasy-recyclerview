@@ -47,8 +47,8 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     private FloatingActionButton fab;
     private boolean smartHiding = false;
     private Bundle extraData = null;
-    private PeasyCoordinatorContent.Header<T> headerContent = null;
-    private PeasyCoordinatorContent.Footer<T> footerContent = null;
+    private PeasyHeaderContent<T> headerContent = null;
+    private PeasyFooterContent<T> footerContent = null;
     public static final int DefaultGridColumnSize = 2;
     private static String ExtraColumnSize = "column_size";
 
@@ -264,7 +264,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      *
      * @param headerContent
      */
-    public void setHeaderContent(PeasyCoordinatorContent.Header<T> headerContent) {
+    public void setHeaderContent(PeasyHeaderContent<T> headerContent) {
         this.headerContent = headerContent;
     }
 
@@ -274,7 +274,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      *
      * @param footerContent
      */
-    public void setFooterContent(PeasyCoordinatorContent.Footer<T> footerContent) {
+    public void setFooterContent(PeasyFooterContent<T> footerContent) {
         this.footerContent = footerContent;
     }
 
@@ -1174,29 +1174,31 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
         abstract PVH onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType);
 
         abstract void onBindViewHolder(Context context, PVH holder, int position, D item);
+    }
 
-        /**
-         * Extended Blueprint of @{@link PeasyCoordinatorContent}
-         * Coordination : Header section of list
-         *
-         * @param <D>
-         */
-        public static abstract class Header<D> extends PeasyCoordinatorContent<PeasyHeaderViewHolder, D> {
-            public Header(int viewtype, D data) {
-                super(viewtype, data);
-            }
+    /**
+     * Extended Blueprint of @{@link PeasyCoordinatorContent}
+     * Coordination : Header section of list
+     *
+     * @param <D>
+     */
+    public static abstract class PeasyHeaderContent<D> extends PeasyCoordinatorContent<PeasyHeaderViewHolder, D> {
+
+        public PeasyHeaderContent(int viewtypeId, D data) {
+            super(viewtypeId, data);
         }
+    }
 
-        /**
-         * Extended Blueprint of @{@link PeasyCoordinatorContent}
-         * Coordination : Content section of list
-         *
-         * @param <D>
-         */
-        public static abstract class Footer<D> extends PeasyCoordinatorContent<PeasyFooterViewHolder, D> {
-            public Footer(int viewtype, D data) {
-                super(viewtype, data);
-            }
+    /**
+     * Extended Blueprint of @{@link PeasyCoordinatorContent}
+     * Coordination : Content section of list
+     *
+     * @param <D>
+     */
+    public static abstract class PeasyFooterContent<D> extends PeasyCoordinatorContent<PeasyFooterViewHolder, D> {
+
+        public PeasyFooterContent(int viewtypeId, D data) {
+            super(viewtypeId, data);
         }
     }
 
