@@ -51,8 +51,8 @@ public final class PeasyRVInbox extends PeasyRecyclerView<PeasyRVInbox.ModelInbo
     }
 
     // TODO Header Content of PeasyRVInbox
-    // private final PeasyHeaderContent<ModelInbox> headerContent = new PeasyHeaderContent<ModelInbox>(InboxHeaderViewHolder.VIEWTYPE_HEADER, null) {
-    private final PeasyHeaderContent<ModelInbox> headerContent = new PeasyHeaderContent<ModelInbox>(InboxHeaderViewHolder.VIEWTYPE_HEADER, PeasyRVInbox.ModelInbox.buildInboxHeader()) {
+    // private final PeasyCoordinatorContent.Header<ModelInbox> headerContent = new PeasyCoordinatorContent.Header<ModelInbox>(InboxHeaderViewHolder.VIEWTYPE_HEADER, null) {
+    private final PeasyCoordinatorContent.Header<ModelInbox> headerContent = new PeasyCoordinatorContent.Header<ModelInbox>(InboxHeaderViewHolder.VIEWTYPE_HEADER, PeasyRVInbox.ModelInbox.buildInboxHeader()) {
         @Override
         PeasyHeaderViewHolder onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
             // TODO Do Nothing but initializing view holder with layout_id
@@ -69,8 +69,8 @@ public final class PeasyRVInbox extends PeasyRecyclerView<PeasyRVInbox.ModelInbo
     };
 
     //  TODO Footer Content of PeasyRVInbox
-    // private final PeasyFooterContent<ModelInbox> footerContent = new PeasyFooterContent<ModelInbox>(InboxFooterViewHolder.VIEWTYPE_FOOTER, null) {
-    private final PeasyFooterContent<ModelInbox> footerContent = new PeasyFooterContent<ModelInbox>(InboxFooterViewHolder.VIEWTYPE_FOOTER, PeasyRVInbox.ModelInbox.buildInboxFooter()) {
+    // private final PeasyCoordinatorContent.Footer<ModelInbox> footerContent = new PeasyCoordinatorContent.Footer<ModelInbox>(InboxFooterViewHolder.VIEWTYPE_FOOTER, null) {
+    private final PeasyCoordinatorContent.Footer<ModelInbox> footerContent = new PeasyCoordinatorContent.Footer<ModelInbox>(InboxFooterViewHolder.VIEWTYPE_FOOTER, PeasyRVInbox.ModelInbox.buildInboxFooter()) {
         @Override
         PeasyFooterViewHolder onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
             // TODO Do Nothing but initializing view holder with layout_id
