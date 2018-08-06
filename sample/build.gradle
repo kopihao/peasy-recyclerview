@@ -5,7 +5,7 @@ ext {
     _minSdkVersion = 16
     _targetSdkVersion = 27
     _versionCode = 1
-    _versionName = "1.0.6"
+    _versionName = "1.0.7"
     _supportLibrary = '27.1.1'
 }
 
@@ -41,6 +41,6 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$_supportLibrary"
     implementation "com.android.support:recyclerview-v7:$_supportLibrary"
     implementation "com.android.support:design:$_supportLibrary"
-    implementation 'com.github.kopihao:peasy-recyclerview:1.0.6'
-    // implementation project(path: ':peasy-recyclerview')
+    // implementation 'com.github.kopihao:peasy-recyclerview:1.0.6'
+    implementation project(path: ':peasy-recyclerview')
 }
