@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -385,7 +386,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @return
      */
     @Override
-    public int getItemViewType(int position) {
+    public final int getItemViewType(int position) {
         if (PeasyHeaderViewHolder.VIEWTYPE_NOTHING != getHeaderViewType(position)) {
             return getHeaderViewType(position);
         }
@@ -434,7 +435,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @return
      */
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public final RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         if (headerContent != null) {
             if (viewType == headerContent.getViewtype()) {
@@ -461,13 +462,13 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
 
     /**
      * DO NOT OVERRIDE THIS
-     * Please override {@link #onBindViewHolder(Context, PeasyViewHolder, int, Object)}
+     * Please override {@link #onBindViewHolder(Context, PeasyViewHolder, int, T)}
      *
      * @param holder
      * @param position
      */
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public final void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder == null) return;
         onBindViewHolder((PeasyViewHolder) holder, position);
     }
@@ -491,6 +492,41 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
             }
         }
         onBindViewHolder(getContext(), holder, position, getItem(position));
+    }
+
+    /**
+     * DO NOT OVERRIDE THIS
+     * Please override {@link #onBindViewHolder(Context, PeasyViewHolder, int, T)}
+     *
+     * @param holder
+     * @param position
+     * @param payloads
+     */
+    @Override
+    public final void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, @NonNull List payloads) {
+        if (holder == null) return;
+        onBindViewHolder((PeasyViewHolder) holder, position, payloads);
+    }
+
+    /**
+     * Enhanced Implementation Layer of {@link RecyclerView.Adapter#onBindViewHolder(RecyclerView.ViewHolder, int, List)}
+     *
+     * @param holder
+     * @param position
+     */
+    private void onBindViewHolder(PeasyViewHolder holder, int position, @NonNull List payloads) {
+        if (holder == null) return;
+        if (headerContent != null) {
+            if (holder.isHeaderView()) {
+                headerContent.onBindViewHolder(getContext(), (PeasyHeaderViewHolder) holder, position, new ArrayList<T>(payloads));
+            }
+        }
+        if (footerContent != null) {
+            if (holder.isFooterView()) {
+                footerContent.onBindViewHolder(getContext(), (PeasyFooterViewHolder) holder, position, new ArrayList<T>(payloads));
+            }
+        }
+        onBindViewHolder(getContext(), holder, position, new ArrayList<T>(payloads));
     }
 
     /**
@@ -803,7 +839,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     }
 
     //==========================================================================================
-    // CONTRACTUAL METHODS
+    // CONTRACTUAL METHODS BEGIN
     //==========================================================================================
 
     /**
@@ -820,6 +856,16 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     protected abstract PeasyViewHolder onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType);
 
     /**
+     * Enhanced Implementation Layer of {@link RecyclerView.Adapter#getItemViewType(int)}
+     * Here you should define or decide view type
+     *
+     * @param position
+     * @param item
+     * @return
+     */
+    protected abstract int getItemViewType(final int position, final T item);
+
+    /**
      * Enhanced Implementation Layer of {@link RecyclerView.Adapter#onBindViewHolder(RecyclerView.ViewHolder, int)}
      * Here you should populate views in {@link PeasyViewHolder} with item returned in this method
      *
@@ -830,15 +876,21 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      */
     protected abstract void onBindViewHolder(final Context context, final PeasyViewHolder holder, final int position, final T item);
 
+    //==========================================================================================
+    // CONTRACTUAL METHODS END
+    //==========================================================================================
+
     /**
-     * Enhanced Implementation Layer of {@link RecyclerView.Adapter#getItemViewType(int)}
-     * Here you should define or decide view type
+     * Enhanced Implementation Layer of {@link RecyclerView.Adapter#onBindViewHolder(RecyclerView.ViewHolder, int, List)} )}
+     * Here you should populate views in {@link PeasyViewHolder} with item returned in this method
      *
+     * @param context
+     * @param holder
      * @param position
-     * @param item
-     * @return
+     * @param items
      */
-    protected abstract int getItemViewType(final int position, final T item);
+    protected void onBindViewHolder(final Context context, final PeasyViewHolder holder, final int position, ArrayList<T> items) {
+    }
 
     /**
      * To reset added {@link android.support.v7.widget.RecyclerView.ItemDecoration}
@@ -1285,6 +1337,9 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
         protected abstract VH onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType);
 
         protected abstract void onBindViewHolder(Context context, VH holder, int position, D item);
+
+        protected void onBindViewHolder(Context context, VH holder, int position, ArrayList<D> items) {
+        }
     }
 
     /**
