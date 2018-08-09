@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * An Adapter as well as a RecyclerView Binder
@@ -49,7 +50,10 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     private Bundle extraData = null;
     private PeasyHeaderContent<T> headerContent = null;
     private PeasyFooterContent<T> footerContent = null;
+    private AtomicBoolean lockEOL = new AtomicBoolean(true);
+    private int thresholdOfEOL = -1;
     public static final int DefaultGridColumnSize = 2;
+    public static final int DefaultEOLThreshold = 1;
     private static String ExtraColumnSize = "column_size";
 
     public PeasyRecyclerView(@NonNull Context context, RecyclerView recyclerView, ArrayList<T> arrayList) {
@@ -60,6 +64,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
         this.context = context;
         this.recyclerView = recyclerView;
         this.extraData = extraData;
+        this.setThresholdOfEOL(-1);
         this.onCreate(context, recyclerView, arrayList, extraData);
         this.setContent(arrayList, recyclerView);
     }
@@ -219,18 +224,58 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     private void onRecyclerViewScroll(RecyclerView recyclerView) {
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            public void onScrolled(final RecyclerView recyclerView, final int dx, final int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                PeasyRecyclerView.this.handleFAB(recyclerView, getFab(), dx, dy);
-                onViewScrolled(recyclerView, dx, dy);
+                recyclerView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        PeasyRecyclerView.this.handleFAB(recyclerView, getFab(), dx, dy);
+                        onViewScrolled(recyclerView, dx, dy);
+                        synchronized (lockEOL) {
+                            if (!lockEOL.get()) {
+                                final boolean inDirection = (dx > 0) || (dy > 0);
+                                final int eolThreshold = PeasyRecyclerView.this.thresholdOfEOL;
+                                if (inDirection && hasReachedEndOfList(eolThreshold)) {
+                                    lockEOL.set(!lockEOL.get());
+                                    onViewReachingEndOfList(recyclerView, eolThreshold);
+                                }
+                            }
+                        }
+                    }
+                });
             }
 
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            public void onScrollStateChanged(final RecyclerView recyclerView, final int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                onViewScrollStateChanged(recyclerView, newState);
+                recyclerView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        onViewScrollStateChanged(recyclerView, newState);
+                        synchronized (lockEOL) {
+                            if (!!lockEOL.get() && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                                lockEOL.set(!lockEOL.get());
+                            }
+                        }
+                    }
+                });
             }
         });
+    }
+
+    /**
+     * To set End Of List threshold
+     * Threshold must excedd {@value #DefaultEOLThreshold} in order to trigger callback of {@link #onViewReachingEndOfList(RecyclerView, int)}
+     *
+     * @param thresholdOfEOL
+     * @see #hasReachedEndOfList(int)
+     * @see #onViewReachingEndOfList(RecyclerView, int)
+     */
+    public void setThresholdOfEOL(int thresholdOfEOL) {
+        if (thresholdOfEOL >= DefaultEOLThreshold) {
+            this.lockEOL.set(!this.lockEOL.get());
+            this.thresholdOfEOL = thresholdOfEOL;
+        }
     }
 
     /**
@@ -571,24 +616,26 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
 
     /**
      * To check reach end of contents
+     * Default threshold is {@value #DefaultEOLThreshold }
      *
      * @return
      * @see #hasReachedEndOfList(int)
      */
     public boolean hasReachedEndOfList() {
-        return hasReachedEndOfList(1);
+        return hasReachedEndOfList(DefaultEOLThreshold);
     }
 
     /**
      * To check reach end of contents
+     * Minimum threshold is {@value #DefaultEOLThreshold }
      *
-     * @param threshold visibility count, default is 1, recommended value [3,5]
+     * @param threshold visibility count, recommended value is [1,5]
      * @return
      */
     public boolean hasReachedEndOfList(final int threshold) {
         final int totalItemCount = getItemCount();
         final int lastVisibleItem = getLastVisibleItemPosition();
-        return (totalItemCount <= (lastVisibleItem + Math.max(1, threshold)));
+        return (totalItemCount <= (lastVisibleItem + Math.max(DefaultEOLThreshold, threshold)));
     }
 
     /**
@@ -642,6 +689,22 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @param newState
      */
     public void onViewScrollStateChanged(final RecyclerView recyclerView, final int newState) {
+    }
+
+    /**
+     * Enhanced Implementation Layer of {@link RecyclerView.OnScrollListener#onScrolled(RecyclerView, int, int)}
+     * Target on itemView of {@link PeasyRecyclerView#recyclerView}
+     * Here you should define recycler view on scroll action when it reach end of list
+     * [WARNING]
+     * This method will execute right after {@link #onViewScrolled(RecyclerView, int, int)}
+     * when {@link #thresholdOfEOL} is more than or equal {@value #DefaultEOLThreshold }
+     * Do not repeat duplication at {@link #onViewScrolled(RecyclerView, int, int)}
+     * This method will utilize {@link #lockEOL} to avoid feedback spamming.
+     *
+     * @param recyclerView
+     * @param threshold
+     */
+    public void onViewReachingEndOfList(final RecyclerView recyclerView, final int threshold) {
     }
 
     /**

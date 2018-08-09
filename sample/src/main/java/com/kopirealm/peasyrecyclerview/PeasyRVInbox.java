@@ -48,6 +48,7 @@ public final class PeasyRVInbox extends PeasyRecyclerView<PeasyRVInbox.ModelInbo
         // TODO Initialization
         super(context, recyclerView, arrayList);
         super.anchorFAB(fab);
+        super.setThresholdOfEOL(2);
     }
 
     // TODO Header Content of PeasyRVInbox
@@ -193,8 +194,15 @@ public final class PeasyRVInbox extends PeasyRecyclerView<PeasyRVInbox.ModelInbo
         super.onViewScrolled(recyclerView, dx, dy);
         if (hasReachedEndOfList(1)) {
             getFab().setVisibility(View.VISIBLE);
-            showScrollTopSnackbar(recyclerView);
+            notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public void onViewReachingEndOfList(RecyclerView recyclerView, int threshold) {
+        // TODO Everything during RecyclerView scrolled to reach End of List
+        super.onViewReachingEndOfList(recyclerView, threshold);
+        showScrollTopSnackbar(recyclerView);
     }
 
     // TODO Define data object represent PeasyRVInbox item, provide to PeasyRecyclerView as T(generic type)
