@@ -54,13 +54,13 @@ public final class PeasyRVInbox extends PeasyRecyclerView<PeasyRVInbox.ModelInbo
     // private final PeasyHeaderContent<ModelInbox> headerContent = new PeasyHeaderContent<ModelInbox>(InboxHeaderViewHolder.VIEWTYPE_HEADER, null) {
     private final PeasyHeaderContent<ModelInbox> headerContent = new PeasyHeaderContent<ModelInbox>(InboxHeaderViewHolder.VIEWTYPE_HEADER, PeasyRVInbox.ModelInbox.buildInboxHeader()) {
         @Override
-        PeasyHeaderViewHolder onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
+        protected PeasyHeaderViewHolder onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
             // TODO Do Nothing but initializing view holder with layout_id
             return new InboxHeaderViewHolder(InboxHeaderViewHolder.inflateView(inflater, parent, InboxHeaderViewHolder.LAYOUT_ID));
         }
 
         @Override
-        void onBindViewHolder(Context context, PeasyHeaderViewHolder holder, int position, ModelInbox item) {
+        protected void onBindViewHolder(Context context, PeasyHeaderViewHolder holder, int position, ModelInbox item) {
             // TODO Do Nothing but checking instance and populating item to view with view holder
             if (holder.isInstance(InboxHeaderViewHolder.class)) {
                 ((InboxHeaderViewHolder) holder).createView(item);
@@ -72,13 +72,13 @@ public final class PeasyRVInbox extends PeasyRecyclerView<PeasyRVInbox.ModelInbo
     // private final PeasyFooterContent<ModelInbox> footerContent = new PeasyFooterContent<ModelInbox>(InboxFooterViewHolder.VIEWTYPE_FOOTER, null) {
     private final PeasyFooterContent<ModelInbox> footerContent = new PeasyFooterContent<ModelInbox>(InboxFooterViewHolder.VIEWTYPE_FOOTER, PeasyRVInbox.ModelInbox.buildInboxFooter()) {
         @Override
-        PeasyFooterViewHolder onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
+        protected PeasyFooterViewHolder onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
             // TODO Do Nothing but initializing view holder with layout_id
             return new InboxFooterViewHolder(InboxFooterViewHolder.inflateView(inflater, parent, InboxFooterViewHolder.LAYOUT_ID));
         }
 
         @Override
-        void onBindViewHolder(Context context, PeasyFooterViewHolder holder, int position, ModelInbox item) {
+        protected void onBindViewHolder(Context context, PeasyFooterViewHolder holder, int position, ModelInbox item) {
             // TODO Do Nothing but checking instance and populating item to view with view holder
             if (holder.isInstance(InboxFooterViewHolder.class)) {
                 ((InboxFooterViewHolder) holder).createView(item);

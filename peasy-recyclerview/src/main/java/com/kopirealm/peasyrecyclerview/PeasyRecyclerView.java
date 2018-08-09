@@ -705,6 +705,18 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
         return null;
     }
 
+    /**
+     * Help to cast provided PeasyViewHolder to its child class instance
+     *
+     * @param vh
+     * @param cls
+     * @param <VH>
+     * @return
+     */
+    public static <VH extends PeasyViewHolder> VH GetViewHolder(PeasyViewHolder vh, Class<VH> cls) {
+        return cls.cast(vh);
+    }
+
     //==========================================================================================
     // CONTRACTUAL METHODS
     //==========================================================================================
@@ -1013,6 +1025,8 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
         }
     }
 
+    //==========================================================================================
+
     /**
      * Blueprint to substitute RecyclerView.ViewHolder
      * Require you to return {@link PeasyViewHolder } from {@link #onCreateViewHolder(LayoutInflater, ViewGroup, int)}
@@ -1025,6 +1039,18 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
 
         public PeasyViewHolder(View itemView) {
             super(itemView);
+        }
+
+
+        /**
+         * Help to cast provided PeasyViewHolder to its instance
+         *
+         * @param cls
+         * @param <VH>
+         * @return
+         */
+        public <VH extends PeasyViewHolder> VH asIs(Class<VH> cls) {
+            return PeasyRecyclerView.GetViewHolder(this, cls);
         }
 
         /**
@@ -1148,12 +1174,12 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     //==========================================================================================
 
     /**
-     * Blueprint of Content that represents Unique Coordination or Purpose
+     * Blueprint of Content that represents its Unique Coordination or has Special Purpose
      * PeasyCoordinatorContent represents its viewtype, data and viewholder implementations
      *
-     * @param <D>
+     * @param <D> Data Type
      */
-    private static class PeasyCoordinatorContent<D> {
+    private static abstract class PeasyCoordinatorContent<VH extends PeasyViewHolder, D> {
 
         private int viewtype;
         private D data;
@@ -1170,6 +1196,10 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
         public D getData() {
             return data;
         }
+
+        protected abstract VH onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType);
+
+        protected abstract void onBindViewHolder(Context context, VH holder, int position, D item);
     }
 
     /**
@@ -1178,32 +1208,22 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      *
      * @param <D>
      */
-    public static abstract class PeasyHeaderContent<D> extends PeasyCoordinatorContent<D> {
-
+    public static abstract class PeasyHeaderContent<D> extends PeasyCoordinatorContent<PeasyHeaderViewHolder, D> {
         public PeasyHeaderContent(int viewtypeId, D data) {
             super(viewtypeId, data);
         }
-
-        abstract PeasyHeaderViewHolder onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType);
-
-        abstract void onBindViewHolder(Context context, PeasyHeaderViewHolder holder, int position, D item);
     }
 
     /**
      * Extended Blueprint of @{@link PeasyCoordinatorContent}
      * Coordination : Content section of list
      *
-     * @param <D>
+     * @param <D> Data Type
      */
-    public static abstract class PeasyFooterContent<D> extends PeasyCoordinatorContent<D> {
-
+    public static abstract class PeasyFooterContent<D> extends PeasyCoordinatorContent<PeasyFooterViewHolder, D> {
         public PeasyFooterContent(int viewtypeId, D data) {
             super(viewtypeId, data);
         }
-
-        abstract PeasyFooterViewHolder onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType);
-
-        abstract void onBindViewHolder(Context context, PeasyFooterViewHolder holder, int position, D item);
     }
 
     //==========================================================================================
