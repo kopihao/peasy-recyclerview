@@ -193,8 +193,9 @@ public final class PeasyRVInbox extends PeasyRecyclerView<PeasyRVInbox.ModelInbo
         // TODO Everything during RecyclerView scrolling
         super.onViewScrolled(recyclerView, dx, dy);
         if (hasReachedEndOfList(1)) {
-            getFab().setVisibility(View.VISIBLE);
             notifyDataSetChanged();
+            getFab().hide();
+            showScrollTopSnackbar(recyclerView);
         }
     }
 
@@ -202,7 +203,13 @@ public final class PeasyRVInbox extends PeasyRecyclerView<PeasyRVInbox.ModelInbo
     public void onViewReachingEndOfList(RecyclerView recyclerView, int threshold) {
         // TODO Everything during RecyclerView scrolled to reach End of List
         super.onViewReachingEndOfList(recyclerView, threshold);
-        showScrollTopSnackbar(recyclerView);
+        new AlertDialog.Builder(getContext())
+                .setTitle("onViewReachingEndOfList(...)")
+                .setMessage("Threshold : " + threshold)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }).show();
     }
 
     // TODO Define data object represent PeasyRVInbox item, provide to PeasyRecyclerView as T(generic type)
