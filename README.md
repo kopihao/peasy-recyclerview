@@ -37,7 +37,8 @@ Peasy RecyclerView
     2) `onItemLongClick(...)`
     3) `onViewScrolled(...)`
     4) `onViewScrollStateChanged(...)`
-    5) `onInterceptTouchEvent(...)`
+    5) `onViewReachingEndOfList(...)`
+    6) `onInterceptTouchEvent(...)`
 
 * Retains Android promoted implement in better ways, no proprietary knowledge required to start with, you will still see these:
     1) `onCreateViewHolder(...)`
@@ -56,17 +57,19 @@ public final class SampleRV extends PeasyRecyclerView.VerticalList<PeasyRVInbox.
 
         @Override
         protected PeasyViewHolder onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
+            // TODO Do Nothing but initializing view holder with layout_id
             return null;
         }
 
         @Override
-        protected void onBindViewHolder(Context context, PeasyViewHolder holder, int position, PeasyRVInbox.ModelInbox item) {
-
+        protected int getItemViewType(int position, PeasyRVInbox.ModelInbox item) {
+            // TODO Do Nothing but returning view type accordingly
+            return 0;
         }
 
         @Override
-        protected int getItemViewType(int position, PeasyRVInbox.ModelInbox item) {
-            return 0;
+        protected void onBindViewHolder(Context context, PeasyViewHolder holder, int position, PeasyRVInbox.ModelInbox item) {
+            // TODO Do Nothing but checking instance and populating item to view with view holder
         }
     }
 ```
@@ -85,37 +88,49 @@ public final class SampleRV extends PeasyRecyclerView.VerticalList<PeasyRVInbox.
 
         @Override
         protected PeasyViewHolder onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
+            // TODO Do Nothing but initializing view holder with layout_id
             return null;
         }
 
         @Override
-        protected void onBindViewHolder(Context context, PeasyViewHolder holder, int position, PeasyRVInbox.ModelInbox item) {
-
-        }
-
-        @Override
         protected int getItemViewType(int position, PeasyRVInbox.ModelInbox item) {
+            // TODO Do Nothing but returning view type accordingly
             return 0;
         }
 
         @Override
+        protected void onBindViewHolder(Context context, PeasyViewHolder holder, int position, PeasyRVInbox.ModelInbox item) {
+            // TODO Do Nothing but checking instance and populating item to view with view holder
+        }
+
+        @Override
         public void onItemClick(View view, int viewType, int position, PeasyRVInbox.ModelInbox item, PeasyViewHolder viewHolder) {
+            // TODO Do Nothing but defining click action on PeasyRVInbox item
             super.onItemClick(view, viewType, position, item, viewHolder);
         }
 
         @Override
         public boolean onItemLongClick(View view, int viewType, int position, PeasyRVInbox.ModelInbox item, PeasyViewHolder viewHolder) {
+            // TODO Do Nothing but defining long click action on PeasyRVInbox item
             return super.onItemLongClick(view, viewType, position, item, viewHolder);
         }
 
         @Override
         public void onViewScrolled(RecyclerView recyclerView, int dx, int dy) {
+            // TODO Everything during RecyclerView scrolling
             super.onViewScrolled(recyclerView, dx, dy);
         }
 
         @Override
         public void onViewScrollStateChanged(RecyclerView recyclerView, int newState) {
+            // TODO Everything after RecyclerView scroll state updated
             super.onViewScrollStateChanged(recyclerView, newState);
+        }
+
+        @Override
+        public void onViewReachingEndOfList(RecyclerView recyclerView, int threshold) {
+            // TODO Everything during RecyclerView scrolled to reach End of List 
+           super.onViewReachingEndOfList(recyclerView, threshold);
         }
 
         @Override

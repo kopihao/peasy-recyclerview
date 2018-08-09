@@ -11,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -195,7 +196,6 @@ public final class PeasyRVInbox extends PeasyRecyclerView<PeasyRVInbox.ModelInbo
         if (hasReachedEndOfList(1)) {
             notifyDataSetChanged();
             getFab().hide();
-            showScrollTopSnackbar(recyclerView);
         }
     }
 
@@ -203,13 +203,18 @@ public final class PeasyRVInbox extends PeasyRecyclerView<PeasyRVInbox.ModelInbo
     public void onViewReachingEndOfList(RecyclerView recyclerView, int threshold) {
         // TODO Everything during RecyclerView scrolled to reach End of List
         super.onViewReachingEndOfList(recyclerView, threshold);
-        new AlertDialog.Builder(getContext())
-                .setTitle("onViewReachingEndOfList(...)")
-                .setMessage("Threshold : " + threshold)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                }).show();
+        showScrollTopSnackbar(recyclerView);
+    }
+
+    @Override
+    public void onViewScrollStateChanged(RecyclerView recyclerView, int newState) {
+        // TODO Everything after RecyclerView scroll state updated
+        super.onViewScrollStateChanged(recyclerView, newState);
+    }
+
+    @Override
+    public void onViewInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+        super.onViewInterceptTouchEvent(rv, e);
     }
 
     // TODO Define data object represent PeasyRVInbox item, provide to PeasyRecyclerView as T(generic type)
