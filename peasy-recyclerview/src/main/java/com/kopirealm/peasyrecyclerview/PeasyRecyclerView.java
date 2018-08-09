@@ -470,7 +470,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     @Override
     public final void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder == null) return;
-        onBindViewHolder((PeasyViewHolder) holder, position);
+        onBindViewHolder(getContext(), (PeasyViewHolder) holder, position);
     }
 
     /**
@@ -479,24 +479,24 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @param holder
      * @param position
      */
-    private void onBindViewHolder(PeasyViewHolder holder, int position) {
+    private void onBindViewHolder(Context context, PeasyViewHolder holder, int position) {
         if (holder == null) return;
         if (headerContent != null) {
             if (holder.isHeaderView()) {
-                headerContent.onBindViewHolder(getContext(), (PeasyHeaderViewHolder) holder, position, getItem(position));
+                headerContent.onBindViewHolder(context, (PeasyHeaderViewHolder) holder, position, getItem(position));
             }
         }
         if (footerContent != null) {
             if (holder.isFooterView()) {
-                footerContent.onBindViewHolder(getContext(), (PeasyFooterViewHolder) holder, position, getItem(position));
+                footerContent.onBindViewHolder(context, (PeasyFooterViewHolder) holder, position, getItem(position));
             }
         }
-        onBindViewHolder(getContext(), holder, position, getItem(position));
+        onBindViewHolder(context, holder, position, getItem(position));
     }
 
     /**
      * DO NOT OVERRIDE THIS
-     * Please override {@link #onBindViewHolder(Context, PeasyViewHolder, int, T)}
+     * Please override {@link #onBindViewHolder(Context, PeasyViewHolder, int, ArrayList)}
      *
      * @param holder
      * @param position
@@ -504,9 +504,11 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      */
     @Override
     public final void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, @NonNull List payloads) {
+        super.onBindViewHolder(holder, position, payloads);
         if (holder == null) return;
-        onBindViewHolder((PeasyViewHolder) holder, position, payloads);
+        onBindViewHolder(getContext(), (PeasyViewHolder) holder, position, payloads);
     }
+
 
     /**
      * Enhanced Implementation Layer of {@link RecyclerView.Adapter#onBindViewHolder(RecyclerView.ViewHolder, int, List)}
@@ -514,19 +516,19 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @param holder
      * @param position
      */
-    private void onBindViewHolder(PeasyViewHolder holder, int position, @NonNull List payloads) {
+    private void onBindViewHolder(Context context, PeasyViewHolder holder, int position, @NonNull List payloads) {
         if (holder == null) return;
-        if (headerContent != null) {
-            if (holder.isHeaderView()) {
-                headerContent.onBindViewHolder(getContext(), (PeasyHeaderViewHolder) holder, position, new ArrayList<T>(payloads));
-            }
-        }
-        if (footerContent != null) {
-            if (holder.isFooterView()) {
-                footerContent.onBindViewHolder(getContext(), (PeasyFooterViewHolder) holder, position, new ArrayList<T>(payloads));
-            }
-        }
-        onBindViewHolder(getContext(), holder, position, new ArrayList<T>(payloads));
+//        if (headerContent != null) {
+//            if (holder.isHeaderView()) {
+//                headerContent.onBindViewHolder(context, (PeasyHeaderViewHolder) holder, position, new ArrayList<T>(payloads));
+//            }
+//        }
+//        if (footerContent != null) {
+//            if (holder.isFooterView()) {
+//                footerContent.onBindViewHolder(context, (PeasyFooterViewHolder) holder, position, new ArrayList<T>(payloads));
+//            }
+//        }
+        onBindViewHolder(context, holder, position, new ArrayList<T>(payloads));
     }
 
     /**
