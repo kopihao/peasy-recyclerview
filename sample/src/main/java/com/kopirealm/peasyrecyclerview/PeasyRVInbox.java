@@ -191,10 +191,7 @@ public final class PeasyRVInbox extends PeasyRecyclerView<PeasyRVInbox.ModelInbo
     public void onViewScrolled(final RecyclerView recyclerView, int dx, int dy) {
         // TODO Everything during RecyclerView scrolling
         super.onViewScrolled(recyclerView, dx, dy);
-        final int visibleThreshold = 1;
-        final int totalItemCount = getItemCount();
-        final int lastVisibleItem = getLastVisibleItemPosition();
-        if (totalItemCount <= (lastVisibleItem + visibleThreshold)) {
+        if (hasReachedEndOfList(1)) {
             getFab().setVisibility(View.VISIBLE);
             showScrollTopSnackbar(recyclerView);
         }

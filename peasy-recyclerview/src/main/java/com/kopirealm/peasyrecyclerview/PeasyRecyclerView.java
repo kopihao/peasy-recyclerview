@@ -570,6 +570,28 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     }
 
     /**
+     * To check reach end of contents
+     *
+     * @return
+     * @see #hasReachedEndOfList(int)
+     */
+    public boolean hasReachedEndOfList() {
+        return hasReachedEndOfList(1);
+    }
+
+    /**
+     * To check reach end of contents
+     *
+     * @param threshold visibility count, default is 1, recommended value [3,5]
+     * @return
+     */
+    public boolean hasReachedEndOfList(final int threshold) {
+        final int totalItemCount = getItemCount();
+        final int lastVisibleItem = getLastVisibleItemPosition();
+        return (totalItemCount <= (lastVisibleItem + Math.max(1, threshold)));
+    }
+
+    /**
      * Enhanced Implementation Layer of {@link View.OnClickListener#onClick(View)}
      * Target on itemView of {@link PeasyViewHolder}
      * Here you should define recycler view member single click action
