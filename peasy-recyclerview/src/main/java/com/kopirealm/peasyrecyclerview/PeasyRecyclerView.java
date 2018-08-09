@@ -518,16 +518,16 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      */
     private void onBindViewHolder(Context context, PeasyViewHolder holder, int position, @NonNull List payloads) {
         if (holder == null) return;
-//        if (headerContent != null) {
-//            if (holder.isHeaderView()) {
-//                headerContent.onBindViewHolder(context, (PeasyHeaderViewHolder) holder, position, new ArrayList<T>(payloads));
-//            }
-//        }
-//        if (footerContent != null) {
-//            if (holder.isFooterView()) {
-//                footerContent.onBindViewHolder(context, (PeasyFooterViewHolder) holder, position, new ArrayList<T>(payloads));
-//            }
-//        }
+        if (headerContent != null) {
+            if (holder.isHeaderView()) {
+                headerContent.onBindViewHolder(context, (PeasyHeaderViewHolder) holder, position, new ArrayList<T>(payloads));
+            }
+        }
+        if (footerContent != null) {
+            if (holder.isFooterView()) {
+                footerContent.onBindViewHolder(context, (PeasyFooterViewHolder) holder, position, new ArrayList<T>(payloads));
+            }
+        }
         onBindViewHolder(context, holder, position, new ArrayList<T>(payloads));
     }
 
