@@ -7,9 +7,12 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -122,6 +125,7 @@ public final class PeasyRVInbox extends PeasyRecyclerView<PeasyRVInbox.ModelInbo
     @Override
     public void onItemClick(final View v, int viewType, final int position, final ModelInbox item, PeasyViewHolder vh) {
         // TODO Do Nothing but defining click action on PeasyRVInbox item
+        Log.d("Jasper", "getColumnSize::" + this.getColumnSize());
         if (viewType == InboxModelViewHolder.VIEWTYPE_CONTENT) {
             new AlertDialog.Builder(getContext())
                     .setTitle(item.title)
@@ -215,6 +219,27 @@ public final class PeasyRVInbox extends PeasyRecyclerView<PeasyRVInbox.ModelInbo
     @Override
     public void onViewInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
         super.onViewInterceptTouchEvent(rv, e);
+    }
+
+    @Override
+    public GridLayoutManager asGridView(int columns) {
+        final GridLayoutManager layoutManager = super.asGridView(columns);
+        Log.d("Jasper", "asGridView::" + this.getColumnSize());
+        return layoutManager;
+    }
+
+    @Override
+    public StaggeredGridLayoutManager asVerticalStaggeredGridView(int columns) {
+        final StaggeredGridLayoutManager layoutManager = super.asVerticalStaggeredGridView(columns);
+        Log.d("Jasper", "asVerticalStaggeredGridView::" + this.getColumnSize());
+        return layoutManager;
+    }
+
+    @Override
+    public StaggeredGridLayoutManager asHorizontalStaggeredGridView(int columns) {
+        final StaggeredGridLayoutManager layoutManager = super.asVerticalStaggeredGridView(columns);
+        Log.d("Jasper", "asHorizontalStaggeredGridView::" + this.getColumnSize());
+        return layoutManager;
     }
 
     // TODO Define data object represent PeasyRVInbox item, provide to PeasyRecyclerView as T(generic type)
