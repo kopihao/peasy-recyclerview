@@ -25,6 +25,7 @@ android {
         targetSdkVersion _targetSdkVersion
         versionCode _versionCode
         versionName _versionName
+        setProperty("archivesBaseName", ANDROID_ARTIFACT_ID)
     }
     buildTypes {
         debug {
@@ -45,8 +46,8 @@ android {
                     if ("${variant.flavorName}"?.trim()) {
                         distributionMode = "${variant.flavorName}-" + distributionMode
                     }
-                    def finalAARName = "${archivesBaseName}-${_versionName}-${distributionMode}.aar"
-                    outputFileName = "${finalAARName}"
+                    def finalOutputFileName = "${archivesBaseName}-${_versionName}-${distributionMode}.aar"
+                    outputFileName = "${finalOutputFileName}"
                 }
             }
         }

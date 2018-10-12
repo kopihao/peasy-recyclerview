@@ -13,21 +13,44 @@ android {
     compileSdkVersion _compileSdkVersion
     defaultConfig {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        applicationId "com.kopirealm.peasyrecyclerview"
+        applicationId "com.kopirealm.peasyrecyclerview.sample"
         minSdkVersion _minSdkVersion
         targetSdkVersion _targetSdkVersion
         versionCode _versionCode
         versionName _versionName
+        setProperty("archivesBaseName", ANDROID_ARTIFACT_ID)
+    }
+    signingConfigs {
+        distribution {
+            keyAlias 'AndroidDebugKey'
+            storeFile file("debug.keystore")
+            storePassword 'android'
+            keyPassword 'android'
+        }
     }
     buildTypes {
         debug {
+            signingConfig signingConfigs.distribution
             minifyEnabled true
             useProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {
+            signingConfig signingConfigs.distribution
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    afterEvaluate {
+        applicationVariants.all { variant ->
+            variant.outputs.all {
+                def distributionMode = "${variant.buildType.name}"
+                if ("${variant.flavorName}"?.trim()) {
+                    distributionMode = "${variant.flavorName}-" + distributionMode
+                }
+                def finalOutputFileName = "${archivesBaseName}-${_versionName}-${distributionMode}.apk"
+                outputFileName = "${finalOutputFileName}"
+            }
         }
     }
     flavorDimensions "pluginStatus"
