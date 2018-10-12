@@ -1,3 +1,9 @@
+// In order to use local.properties
+def propertiesFileName = 'local.properties'
+Properties properties = new Properties();
+properties.load(project.rootProject.file(propertiesFileName).newDataInputStream());
+// But I guess I'm good with gradle.properties
+
 /**
  * Publish to JCentral+Maven Central via Bintray
  *
@@ -20,30 +26,79 @@
  * Deploying via Bintray with Gradle refer:
  * https://medium.com/@yegor_zatsepin/simple-way-to-publish-your-android-library-to-jcenter-d1e145bacf1
  */
-
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'signing'
 
-def POM_NAME = 'peasy-recyclerview'
-def POM_ARTIFACT_ID = 'peasy-recyclerview'
-def POM_GROUP_ID = 'com.github.kopihao'
-def POM_VERSION = project._versionName
-def POM_DESCRIPTION = POM_GROUP_ID + ':' + POM_ARTIFACT_ID + ':' + POM_VERSION
-def POM_URL = 'https://github.com/kopihao/peasy-recyclerview'
-def POM_GIT_URL = 'https://github.com/kopihao/peasy-recyclerview.git'
-def POM_CONNECTION = 'scm:git@github.com:kopihao/peasy-recyclerview.git'
-def POM_LICENSE_ALL = ["Apache-2.0"]
-def POM_LICENSE_NAME = 'The Apache Software License, Version 2.0'
-def POM_LICENSE_URL = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-def POM_DEVELOPER_ID = 'kopihao.my'
-def POM_DEVELOPER_NAME = 'Kopihao'
-def POM_DEVELOPER_EMAIL = 'kopihao@gmail.com'
-def POM_PACKAGING = 'aar'
+def POM_URL = hasProperty('POM_URL') ? findProperty('POM_URL') : 'POM_URL';
+def POM_GIT_URL = hasProperty('POM_GIT_URL') ? findProperty('POM_GIT_URL') : 'POM_GIT_URL';
+def POM_CONNECTION = hasProperty('POM_CONNECTION') ? findProperty('POM_CONNECTION') : 'POM_CONNECTION';
+def POM_LICENSE_ALL = hasProperty('POM_LICENSE_ALL') ? findProperty('POM_LICENSE_ALL') : 'POM_LICENSE_ALL';
+def POM_LICENSE_NAME = hasProperty('POM_LICENSE_NAME') ? findProperty('POM_LICENSE_NAME') : 'POM_LICENSE_NAME';
+def POM_LICENSE_URL = hasProperty('POM_LICENSE_URL') ? findProperty('POM_LICENSE_URL') : 'POM_LICENSE_URL';
+def POM_DEVELOPER_ID = hasProperty('POM_DEVELOPER_ID') ? findProperty('POM_DEVELOPER_ID') : 'POM_DEVELOPER_ID';
+def POM_DEVELOPER_NAME = hasProperty('POM_DEVELOPER_NAME') ? findProperty('POM_DEVELOPER_NAME') : 'POM_DEVELOPER_NAME';
+def POM_DEVELOPER_EMAIL = hasProperty('POM_DEVELOPER_EMAIL') ? findProperty('POM_DEVELOPER_EMAIL') : 'POM_DEVELOPER_EMAIL';
 
+def POM_NAME = hasProperty('POM_NAME') ? findProperty('POM_NAME') : 'POM_NAME';
+def POM_ARTIFACT_ID = hasProperty('POM_ARTIFACT_ID') ? findProperty('POM_ARTIFACT_ID') : 'POM_ARTIFACT_ID';
+def POM_GROUP_ID = hasProperty('POM_GROUP_ID') ? findProperty('POM_GROUP_ID') : 'POM_GROUP_ID';
+def POM_PACKAGING = hasProperty('POM_PACKAGING') ? findProperty('POM_PACKAGING') : 'POM_PACKAGING';
+
+def POM_VERSION = project._versionName
+def POM_DESCRIPTION = POM_GROUP_ID + ':' + POM_ARTIFACT_ID + ':' + POM_VERSION + '@' + POM_PACKAGING
 group = POM_GROUP_ID
 version = POM_VERSION
-println 'Uploading ' + POM_DESCRIPTION + " via Bintray"
+
+println "${POM_DESCRIPTION} Bintray Upload Script Applied"
+
+if (POM_PACKAGING == 'jar') {
+    // codes below to publish Java Libraries
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from tasks.javadoc.destinationDir
+    }
+    task sourcesJar(type: Jar) {
+        from sourceSets.main.allSource
+        classifier = 'sources'
+    }
+    artifacts {
+        archives jar
+        archives javadocJar
+        archives sourcesJar
+    }
+    signing {
+        sign configurations.archives
+    }
+} else {
+    // codes below to publish Android Libraries
+    task sourceJar(type: Jar) {
+        from android.sourceSets.main.java.srcDirs
+        classifier "source"
+    }
+    task javadoc(type: Javadoc) {
+        source = android.sourceSets.main.java.srcDirs
+        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+        destinationDir = file("../javadoc/")
+        failOnError false
+    }
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from tasks.javadoc.destinationDir
+    }
+    //Creating sources with comments
+    task androidSourcesJar(type: Jar) {
+        classifier = 'sources'
+        from android.sourceSets.main.java.srcDirs
+    }
+    artifacts {
+        archives javadocJar
+        archives androidSourcesJar
+    }
+    signing {
+        sign configurations.archives
+    }
+}
 
 install {
     repositories.mavenInstaller {
@@ -76,38 +131,6 @@ install {
     }
 }
 
-// Uncomment to use local.properties
-//def propertiesFileName = 'local.properties'
-//Properties properties = new Properties();
-//properties.load(project.rootProject.file(propertiesFileName).newDataInputStream());
-
-task sourcesJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
-}
-
-task javadoc(type: Javadoc) {
-    failOnError false
-    source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-artifacts {
-    archives javadocJar
-    archives sourcesJar
-}
-signing {
-    sign configurations.archives
-}
-
-//signing {
-//    sign configurations.archives
-//}
-
 /**
  * kopihao:
  * Beware when creating your android library module,
@@ -118,21 +141,22 @@ signing {
  * http://jcenter.bintray.com/com/loopj/android/android-async-http
  */
 
-def BINTRAY_REPO = 'maven'
-def BINTRAY_USER = bintrayUser
-def BINTRAY_API_KEY = bintrayAPIKey
+
 def BINTRAY_NAME = POM_ARTIFACT_ID
 def BINTRAY_DESCRIPTION = POM_DESCRIPTION
 def BINTRAY_URL = POM_URL
 def BINTRAY_GIT_URL = POM_GIT_URL
 def BINTRAY_LICENSE_ALL = POM_LICENSE_ALL
 
+def BINTRAY_USER = hasProperty('BINTRAY_USER') ? findProperty('BINTRAY_USER') : 'BINTRAY_USER';
+def BINTRAY_API_KEY = hasProperty('BINTRAY_API_KEY') ? findProperty('BINTRAY_API_KEY') : 'BINTRAY_API_KEY';
+
 bintray {
     user = BINTRAY_USER
     key = BINTRAY_API_KEY
     configurations = ['archives']
     pkg {
-        repo = BINTRAY_REPO
+        repo = 'maven'
         name = BINTRAY_NAME
         desc = BINTRAY_DESCRIPTION
         websiteUrl = BINTRAY_URL
