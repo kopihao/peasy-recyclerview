@@ -77,9 +77,11 @@ if (POM_PACKAGING == 'jar') {
         classifier "source"
     }
     task javadoc(type: Javadoc) {
+        def timestamp = "${new Date().format('yyyyMMdd-HHmm')}";
+        def distributionPath = "../.javadoc/published-${timestamp}";
         source = android.sourceSets.main.java.srcDirs
         classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-        destinationDir = file("../javadoc/")
+        destinationDir = file("${distributionPath}/")
         failOnError false
     }
     task javadocJar(type: Jar, dependsOn: javadoc) {

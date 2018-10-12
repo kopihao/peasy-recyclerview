@@ -42,14 +42,27 @@ android {
         }
     }
     afterEvaluate {
+        def fileExtension = ".apk";
         applicationVariants.all { variant ->
             variant.outputs.all {
                 def distributionMode = "${variant.buildType.name}"
                 if ("${variant.flavorName}"?.trim()) {
                     distributionMode = "${variant.flavorName}-" + distributionMode
                 }
-                def finalOutputFileName = "${archivesBaseName}-${_versionName}-${distributionMode}.apk"
+                def finalOutputFileName = "${archivesBaseName}-${_versionName}-${distributionMode}${fileExtension}"
                 outputFileName = "${finalOutputFileName}"
+            }
+            variant.assemble.doLast { assemble ->
+                def timestamp = "${new Date().format('yyyyMMdd-HHmm')}";
+                def distributionPath = "../${fileExtension}";
+                // copy the apk in another directory, add here your
+                // logic to customize the destination folder
+                copy {
+                    from variant.outputs*.outputFile
+                    into "${distributionPath}/${timestamp}/${variant.flavorName}"
+                }
+                // if you don't want to delete the file after copying it comment the line below
+                delete variant.outputs*.outputFile
             }
         }
     }
