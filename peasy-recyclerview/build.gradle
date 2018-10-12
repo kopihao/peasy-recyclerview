@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+def printHeader = "||KOPIHAO>>>>\t|";
+def printFooter = "|\t<<<<KOPIHAO||";
 
 // Publish to No Where via Nothing
 def noDistScript = ""
@@ -7,6 +9,8 @@ def mavenDistScript = "publish-maven.gradle"
 // Publish to Maven Central + JCenter via Bintray
 def bintrayDistScript = "publish-bintray.gradle"
 def useDistScript = noDistScript;
+// Generate JAVADOC, requireJAVADOC::boolean works under "release" buildTypes only
+def requireJAVADOC = false;
 
 ext {
     _supportLibrary = '28.0.0'
@@ -40,6 +44,8 @@ android {
     }
     afterEvaluate {
         def fileExtension = ".aar";
+        def timestamp = "${new Date().format('yyyyMMdd-HHmm')}";
+        def distributionPath = "../${fileExtension}";
         libraryVariants.all { variant ->
             variant.outputs.all { output ->
                 if (outputFile != null && outputFileName.endsWith("${fileExtension}")) {
@@ -52,8 +58,6 @@ android {
                 }
             }
             variant.assemble.doLast { assemble ->
-                def timestamp = "${new Date().format('yyyyMMdd-HHmm')}";
-                def distributionPath = "../${fileExtension}";
                 // copy the apk in another directory, add here your
                 // logic to customize the destination folder
                 copy {
@@ -64,39 +68,49 @@ android {
                 delete variant.outputs*.outputFile
             }
         }
-        task publishedToMaven {
-            doLast {
-                println "\t"
-                println "******************KOPIHAO******************"
-                println "******************publishedToMaven******************"
-                println "******************KOPIHAO******************"
-                println "\t"
-            }
-        }
-        task publishedToBintray {
-            doLast {
-                println "\t"
-                println "******************KOPIHAO******************"
-                println "******************publishedToBintray******************"
-                println "******************KOPIHAO******************"
-                println "\t"
-            }
-        }
         task postAssembleRelease {
             doLast {
                 println "\t"
-                println "******************KOPIHAO******************"
-                println "${archivesBaseName} AAR is ready to be distributed!"
-                println "******************KOPIHAO******************"
+                println "\t"
+                println "${printHeader}***${archivesBaseName} AAR is ready to be distributed!***${printFooter}"
+                if (requireJAVADOC) {
+                    println "${printHeader}***${archivesBaseName} JAVADOC published >> ${tasks.javadoc.destinationDir}!***${printFooter}"
+                }
+                println "\t"
                 println "\t"
             }
         }
-        assembleRelease.finalizedBy(postAssembleRelease)
+        if (requireJAVADOC) {
+            task javadoc(type: Javadoc) {
+                source = android.sourceSets.main.java.srcDirs
+                classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+                destinationDir = file("${distributionPath}/${timestamp}/${archivesBaseName}-${_versionName}-JAVADOC/")
+                failOnError false
+            }
+            task javadocJar(type: Jar, dependsOn: javadoc) {
+                classifier = 'javadoc'
+                from tasks.javadoc.destinationDir
+            }
+            assembleRelease.finalizedBy(javadoc)
+            javadoc.finalizedBy(postAssembleRelease)
+        } else {
+            assembleRelease.finalizedBy(postAssembleRelease)
+        }
         if ("${useDistScript}"?.trim() == mavenDistScript) {
+            task publishedToMaven {
+                doLast {
+                    println "${printHeader}***publishedToMaven***${printFooter}"
+                }
+            }
             postAssembleRelease.finalizedBy(install)
             install.finalizedBy(uploadArchives)
             uploadArchives.finalizedBy(publishedToMaven)
         } else if ("${useDistScript}"?.trim() == bintrayDistScript) {
+            task publishedToBintray {
+                doLast {
+                    println "${printHeader}***publishedToBintray***${printFooter}"
+                }
+            }
             postAssembleRelease.finalizedBy(install)
             install.finalizedBy(bintrayUpload)
             bintrayUpload.finalizedBy(publishedToBintray)
@@ -121,5 +135,4 @@ if ("${useDistScript}" != "${noDistScript}") {
     // This will cause improper setup
     apply from: "${useDistScript}"
 }
-
 
