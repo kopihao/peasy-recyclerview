@@ -1209,38 +1209,8 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     }
 
     //==========================================================================================
-
-    /**
-     * Blueprint of Content that represents its Unique Coordination or has Special Purpose
-     * PeasyCoordinatorContent represents its viewtype, data and viewholder implementations
-     *
-     * @param <D> Data Type
-     */
-    private static abstract class PeasyCoordinatorContent<VH extends PeasyViewHolder, D> {
-
-        private int viewtype;
-        private D data;
-
-        public PeasyCoordinatorContent(int viewtype, D data) {
-            this.viewtype = viewtype;
-            this.data = data;
-        }
-
-        public int getViewtype() {
-            return viewtype;
-        }
-
-        public D getData() {
-            return data;
-        }
-
-        protected abstract VH onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType);
-
-        protected abstract void onBindViewHolder(Context context, VH holder, int position, D item);
-
-        protected void onBindViewHolder(Context context, VH holder, int position, ArrayList<D> items) {
-        }
-    }
+    // PeasyCoordinatorContent
+    //==========================================================================================
 
     /**
      * Extended Blueprint of @{@link PeasyCoordinatorContent}
