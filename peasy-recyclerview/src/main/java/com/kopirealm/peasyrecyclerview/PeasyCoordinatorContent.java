@@ -12,7 +12,7 @@ import java.util.ArrayList;
  *
  * @param <D> Data Type
  */
-public abstract class PeasyCoordinatorContent<VH extends PeasyRecyclerView.PeasyViewHolder, D> {
+public abstract class PeasyCoordinatorContent<VH extends PeasyViewHolder, D> {
 
     private int viewtype;
     private D data;
