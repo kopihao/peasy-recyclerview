@@ -167,8 +167,8 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * By default, FAB handling will be contracted at here
      *
      * @param recyclerView
-     * @see PeasyViewHolder#handleFAB(RecyclerView, FloatingActionButton, int, int)
-     * @see PeasyViewHolder#handleFAB(RecyclerView, FloatingActionButton, MotionEvent, boolean)
+     * @see #handleFAB(RecyclerView, FloatingActionButton, int, int)
+     * @see #handleFAB(RecyclerView, FloatingActionButton, MotionEvent, boolean)
      */
     protected void configureRecyclerView(RecyclerView recyclerView) {
         this.enableNestedScroll(true);
@@ -284,8 +284,8 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * By default, will handle FAB automatically
      *
      * @param fab
-     * @see PeasyViewHolder#handleFAB(RecyclerView, FloatingActionButton, int, int)
-     * @see PeasyViewHolder#handleFAB(RecyclerView, FloatingActionButton, MotionEvent, boolean)
+     * @see #handleFAB(RecyclerView, FloatingActionButton, int, int)
+     * @see #handleFAB(RecyclerView, FloatingActionButton, MotionEvent, boolean)
      */
     public void anchorFAB(FloatingActionButton fab) {
         anchorFAB(fab, true);
@@ -296,8 +296,8 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      *
      * @param fab
      * @param smartHiding
-     * @see PeasyViewHolder#handleFAB(RecyclerView, FloatingActionButton, int, int)
-     * @see PeasyViewHolder#handleFAB(RecyclerView, FloatingActionButton, MotionEvent, boolean)
+     * @see #handleFAB(RecyclerView, FloatingActionButton, int, int)
+     * @see #handleFAB(RecyclerView, FloatingActionButton, MotionEvent, boolean)
      */
     public void anchorFAB(FloatingActionButton fab, boolean smartHiding) {
         this.fab = fab;
