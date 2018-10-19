@@ -59,7 +59,7 @@ public abstract class PeasyViewHolder extends RecyclerView.ViewHolder {
             public void onClick(View v) {
                 final int position = getLayoutPosition();
                 if (position != RecyclerView.NO_POSITION) {
-                    binder.onItemClick(v, viewType, position, binder.getItem(position), getInstance());
+                    binder.onItemClick(v, viewType, position, binder.getDisplayedContentAt(position), getInstance());
                 }
             }
         });
@@ -68,7 +68,7 @@ public abstract class PeasyViewHolder extends RecyclerView.ViewHolder {
             public boolean onLongClick(View v) {
                 final int position = getLayoutPosition();
                 if (getLayoutPosition() != RecyclerView.NO_POSITION) {
-                    return binder.onItemLongClick(v, viewType, position, binder.getItem(position), getInstance());
+                    return binder.onItemLongClick(v, viewType, position, binder.getDisplayedContentAt(position), getInstance());
                 }
                 return false;
             }

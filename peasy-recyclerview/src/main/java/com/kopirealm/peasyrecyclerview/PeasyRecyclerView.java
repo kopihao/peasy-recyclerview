@@ -25,9 +25,9 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * An Adapter as well as a RecyclerView Binder
+ * An Binder as well as a adapter of RecyclerView
  *
- * @param <T> type of array list content
+ * @param <T> class type of array list content
  */
 public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
 
@@ -46,196 +46,134 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     private Presentation presentation = Presentation.undefined;
     private Context context;
     private RecyclerView recyclerView;
-    private ArrayList<T> recyclerDataSource;
-    private FloatingActionButton fab;
-    private boolean smartHiding = false;
+    private ArrayList<T> displayedContents;
+    private ArrayList<T> providedContents;
     private Bundle extraData = null;
     private PeasyHeaderContent<T> headerContent = null;
     private PeasyFooterContent<T> footerContent = null;
-    private AtomicBoolean lockEOL = new AtomicBoolean(true);
-    private int thresholdOfEOL = -1;
-    public static final int DefaultEOLThreshold = 1;
+    private FloatingActionButton fab;
+    private boolean enhancedFAB = false;
+    private static final int DefaultEOLThreshold = 1;
+    private static final int DisabledEOLThreshold = -1;
+    private int thresholdOfEOL = DisabledEOLThreshold;
+    private final AtomicBoolean lockEOL = new AtomicBoolean(true);
 
-    public PeasyRecyclerView(@NonNull Context context, RecyclerView recyclerView, ArrayList<T> arrayList) {
+    //=============================
+    // Constructor
+    //=============================
+
+    public PeasyRecyclerView(@NonNull Context context, @NonNull RecyclerView recyclerView, @NonNull ArrayList<T> arrayList) {
         this(context, recyclerView, arrayList, new Bundle());
     }
 
-    public PeasyRecyclerView(@NonNull Context context, RecyclerView recyclerView, ArrayList<T> arrayList, Bundle extraData) {
+    public PeasyRecyclerView(@NonNull Context context, @NonNull RecyclerView recyclerView, @NonNull ArrayList<T> arrayList, @NonNull Bundle extraData) {
         this.context = context;
         this.recyclerView = recyclerView;
         this.extraData = extraData;
-        this.setThresholdOfEOL(-1);
+        this.setContent(arrayList);
         this.onCreate(context, recyclerView, arrayList, getExtraData());
-        this.setContent(arrayList, recyclerView);
+        this.enableNestedScroll(true);
+        this.configureRecyclerView(recyclerView);
+        this.configureRecyclerViewTouchEvent();
+        this.configureRecyclerViewScrollEvent();
+        this.recyclerView.setAdapter(this);
     }
 
+    //=============================
+    // Life Cycle & Feeds
+    //=============================
+
     /**
-     * On PeasyRecyclerView created
-     * Where you wish to execute some task before constructor run
-     * Overriding this method is not an encouraging recommendation
+     * Executes lines of code before constructor ended
      *
-     * @param context
-     * @param recyclerView
-     * @param arrayList
-     * @param extraData
+     * @param context      context
+     * @param recyclerView recyclerView
+     * @param arrayList    arrayList
+     * @param extraData    extraData
      */
     public void onCreate(@NonNull Context context, RecyclerView recyclerView, ArrayList<T> arrayList, Bundle extraData) {
     }
 
     /**
-     * Update your array list content with recycler view binding at the same time
-     * Execute at {@link PeasyRecyclerView} constructor for once
-     * Use {@link #setContent(ArrayList)} method to update content only
-     *
-     * @param arrayList
-     * @param recyclerView
-     */
-    private void setContent(ArrayList<T> arrayList, RecyclerView recyclerView) {
-        this.setContent(arrayList);
-        this.recyclerView = recyclerView;
-        this.configureRecyclerView(getRecyclerView());
-        this.recyclerView.setAdapter(this);
-    }
-
-    /**
-     * Method to update array list content
-     *
-     * @param content
-     */
-    public void setContent(final ArrayList<T> content) {
-        final ArrayList<T> arrayList = (content == null) ? new ArrayList<T>() : new ArrayList<>(content);
-        if (this.headerContent != null) {
-            arrayList.add(0, this.headerContent.getData()); //add header as null
-        }
-        if (this.footerContent != null) {
-            arrayList.add(this.footerContent.getData()); //add footer
-        }
-        this.recyclerDataSource = new ArrayList<T>(arrayList);
-        this.notifyDataSetChanged();
-    }
-
-    /**
-     * Method to retrieve latest contents
-     *
-     * @return
-     */
-    public ArrayList<T> getContent() {
-        return new ArrayList<>(this.recyclerDataSource);
-    }
-
-    /**
-     * {@link Context} of {@link PeasyRecyclerView}
-     *
-     * @return context
-     */
-    protected Context getContext() {
-        return this.context;
-    }
-
-    /**
-     * {@link RecyclerView} of {@link PeasyRecyclerView}
-     *
-     * @return recyclerView
-     */
-    public RecyclerView getRecyclerView() {
-        return this.recyclerView;
-    }
-
-    /**
-     * To host extra data
-     *
-     * @return
-     */
-    public Bundle getExtraData() {
-        this.extraData = (extraData != null) ? extraData : new Bundle();
-        return this.extraData;
-    }
-
-    /**
-     * To identify current {@link Presentation}
-     *
-     * @return
-     */
-    public Presentation getPresentation() {
-        return this.presentation;
-    }
-
-    /**
-     * Code Snippet to customize RecyclerView
-     * Define as you like, eg. {@link LinearLayoutManager} , {@link android.support.v7.widget.RecyclerView.ItemAnimator }, {@link android.support.v7.widget.RecyclerView.ItemDecoration}
-     * Helpful to create recycler view presentation
+     * Customize presentation of provided recyclerView
+     * eg. {@link LinearLayoutManager} , {@link RecyclerView.ItemAnimator }, {@link RecyclerView.ItemDecoration}
      * By default, FAB handling will be contracted at here
      *
-     * @param recyclerView
-     * @see #handleFAB(RecyclerView, FloatingActionButton, int, int)
-     * @see #handleFAB(RecyclerView, FloatingActionButton, MotionEvent, boolean)
+     * @param recyclerView recyclerView
      */
     protected void configureRecyclerView(RecyclerView recyclerView) {
-        this.enableNestedScroll(true);
-        this.onRecyclerViewTouch(this.recyclerView);
-        this.onRecyclerViewScroll(this.recyclerView);
+    }
+
+    //=============================
+    // FAB Handling
+    //=============================
+
+    /**
+     * Anchor FAB to {@link PeasyRecyclerView}
+     * This will enhance FAB UX by default
+     *
+     * @param fab FloatingActionButton
+     * @see #anchorFAB(FloatingActionButton, boolean)
+     */
+    public void anchorFAB(FloatingActionButton fab) {
+        anchorFAB(fab, true);
     }
 
     /**
-     * Enabling RecyclerView NestedScroll property
+     * Anchor FAB to {@link PeasyRecyclerView}
      *
-     * @param enable
+     * @param fab     FloatingActionButton
+     * @param enhance enhance FAB UX
+     * @see #enhanceFAB(RecyclerView, FloatingActionButton, int, int)
+     * @see #enhanceFAB(RecyclerView, FloatingActionButton, MotionEvent)
      */
-    public void enableNestedScroll(boolean enable) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            this.recyclerView.setNestedScrollingEnabled(enable);
-        }
+    public void anchorFAB(FloatingActionButton fab, boolean enhance) {
+        this.fab = fab;
+        this.enhancedFAB = enhance;
     }
 
-    /**
-     * TRY NOT OVERRIDE THIS
-     * This is crucial to handle FAB
-     *
-     * @param recyclerView
+    /***
+     *  Provide default {@link RecyclerView.OnItemTouchListener} of provided recyclerView
      */
-    private void onRecyclerViewTouch(RecyclerView recyclerView) {
-        recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+    private void configureRecyclerViewTouchEvent() {
+        getRecyclerView().addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
             @Override
-            public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-                if (smartHiding && getFab() != null) {
-                    PeasyRecyclerView.this.handleFAB(rv, getFab(), e, hasAllContentsVisible());
+            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+                if (isEnhancedFAB() && getFab() != null) {
+                    enhanceFAB(rv, getFab(), e);
                 }
-                PeasyRecyclerView.this.onViewInterceptTouchEvent(rv, e);
+                onViewInterceptTouchEvent(rv, e);
                 return false;
             }
 
             @Override
-            public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-
+            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
             }
 
             @Override
             public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
             }
+
         });
     }
 
-    /**
-     * TRY NOT OVERRIDE THIS
-     * This is crucial to handle FAB
-     *
-     * @param recyclerView
+    /***
+     *  Provide default {@link RecyclerView.OnScrollListener} of provided recyclerView
      */
-    private void onRecyclerViewScroll(RecyclerView recyclerView) {
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+    private void configureRecyclerViewScrollEvent() {
+        getRecyclerView().addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(final RecyclerView recyclerView, final int dx, final int dy) {
+            public void onScrolled(@NonNull final RecyclerView recyclerView, final int dx, final int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 recyclerView.post(new Runnable() {
                     @Override
                     public void run() {
-                        PeasyRecyclerView.this.handleFAB(recyclerView, getFab(), dx, dy);
+                        enhanceFAB(recyclerView, getFab(), dx, dy);
                         onViewScrolled(recyclerView, dx, dy);
                         synchronized (lockEOL) {
                             if (!lockEOL.get()) {
                                 final boolean inDirection = (dx > 0) || (dy > 0);
-                                final int eolThreshold = PeasyRecyclerView.this.thresholdOfEOL;
+                                final int eolThreshold = thresholdOfEOL;
                                 if (inDirection && hasReachedEndOfList(eolThreshold)) {
                                     lockEOL.set(!lockEOL.get());
                                     onViewReachingEndOfList(recyclerView, eolThreshold);
@@ -247,14 +185,14 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
             }
 
             @Override
-            public void onScrollStateChanged(final RecyclerView recyclerView, final int newState) {
+            public void onScrollStateChanged(@NonNull final RecyclerView recyclerView, final int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 recyclerView.post(new Runnable() {
                     @Override
                     public void run() {
                         onViewScrollStateChanged(recyclerView, newState);
                         synchronized (lockEOL) {
-                            if (!!lockEOL.get() && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                            if (lockEOL.get() && newState == RecyclerView.SCROLL_STATE_IDLE) {
                                 lockEOL.set(!lockEOL.get());
                             }
                         }
@@ -264,92 +202,21 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
         });
     }
 
-    /**
-     * To set End Of List threshold
-     * Threshold must excedd {@value #DefaultEOLThreshold} in order to trigger callback of {@link #onViewReachingEndOfList(RecyclerView, int)}
-     *
-     * @param thresholdOfEOL
-     * @see #hasReachedEndOfList(int)
-     * @see #onViewReachingEndOfList(RecyclerView, int)
-     */
-    public void setThresholdOfEOL(int thresholdOfEOL) {
-        if (thresholdOfEOL >= DefaultEOLThreshold) {
-            this.lockEOL.set(!this.lockEOL.get());
-            this.thresholdOfEOL = thresholdOfEOL;
-        }
-    }
 
     /**
-     * Method to bind FAB to RecyclerView
-     * By default, will handle FAB automatically
+     * Enhanced FAB UX Logic
+     * Handle RecyclerView scrolling
      *
-     * @param fab
-     * @see #handleFAB(RecyclerView, FloatingActionButton, int, int)
-     * @see #handleFAB(RecyclerView, FloatingActionButton, MotionEvent, boolean)
+     * @param recyclerView recyclerView
+     * @param fab          FloatingActionButton
+     * @param dx           scrolling dx
+     * @param dy           scrolling dy
      */
-    public void anchorFAB(FloatingActionButton fab) {
-        anchorFAB(fab, true);
-    }
-
-    /**
-     * Method to bind FAB to RecyclerView
-     *
-     * @param fab
-     * @param smartHiding
-     * @see #handleFAB(RecyclerView, FloatingActionButton, int, int)
-     * @see #handleFAB(RecyclerView, FloatingActionButton, MotionEvent, boolean)
-     */
-    public void anchorFAB(FloatingActionButton fab, boolean smartHiding) {
-        this.fab = fab;
-        this.smartHiding = smartHiding;
-    }
-
-    /**
-     * To add header content
-     * Should override {@link #setContent(ArrayList)} and call before its super method
-     *
-     * @param headerContent
-     */
-    public void setHeaderContent(PeasyHeaderContent<T> headerContent) {
-        this.headerContent = headerContent;
-    }
-
-    /**
-     * To add footer content
-     * Should override {@link #setContent(ArrayList)} and call before its super method
-     *
-     * @param footerContent
-     */
-    public void setFooterContent(PeasyFooterContent<T> footerContent) {
-        this.footerContent = footerContent;
-    }
-
-    /**
-     * Getter for FloatingActionButton
-     *
-     * @return FloatingActionButton
-     */
-    public FloatingActionButton getFab() {
-        return this.fab;
-    }
-
-    /**
-     * Handle FAB button when RecyclerView scrolled
-     * By default handle only RecyclerView setup by {@link #asVerticalListView()}
-     * Which is {@link LinearLayoutManager#VERTICAL} mode
-     *
-     * @param recyclerView
-     * @param fab
-     * @param dx
-     * @param dy
-     */
-    private void handleFAB(RecyclerView recyclerView, final FloatingActionButton fab, int dx, int dy) {
-        if (this.smartHiding && getFab() != null) {
+    private void enhanceFAB(RecyclerView recyclerView, final FloatingActionButton fab, int dx, int dy) {
+        if (isEnhancedFAB() && getFab() != null) {
             final FloatingActionButton mFloatingActionButton = this.fab;
             if (getLinearLayoutManager() != null) {
-                final int differential = dy;
-                // final int differential = getLinearLayoutManager().getOrientation() == LinearLayoutManager.VERTICAL ? dy : dx;
-                if (differential > 0) {
+                if (dy > 0) {
                     if (mFloatingActionButton.getVisibility() == View.VISIBLE) {
                         mFloatingActionButton.hide();
                     }
@@ -363,28 +230,234 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     }
 
     /**
-     * By default, show FAB when all item visible within view port
+     * Enhanced FAB UX Logic
+     * Handle RecyclerView scrolled
+     * If all item visible within view port, FAB will show
      *
-     * @param rv         RecyclerView
-     * @param e          MotionEvent
-     * @param allVisible has all contents visible within view port?
-     * @param fab        FloatingActionButton
+     * @param rv  RecyclerView
+     * @param fab FloatingActionButton
+     * @param e   MotionEvent
      */
-    protected void handleFAB(RecyclerView rv, final FloatingActionButton fab, MotionEvent e, boolean allVisible) {
-        if (allVisible) {
+    private void enhanceFAB(RecyclerView rv, final FloatingActionButton fab, MotionEvent e) {
+        if (hasAllContentsVisible()) {
             if (fab.getVisibility() != View.VISIBLE) {
                 fab.show();
             }
         }
     }
 
+    //=============================
+    // Getters
+    //=============================
+
     /**
-     * DO NOT OVERRIDE THIS
-     * Please override {@link #getItemViewType(int, Object)}
-     *
-     * @param position
-     * @return
+     * @return {@link Context} provided
      */
+    protected Context getContext() {
+        return this.context;
+    }
+
+    /**
+     * @return {@link RecyclerView} provided
+     */
+    public RecyclerView getRecyclerView() {
+        return this.recyclerView;
+    }
+
+    /**
+     * @return current contents with {@link PeasyCoordinatorContent}
+     */
+    public ArrayList<T> getDisplayedContents() {
+        return new ArrayList<>(this.displayedContents);
+    }
+
+
+    /**
+     * @return current contents without {@link PeasyCoordinatorContent}
+     */
+    public ArrayList<T> getProvidedContents() {
+        return new ArrayList<>(this.providedContents);
+    }
+
+    /**
+     * @return true if FAB handled by this class
+     */
+    public boolean isEnhancedFAB() {
+        return enhancedFAB;
+    }
+
+    /**
+     * @return bundle of data
+     */
+    public Bundle getExtraData() {
+        this.extraData = (extraData != null) ? extraData : new Bundle();
+        return this.extraData;
+    }
+
+    /**
+     * @return current {@link Presentation}
+     */
+    public Presentation getPresentation() {
+        return this.presentation;
+    }
+
+    /**
+     * @return FloatingActionButton
+     */
+    public FloatingActionButton getFab() {
+        return this.fab;
+    }
+
+    //=============================
+    // Content Management
+    //=============================
+
+    /**
+     * @param content provided contents
+     */
+    public void setContent(final ArrayList<T> content) {
+        this.providedContents = (content == null) ? new ArrayList<T>() : new ArrayList<>(content);
+        this.displayedContents = (content == null) ? new ArrayList<T>() : new ArrayList<>(content);
+        if (this.headerContent != null) {
+            displayedContents.add(0, this.headerContent.getData());
+        }
+        if (this.footerContent != null) {
+            displayedContents.add(this.footerContent.getData());
+        }
+        this.notifyDataSetChanged();
+    }
+
+    /**
+     * Add Header to its content
+     * Should override {@link PeasyHeaderContent#onBindViewHolder(Context, PeasyViewHolder, int, Object)}
+     * Should override {@link PeasyHeaderContent#onCreateViewHolder(LayoutInflater, ViewGroup, int)}
+     *
+     * @param headerContent PeasyHeaderContent
+     */
+    public void setHeaderContent(PeasyHeaderContent<T> headerContent) {
+        this.headerContent = headerContent;
+    }
+
+    /**
+     * Add Footer to its content
+     * Should override {@link PeasyFooterContent#onBindViewHolder(Context, PeasyViewHolder, int, Object)}
+     * Should override {@link PeasyFooterContent#onCreateViewHolder(LayoutInflater, ViewGroup, int)}
+     *
+     * @param footerContent PeasyFooterContent
+     */
+    public void setFooterContent(PeasyFooterContent<T> footerContent) {
+        this.footerContent = footerContent;
+    }
+
+    //=============================
+    // Scrolling
+    //=============================
+
+    /**
+     * Set {@link RecyclerView#setNestedScrollingEnabled}
+     *
+     * @param enable true to enable, vice versa
+     */
+    public void enableNestedScroll(boolean enable) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            this.recyclerView.setNestedScrollingEnabled(enable);
+        }
+    }
+
+    /**
+     * To set End Of List threshold
+     * Threshold must excedd {@value DefaultEOLThreshold} in order to trigger callback of {@link #onViewReachingEndOfList(RecyclerView, int)}
+     *
+     * @param thresholdOfEOL
+     * @see #hasReachedEndOfList(int)
+     * @see #onViewReachingEndOfList(RecyclerView, int)
+     */
+    public void setThresholdOfEOL(int thresholdOfEOL) {
+        if (thresholdOfEOL >= DefaultEOLThreshold) {
+            this.lockEOL.set(!this.lockEOL.get());
+            this.thresholdOfEOL = thresholdOfEOL;
+        }
+    }
+
+    /**
+     * @return true if reaching end of contents
+     * @see #hasReachedEndOfList(int)
+     */
+    public final boolean hasReachedEndOfList() {
+        return hasReachedEndOfList(DefaultEOLThreshold);
+    }
+
+    /**
+     * @param threshold Minimum value is {@value DefaultEOLThreshold } , recommended value is [1,5],
+     * @return true if reaching end of contents within provided threshold
+     */
+    public final boolean hasReachedEndOfList(final int threshold) {
+        final int totalItemCount = getDisplayedContentCount();
+        final int lastVisibleItem = getLastVisibleItemPosition();
+        return (totalItemCount <= (lastVisibleItem + Math.max(DefaultEOLThreshold, threshold)));
+    }
+
+    /**
+     * Navigate to top of recycler view without smooth scroll effect
+     * Work on {@link PeasyRecyclerView.VerticalList} and {@link PeasyRecyclerView.HorizontalList} only
+     */
+    public void setPositionToFirst() {
+        if (getLinearLayoutManager() != null) {
+            getLinearLayoutManager().scrollToPositionWithOffset(0, 0);
+        }
+    }
+
+    /**
+     * Navigate to top of recycler view with smooth scroll effect
+     * Work on {@link PeasyRecyclerView.VerticalList} and {@link PeasyRecyclerView.HorizontalList} only
+     */
+    public void smoothScrollToFirst() {
+        if (getLinearLayoutManager() != null) {
+            final RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(getRecyclerView().getContext()) {
+                @Override
+                protected int getVerticalSnapPreference() {
+                    return LinearSmoothScroller.SNAP_TO_START;
+                }
+            };
+            smoothScroller.setTargetPosition(0);
+            getLinearLayoutManager().startSmoothScroll(smoothScroller);
+        }
+    }
+
+    //=============================
+    // Enhance getItemViewType
+    //=============================
+
+    /**
+     * To identify content as Header
+     *
+     * @param position position
+     * @return view type
+     */
+    private int getHeaderViewType(int position) {
+        if (headerContent != null) {
+            if (headerContent.getData() == getDisplayedContentAt(position) && (position == 0)) {
+                return headerContent.getViewtype();
+            }
+        }
+        return PeasyHeaderViewHolder.VIEWTYPE_NOTHING;
+    }
+
+    /**
+     * To identify content as Footer
+     *
+     * @param position position
+     * @return view type
+     */
+    public int getFooterViewType(int position) {
+        if (footerContent != null) {
+            if (footerContent.getData() == getDisplayedContentAt(position) && (position == getLastDisplayedContentsIndex())) {
+                return footerContent.getViewtype();
+            }
+        }
+        return PeasyHeaderViewHolder.VIEWTYPE_NOTHING;
+    }
+
     @Override
     public final int getItemViewType(int position) {
         if (PeasyHeaderViewHolder.VIEWTYPE_NOTHING != getHeaderViewType(position)) {
@@ -393,47 +466,24 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
         if (PeasyFooterViewHolder.VIEWTYPE_NOTHING != getFooterViewType(position)) {
             return getFooterViewType(position);
         }
-        return getItemViewType(position, getItem(position));
+        return getItemViewType(position, getDisplayedContentAt(position));
     }
 
     /**
-     * To identify Header View Type
+     * Enhanced Implementation Layer of {@link RecyclerView.Adapter#getItemViewType(int)}
+     * Define and Return view type of contents
      *
-     * @param position
-     * @return
+     * @param position position
+     * @param item     item
+     * @return view type
      */
-    public int getHeaderViewType(int position) {
-        if (headerContent != null) {
-            if (headerContent.getData() == getItem(position) && (position == 0)) {
-                return headerContent.getViewtype();
-            }
-        }
-        return PeasyHeaderViewHolder.VIEWTYPE_NOTHING;
-    }
+    protected abstract int getItemViewType(final int position, final T item);
 
-    /**
-     * To identify Footer View Type
-     *
-     * @param position
-     * @return
-     */
-    public int getFooterViewType(int position) {
-        if (footerContent != null) {
-            if (footerContent.getData() == getItem(position) && (position == getLastIndex())) {
-                return footerContent.getViewtype();
-            }
-        }
-        return PeasyHeaderViewHolder.VIEWTYPE_NOTHING;
-    }
+    //=============================
+    // Enhance onCreateViewHolder
+    //=============================
 
-    /**
-     * DO NOT OVERRIDE THIS
-     * Please override {@link #onCreateViewHolder(LayoutInflater, ViewGroup, int)}
-     *
-     * @param parent
-     * @param viewType
-     * @return
-     */
+    @NonNull
     @Override
     public final RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
@@ -461,138 +511,168 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     }
 
     /**
-     * DO NOT OVERRIDE THIS
-     * Please override {@link #onBindViewHolder(Context, PeasyViewHolder, int, T)}
+     * Enhanced Implementation Layer of {@link RecyclerView.Adapter#onCreateViewHolder(ViewGroup, int)}
+     * Define and Return {@link PeasyViewHolder} of contents
      *
-     * @param holder
-     * @param position
+     * @param inflater
+     * @param parent
+     * @param viewType
+     * @return {@link PeasyViewHolder}
      */
+    protected abstract PeasyViewHolder onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType);
+
+    //=============================
+    // Enhance onBindViewHolder
+    //=============================
+
     @Override
-    public final void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (holder == null) return;
+    public final void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        onBindViewHolder(getContext(), (PeasyViewHolder) holder, position);
+    }
+
+    @Override
+    public final void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, @NonNull List payloads) {
         onBindViewHolder(getContext(), (PeasyViewHolder) holder, position);
     }
 
     /**
      * Enhanced Implementation Layer of {@link RecyclerView.Adapter#onBindViewHolder(RecyclerView.ViewHolder, int)}
      *
-     * @param holder
-     * @param position
+     * @param holder   PeasyViewHolder
+     * @param position position
      */
     private void onBindViewHolder(Context context, PeasyViewHolder holder, int position) {
         if (holder == null) return;
-        if (headerContent != null) {
-            if (holder.isHeaderView()) {
-                headerContent.onBindViewHolder(context, (PeasyHeaderViewHolder) holder, position, getItem(position));
+        try {
+            if (headerContent != null && holder.isHeaderView()) {
+                headerContent.onBindViewHolder(context, holder.asIs(PeasyHeaderViewHolder.class), position, getDisplayedContentAt(position));
             }
+        } catch (Exception ignored) {
         }
-        if (footerContent != null) {
-            if (holder.isFooterView()) {
-                footerContent.onBindViewHolder(context, (PeasyFooterViewHolder) holder, position, getItem(position));
+        try {
+            if (footerContent != null && holder.isFooterView()) {
+                footerContent.onBindViewHolder(context, holder.asIs(PeasyFooterViewHolder.class), position, getDisplayedContentAt(position));
             }
+        } catch (Exception ignored) {
         }
-        onBindViewHolder(context, holder, position, getItem(position));
+        onBindViewHolder(context, holder, position, getDisplayedContentAt(position));
     }
 
     /**
-     * DO NOT OVERRIDE THIS
-     * Please override {@link #onBindViewHolder(Context, PeasyViewHolder, int, ArrayList)}
+     * Enhanced Implementation Layer of {@link RecyclerView.Adapter#onBindViewHolder(RecyclerView.ViewHolder, int)}
+     * Here you should populate views in {@link PeasyViewHolder} with item returned in this method
      *
+     * @param context
      * @param holder
      * @param position
-     * @param payloads
+     * @param item
      */
+    protected abstract void onBindViewHolder(final Context context, final PeasyViewHolder holder, final int position, final T item);
+
+    //=============================
+    // Content Provider
+    //=============================
+
+    /**
+     * @return value of {@link #getDisplayedContentCount()}
+     */
+    @Deprecated
     @Override
-    public final void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, @NonNull List payloads) {
-        super.onBindViewHolder(holder, position, payloads);
-        if (holder == null) return;
-        onBindViewHolder(getContext(), (PeasyViewHolder) holder, position, payloads);
+    public final int getItemCount() {
+        return getProvidedContentCount();
     }
 
-
     /**
-     * Enhanced Implementation Layer of {@link RecyclerView.Adapter#onBindViewHolder(RecyclerView.ViewHolder, int, List)}
-     *
-     * @param holder
-     * @param position
+     * @return Size of displayed contents with {@link PeasyCoordinatorContent}
      */
-    private void onBindViewHolder(Context context, PeasyViewHolder holder, int position, @NonNull List payloads) {
-        if (holder == null) return;
-        if (headerContent != null) {
-            if (holder.isHeaderView()) {
-                headerContent.onBindViewHolder(context, (PeasyHeaderViewHolder) holder, position, new ArrayList<T>(payloads));
-            }
-        }
-        if (footerContent != null) {
-            if (holder.isFooterView()) {
-                footerContent.onBindViewHolder(context, (PeasyFooterViewHolder) holder, position, new ArrayList<T>(payloads));
-            }
-        }
-        onBindViewHolder(context, holder, position, new ArrayList<T>(payloads));
+    public final int getDisplayedContentCount() {
+        return (this.displayedContents == null) ? 0 : this.displayedContents.size();
     }
 
     /**
-     * To check size of content
-     *
-     * @return
+     * @return Size of provided contents without {@link PeasyCoordinatorContent}
      */
-    @Override
-    public int getItemCount() {
-        return this.recyclerDataSource.size();
+    public final int getProvidedContentCount() {
+        return (this.providedContents == null) ? 0 : this.providedContents.size();
     }
 
     /**
-     * To check content size is zero/content is empty
-     *
-     * @return
+     * @return true if no contents displayed
      */
-    public boolean isEmpty() {
-        return (this.recyclerDataSource == null) ? true : this.recyclerDataSource.isEmpty();
+    public final boolean isEmpty() {
+        return getDisplayedContentCount() <= 0;
     }
 
     /**
-     * Retrieve content at position
-     *
-     * @param position
-     * @return
+     * @return true if no contents provided
      */
-    public T getItem(int position) {
-        return isEmpty() ? null : this.recyclerDataSource.get(position);
+    public final boolean isEmptyContent() {
+        return getProvidedContentCount() <= 0;
     }
 
     /**
-     * To get last index of content
-     *
-     * @return
+     * @return last index of displayed content with {@link PeasyCoordinatorContent}
      */
-    public int getLastIndex() {
-        return isEmpty() ? 0 : this.getItemCount() - 1;
+    public final int getLastDisplayedContentsIndex() {
+        return getDisplayedContentCount() <= 0 ? 0 : this.getDisplayedContentCount() - 1;
     }
 
     /**
-     * PLEASE OVERRIDE THIS
+     * @return last index of provided content without {@link PeasyCoordinatorContent}
+     */
+    public final int getLastProvidedContentsIndex() {
+        return getProvidedContentCount() <= 0 ? 0 : this.getProvidedContentCount() - 1;
+    }
+
+    /**
+     * @param position displayed content position
+     * @return value of {@link #getDisplayedContentAt(int)}
+     */
+    @Deprecated
+    public final T getItem(int position) {
+        return getDisplayedContentAt(position);
+    }
+
+    /**
+     * @param position displayed content position
+     * @return displayed content with {@link PeasyCoordinatorContent}
+     */
+    public final T getDisplayedContentAt(int position) {
+        return getDisplayedContentCount() <= 0 ? null : this.displayedContents.get(position);
+    }
+
+    /**
+     * @param position displayed content position
+     * @return displayed content with {@link PeasyCoordinatorContent}
+     */
+    public final T getProvidedItemAt(int position) {
+        return getProvidedContentCount() <= 0 ? null : this.providedContents.get(position);
+    }
+
+    /**
+     * @return last index of displayed content with {@link PeasyCoordinatorContent}
+     */
+    public final T getLastDisplayedContent() {
+        return getDisplayedContentAt(getLastDisplayedContentsIndex());
+    }
+
+    /**
+     * @return last index of provided content without {@link PeasyCoordinatorContent}
+     */
+    public final T getLastProvidedContent() {
+        return getProvidedItemAt(getLastProvidedContentsIndex());
+    }
+
+    //=============================
+    // Content Visibility
+    //=============================
+
+    /**
+     * Comprehensive findFirstCompletelyVisibleItemPosition() method
      *
      * @return first visible item position from Layout Manager
      */
-    public int getFirstVisibleItemPosition() {
-        return findFirstCompletelyVisibleItemPosition();
-    }
-
-    /**
-     * PLEASE OVERRIDE THIS
-     *
-     * @return last visible item position from Layout Manager
-     */
-    public int getLastVisibleItemPosition() {
-        return findLastCompletelyVisibleItemPosition();
-    }
-
-    /**
-     * Adaptive method to findFirstCompletelyVisibleItemPosition according to instance of {@link android.support.v7.widget.RecyclerView.LayoutManager}
-     *
-     * @return
-     */
-    private int findFirstCompletelyVisibleItemPosition() {
+    public final int getFirstVisibleItemPosition() {
         if (getLinearLayoutManager() != null) {
             if (getLinearLayoutManager().getOrientation() == LinearLayoutManager.VERTICAL) {
                 return VerticalList.findFirstCompletelyVisibleItemPosition(getLinearLayoutManager());
@@ -612,11 +692,11 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     }
 
     /**
-     * Adaptive method to findLastCompletelyVisibleItemPosition according to instance of {@link android.support.v7.widget.RecyclerView.LayoutManager}
+     * Comprehensive findLastVisibleItemPosition() method
      *
-     * @return
+     * @return last visible item position from Layout Manager
      */
-    private int findLastCompletelyVisibleItemPosition() {
+    public final int getLastVisibleItemPosition() {
         if (getLinearLayoutManager() != null) {
             if (getLinearLayoutManager().getOrientation() == LinearLayoutManager.VERTICAL) {
                 return VerticalList.findLastCompletelyVisibleItemPosition(getLinearLayoutManager());
@@ -636,273 +716,53 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     }
 
     /**
-     * To check all contents are visible
-     *
-     * @return
+     * @return true if all contents are visible within view port
      */
-    public boolean hasAllContentsVisible() {
+    public final boolean hasAllContentsVisible() {
+        return (getFirstVisibleItemPosition() != RecyclerView.NO_POSITION && getLastVisibleItemPosition() != RecyclerView.NO_POSITION) && (getFirstVisibleItemPosition() == 0 && getLastVisibleItemPosition() == getLastDisplayedContentsIndex());
+    }
+
+    //=============================
+    // Layout Managers
+    //=============================
+
+    /**
+     * @param recyclerView recyclerView provided
+     * @param cls          class to be casted
+     * @param <LM>         casted class name
+     * @return {@link RecyclerView.LayoutManager} as casted class instance, null if invalid type cast
+     */
+    private <LM extends RecyclerView.LayoutManager> LM getLayoutManager(RecyclerView recyclerView, Class<LM> cls) {
         try {
-            if (getFirstVisibleItemPosition() == -1 || getLastVisibleItemPosition() == -1) {
-                return false;
-            } else {
-                return getFirstVisibleItemPosition() == 0 && getLastVisibleItemPosition() == (getItemCount() - 1);
+            if (cls.isInstance(recyclerView.getLayoutManager())) {
+                return cls.cast(recyclerView.getLayoutManager());
             }
-        } catch (Exception e) {
-            return false;
+        } catch (Exception ignored) {
         }
+        return null;
     }
 
     /**
-     * To check reach end of contents
-     * Default threshold is {@value #DefaultEOLThreshold }
-     *
-     * @return
-     * @see #hasReachedEndOfList(int)
-     */
-    public boolean hasReachedEndOfList() {
-        return hasReachedEndOfList(DefaultEOLThreshold);
-    }
-
-    /**
-     * To check reach end of contents
-     * Minimum threshold is {@value #DefaultEOLThreshold }
-     *
-     * @param threshold visibility count, recommended value is [1,5]
-     * @return
-     */
-    public boolean hasReachedEndOfList(final int threshold) {
-        final int totalItemCount = getItemCount();
-        final int lastVisibleItem = getLastVisibleItemPosition();
-        return (totalItemCount <= (lastVisibleItem + Math.max(DefaultEOLThreshold, threshold)));
-    }
-
-    /**
-     * Enhanced Implementation Layer of {@link View.OnClickListener#onClick(View)}
-     * Target on itemView of {@link PeasyViewHolder}
-     * Here you should define recycler view member single click action
-     *
-     * @param view
-     * @param viewType
-     * @param position
-     * @param item
-     * @param viewHolder
-     */
-    public void onItemClick(final View view, final int viewType, final int position, final T item, final PeasyViewHolder viewHolder) {
-    }
-
-    /**
-     * Enhanced Implementation Layer of {@link View.OnLongClickListener#onLongClick(View)} (View)}
-     * Target on itemView of {@link PeasyViewHolder}
-     * Here you should define recycler view member long click action
-     *
-     * @param view
-     * @param viewType
-     * @param position
-     * @param item
-     * @param viewHolder
-     * @return
-     */
-    public boolean onItemLongClick(final View view, final int viewType, final int position, final T item, final PeasyViewHolder viewHolder) {
-        return true;
-    }
-
-    /**
-     * Enhanced Implementation Layer of {@link RecyclerView.OnScrollListener#onScrolled(RecyclerView, int, int)}
-     * Target on itemView of {@link PeasyRecyclerView#recyclerView}
-     * Here you should define recycler view on scroll action with dy, dx feedback
-     *
-     * @param recyclerView
-     * @param dx
-     * @param dy
-     */
-    public void onViewScrolled(final RecyclerView recyclerView, final int dx, final int dy) {
-    }
-
-    /**
-     * Enhanced Implementation Layer of {@link RecyclerView.OnScrollListener#onScrollStateChanged(RecyclerView, int)}
-     * Target on {@link RecyclerView} of {@link PeasyRecyclerView }
-     * Here you should define recycler view on scroll action with state feedback
-     *
-     * @param recyclerView
-     * @param newState
-     */
-    public void onViewScrollStateChanged(final RecyclerView recyclerView, final int newState) {
-    }
-
-    /**
-     * Enhanced Implementation Layer of {@link RecyclerView.OnScrollListener#onScrolled(RecyclerView, int, int)}
-     * Target on itemView of {@link PeasyRecyclerView#recyclerView}
-     * Here you should define recycler view on scroll action when it reach end of list
-     * [WARNING]
-     * This method will execute right after {@link #onViewScrolled(RecyclerView, int, int)}
-     * when {@link #thresholdOfEOL} is more than or equal {@value #DefaultEOLThreshold }
-     * Do not repeat duplication at {@link #onViewScrolled(RecyclerView, int, int)}
-     * This method will utilize {@link #lockEOL} to avoid feedback spamming.
-     *
-     * @param recyclerView
-     * @param threshold
-     */
-    public void onViewReachingEndOfList(final RecyclerView recyclerView, final int threshold) {
-    }
-
-    /**
-     * Enhanced Implementation Layer of {@link RecyclerView.OnItemTouchListener#onInterceptTouchEvent(RecyclerView, MotionEvent)}
-     * Target on {@link RecyclerView} of {@link PeasyRecyclerView }
-     *
-     * @param rv
-     * @param e
-     */
-    public void onViewInterceptTouchEvent(final RecyclerView rv, final MotionEvent e) {
-    }
-
-    /**
-     * Method to navigate to top of recycler view with smooth scroll
-     */
-    public void smoothScrollToFirst() {
-        if (getLinearLayoutManager() != null) {
-            final RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(this.recyclerView.getContext()) {
-                @Override
-                protected int getVerticalSnapPreference() {
-                    return LinearSmoothScroller.SNAP_TO_START;
-                }
-            };
-            smoothScroller.setTargetPosition(0);
-            getLinearLayoutManager().startSmoothScroll(smoothScroller);
-        }
-    }
-
-    /**
-     * Method to navigate to top of recycler view with smooth scroll
-     */
-    public void setPositionToFirst() {
-        if (getLinearLayoutManager() != null) {
-            getLinearLayoutManager().scrollToPositionWithOffset(0, 0);
-        }
-    }
-
-    /**
-     * Method to attempt retrieving {@link android.support.v7.widget.RecyclerView.LayoutManager} of RecyclerView as {@link LinearLayoutManager}
-     *
      * @return null if no {@link LinearLayoutManager} instance found
      */
-    public LinearLayoutManager getLinearLayoutManager() {
-        try {
-            if (getRecyclerView().getLayoutManager() instanceof LinearLayoutManager) {
-                return (LinearLayoutManager) this.recyclerView.getLayoutManager();
-            }
-        } catch (Exception e) {
-            return null;
-        }
-        return null;
+    public final LinearLayoutManager getLinearLayoutManager() {
+        return getLayoutManager(getRecyclerView(), LinearLayoutManager.class);
     }
 
     /**
-     * Method to attempt retrieving {@link android.support.v7.widget.RecyclerView.LayoutManager} of RecyclerView as {@link GridLayoutManager}
-     *
      * @return null if no {@link GridLayoutManager} instance found
      */
-    public GridLayoutManager getGridLayoutManager() {
-        try {
-            if (getRecyclerView().getLayoutManager() instanceof GridLayoutManager) {
-                return (GridLayoutManager) this.recyclerView.getLayoutManager();
-            }
-        } catch (Exception e) {
-            return null;
-        }
-        return null;
+    public final GridLayoutManager getGridLayoutManager() {
+        return getLayoutManager(getRecyclerView(), GridLayoutManager.class);
     }
 
     /**
-     * Method to attempt retrieving {@link android.support.v7.widget.RecyclerView.LayoutManager} of RecyclerView as {@link StaggeredGridLayoutManager}
-     *
      * @return null if no {@link StaggeredGridLayoutManager} instance found
      */
     public StaggeredGridLayoutManager getStaggeredGridLayoutManager() {
-        try {
-            if (getRecyclerView().getLayoutManager() instanceof StaggeredGridLayoutManager) {
-                return (StaggeredGridLayoutManager) this.recyclerView.getLayoutManager();
-            }
-        } catch (Exception e) {
-            return null;
-        }
-        return null;
+        return getLayoutManager(getRecyclerView(), StaggeredGridLayoutManager.class);
     }
 
-    //==========================================================================================
-    // CONTRACTUAL METHODS BEGIN
-    //==========================================================================================
-
-    /**
-     * Enhanced Implementation Layer of {@link RecyclerView.Adapter#onCreateViewHolder(ViewGroup, int)}
-     * Here you should return initialized {@link PeasyViewHolder}
-     * Perform click action refer {@link #onItemClick(View, int, int, T, PeasyViewHolder)}
-     * Perform long click refer {@link #onItemLongClick(View, int, int, T, PeasyViewHolder)}
-     *
-     * @param inflater
-     * @param parent
-     * @param viewType
-     * @return
-     */
-    protected abstract PeasyViewHolder onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType);
-
-    /**
-     * Enhanced Implementation Layer of {@link RecyclerView.Adapter#getItemViewType(int)}
-     * Here you should define or decide view type
-     *
-     * @param position
-     * @param item
-     * @return
-     */
-    protected abstract int getItemViewType(final int position, final T item);
-
-    /**
-     * Enhanced Implementation Layer of {@link RecyclerView.Adapter#onBindViewHolder(RecyclerView.ViewHolder, int)}
-     * Here you should populate views in {@link PeasyViewHolder} with item returned in this method
-     *
-     * @param context
-     * @param holder
-     * @param position
-     * @param item
-     */
-    protected abstract void onBindViewHolder(final Context context, final PeasyViewHolder holder, final int position, final T item);
-
-    //==========================================================================================
-    // CONTRACTUAL METHODS END
-    //==========================================================================================
-
-    /**
-     * Enhanced Implementation Layer of {@link RecyclerView.Adapter#onBindViewHolder(RecyclerView.ViewHolder, int, List)} )}
-     * Here you should populate views in {@link PeasyViewHolder} with item returned in this method
-     *
-     * @param context
-     * @param holder
-     * @param position
-     * @param items
-     */
-    protected void onBindViewHolder(final Context context, final PeasyViewHolder holder, final int position, ArrayList<T> items) {
-    }
-
-    /**
-     * To reset added {@link android.support.v7.widget.RecyclerView.ItemDecoration}
-     */
-    public void resetItemDecorations() {
-        for (int i = 0; i < getRecyclerView().getItemDecorationCount(); i++) {
-            try {
-                getRecyclerView().removeItemDecoration(getRecyclerView().getItemDecorationAt(i));
-            } catch (Exception e) {
-            }
-        }
-    }
-
-    /**
-     * To reset added {@link android.support.v7.widget.RecyclerView.ItemAnimator}
-     */
-    public void resetItemAnimator() {
-        try {
-            getRecyclerView().setItemAnimator(new DefaultItemAnimator());
-        } catch (Exception e) {
-        }
-    }
 
     /**
      * Present as Vertical List View
@@ -913,8 +773,8 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      *
      * @return LinearLayoutManager
      */
-    public LinearLayoutManager asVerticalListView() {
-        this.presentation = Presentation.VerticalList;
+    public final LinearLayoutManager asVerticalListView() {
+        this.presentation = PeasyRecyclerView.Presentation.VerticalList;
         return asListView(LinearLayoutManager.VERTICAL);
     }
 
@@ -927,8 +787,8 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      *
      * @return LinearLayoutManager
      */
-    public LinearLayoutManager asHorizontalListView() {
-        this.presentation = Presentation.HorizontalList;
+    public final LinearLayoutManager asHorizontalListView() {
+        this.presentation = PeasyRecyclerView.Presentation.HorizontalList;
         return asListView(LinearLayoutManager.HORIZONTAL);
     }
 
@@ -940,9 +800,9 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * Execute {@link #resetItemAnimator()}
      *
      * @param orientation {@value LinearLayoutManager#VERTICAL}  OR  {@value LinearLayoutManager#HORIZONTAL}
-     * @return
+     * @return LinearLayoutManager
      */
-    public LinearLayoutManager asListView(final int orientation) {
+    private LinearLayoutManager asListView(final int orientation) {
         resetItemDecorations();
         resetItemAnimator();
         final LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -962,15 +822,15 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * Execute {@link #resetItemDecorations()}
      * Execute {@link #resetItemAnimator()}
      *
-     * @param columns provided to {@link PeasyPresentationTemplate#issueColumnSize(int)}
+     * @param columns provided to {@link #issueColumnSize(int)}
      * @return GridLayoutManager
      */
     public GridLayoutManager asGridView(int columns) {
-        this.presentation = Presentation.BasicGrid;
+        this.presentation = PeasyRecyclerView.Presentation.BasicGrid;
         resetItemDecorations();
         resetItemAnimator();
-        final GridLayoutManager layoutManager = new GridLayoutManager(getContext(), PeasyPresentationTemplate.issueColumnSize(columns));
-        PeasyPresentationTemplate.bundleColumnSize(getExtraData(), PeasyPresentationTemplate.issueColumnSize(columns));
+        final GridLayoutManager layoutManager = new GridLayoutManager(getContext(), issueColumnSize(columns));
+        PeasyPresentationTemplate.bundleColumnSize(getExtraData(), issueColumnSize(columns));
         getRecyclerView().setLayoutManager(layoutManager);
         getRecyclerView().addItemDecoration(issuePeasyGridDivider(getContext(), columns));
         getRecyclerView().setItemAnimator(new DefaultItemAnimator());
@@ -986,12 +846,12 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * Execute {@link #resetItemDecorations()}
      * Execute {@link #resetItemAnimator()}
      *
-     * @param columns provided to {@link PeasyPresentationTemplate#issueColumnSize(int)}
+     * @param columns provided to {@link #issueColumnSize(int)}
      * @return StaggeredGridLayoutManager
      */
     public StaggeredGridLayoutManager asVerticalStaggeredGridView(final int columns) {
-        this.presentation = Presentation.VerticalStaggeredGrid;
-        return asStaggeredGridView(PeasyPresentationTemplate.issueColumnSize(columns), StaggeredGridLayoutManager.VERTICAL);
+        this.presentation = PeasyRecyclerView.Presentation.VerticalStaggeredGrid;
+        return asStaggeredGridView(issueColumnSize(columns), StaggeredGridLayoutManager.VERTICAL);
     }
 
     /**
@@ -1003,12 +863,12 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * Execute {@link #resetItemDecorations()}
      * Execute {@link #resetItemAnimator()}
      *
-     * @param columns provided to {@link PeasyPresentationTemplate#issueColumnSize(int)}
+     * @param columns provided to {@link #issueColumnSize(int)}
      * @return StaggeredGridLayoutManager
      */
     public StaggeredGridLayoutManager asHorizontalStaggeredGridView(final int columns) {
-        this.presentation = Presentation.HorizontalStaggeredGrid;
-        return asStaggeredGridView(PeasyPresentationTemplate.issueColumnSize(columns), StaggeredGridLayoutManager.HORIZONTAL);
+        this.presentation = PeasyRecyclerView.Presentation.HorizontalStaggeredGrid;
+        return asStaggeredGridView(issueColumnSize(columns), StaggeredGridLayoutManager.HORIZONTAL);
     }
 
     /**
@@ -1020,65 +880,159 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * Execute {@link #resetItemDecorations()}
      * Execute {@link #resetItemAnimator()}
      *
-     * @param columns     provided to {@link PeasyPresentationTemplate#issueColumnSize(int)}
+     * @param columns     provided to {@link #issueColumnSize(int)}
      * @param orientation {@value StaggeredGridLayoutManager#VERTICAL}  OR  {@value StaggeredGridLayoutManager#HORIZONTAL}
      * @return StaggeredGridLayoutManager
      */
     private StaggeredGridLayoutManager asStaggeredGridView(final int columns, final int orientation) {
         resetItemDecorations();
         resetItemAnimator();
-        final StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(PeasyPresentationTemplate.issueColumnSize(columns), orientation);
-        PeasyPresentationTemplate.bundleColumnSize(getExtraData(), PeasyPresentationTemplate.issueColumnSize(columns));
+        final StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(issueColumnSize(columns), orientation);
+        PeasyPresentationTemplate.bundleColumnSize(getExtraData(), issueColumnSize(columns));
         getRecyclerView().setLayoutManager(layoutManager);
         getRecyclerView().addItemDecoration(issuePeasyGridDivider(getContext(), columns));
         getRecyclerView().setItemAnimator(new DefaultItemAnimator());
         return layoutManager;
     }
 
+    //=============================
+    // View Configurations
+    //=============================
+
+    /**
+     * @return column size
+     * @see PeasyPresentationTemplate#getColumnSize(Bundle)
+     */
     public int getColumnSize() {
-        return getExtraData().getInt(PeasyPresentationTemplate.ExtraColumnSize, 1);
+        return PeasyPresentationTemplate.getColumnSize(getExtraData());
     }
 
     /**
-     * To build standard PeasyGridDividerItemDecoration
-     *
-     * @param columns must larger than {@value PeasyPresentationTemplate#DefaultGridColumnSize}
-     * @return
+     * @param columnSize input column size
+     * @return accepted column size
+     * @see PeasyPresentationTemplate#issueColumnSize(int)
      */
-    public static PeasyGridDividerItemDecoration issuePeasyGridDivider(Context context, int columns) {
-        return new PeasyGridDividerItemDecoration(context.getResources().getDimensionPixelSize(R.dimen.peasy_grid_divider_spacing), PeasyPresentationTemplate.issueColumnSize(columns));
+    private int issueColumnSize(int columnSize) {
+        return PeasyPresentationTemplate.issueColumnSize(columnSize);
     }
 
-    //==========================================================================================
-    // PeasyCoordinatorContent
-    //==========================================================================================
+    /**
+     * @param context    context
+     * @param columnSize input column size
+     * @return PeasyGridDividerItemDecoration
+     * @see PeasyPresentationTemplate#issuePeasyGridDivider(Context, int)
+     */
+    private PeasyGridDividerItemDecoration issuePeasyGridDivider(Context context, int columnSize) {
+        return PeasyPresentationTemplate.issuePeasyGridDivider(context, columnSize);
+    }
 
     /**
-     * Extended Blueprint of @{@link PeasyCoordinatorContent}
-     * Coordination : Header section of list
-     *
-     * @param <D>
+     * Remove all added {@link RecyclerView.ItemDecoration}
      */
-    public static abstract class PeasyHeaderContent<D> extends PeasyCoordinatorContent<PeasyHeaderViewHolder, D> {
-        public PeasyHeaderContent(int viewtypeId, D data) {
-            super(viewtypeId, data);
+    public void resetItemDecorations() {
+        for (int i = 0; i < getRecyclerView().getItemDecorationCount(); i++) {
+            try {
+                getRecyclerView().removeItemDecoration(getRecyclerView().getItemDecorationAt(i));
+            } catch (Exception ignored) {
+            }
         }
     }
 
     /**
-     * Extended Blueprint of @{@link PeasyCoordinatorContent}
-     * Coordination : Content section of list
-     *
-     * @param <D> Data Type
+     * Remove all added {@link RecyclerView.ItemAnimator}
      */
-    public static abstract class PeasyFooterContent<D> extends PeasyCoordinatorContent<PeasyFooterViewHolder, D> {
-        public PeasyFooterContent(int viewtypeId, D data) {
-            super(viewtypeId, data);
+    public void resetItemAnimator() {
+        try {
+            getRecyclerView().setItemAnimator(new DefaultItemAnimator());
+        } catch (Exception ignored) {
         }
     }
 
+    //=============================
+    // Overriding Methods
+    //=============================
+
+    /**
+     * Enhanced Implementation Layer of {@link View.OnClickListener#onClick(View)}
+     * Target on itemView of {@link PeasyViewHolder}
+     * Here you should define recycler view member single click action
+     *
+     * @param view       view
+     * @param viewType   viewType
+     * @param position   position
+     * @param item       item
+     * @param viewHolder viewHolder
+     */
+    public void onItemClick(final View view, final int viewType, final int position, final T item, final PeasyViewHolder viewHolder) {
+    }
+
+    /**
+     * Enhanced Implementation Layer of {@link View.OnLongClickListener#onLongClick(View)} (View)}
+     * Target on itemView of {@link PeasyViewHolder}
+     * Here you should define recycler view member long click action
+     *
+     * @param view       view
+     * @param viewType   viewType
+     * @param position   position
+     * @param item       item
+     * @param viewHolder viewHolder
+     * @return true by default
+     */
+    public boolean onItemLongClick(final View view, final int viewType, final int position, final T item, final PeasyViewHolder viewHolder) {
+        return true;
+    }
+
+    /**
+     * Enhanced Implementation Layer of {@link RecyclerView.OnScrollListener#onScrolled(RecyclerView, int, int)}
+     * Target on itemView of {@link PeasyRecyclerView#recyclerView}
+     * Here you should define recycler view on scroll action with dy, dx feedback
+     *
+     * @param recyclerView recyclerView
+     * @param dx           dx
+     * @param dy           dy
+     */
+    public void onViewScrolled(final RecyclerView recyclerView, final int dx, final int dy) {
+    }
+
+    /**
+     * Enhanced Implementation Layer of {@link RecyclerView.OnScrollListener#onScrollStateChanged(RecyclerView, int)}
+     * Target on {@link RecyclerView} of {@link PeasyRecyclerView }
+     * Here you should define recycler view on scroll action with state feedback
+     *
+     * @param recyclerView recyclerView
+     * @param newState     newState
+     */
+    public void onViewScrollStateChanged(final RecyclerView recyclerView, final int newState) {
+    }
+
+    /**
+     * Enhanced Implementation Layer of {@link RecyclerView.OnScrollListener#onScrolled(RecyclerView, int, int)}
+     * Target on itemView of {@link PeasyRecyclerView#recyclerView}
+     * Here you should define recycler view on scroll action when it reach end of list
+     * [WARNING]
+     * This method will execute right after {@link #onViewScrolled(RecyclerView, int, int)}
+     * when {@link #thresholdOfEOL} is more than or equal {@value #DefaultEOLThreshold }
+     * Do not repeat duplication at {@link #onViewScrolled(RecyclerView, int, int)}
+     * This method will utilize {@link #lockEOL} to avoid feedback spamming.
+     *
+     * @param recyclerView recyclerView
+     * @param threshold    threshold
+     */
+    public void onViewReachingEndOfList(final RecyclerView recyclerView, final int threshold) {
+    }
+
+    /**
+     * Enhanced Implementation Layer of {@link RecyclerView.OnItemTouchListener#onInterceptTouchEvent(RecyclerView, MotionEvent)}
+     * Target on {@link RecyclerView} of {@link PeasyRecyclerView }
+     *
+     * @param recyclerView recyclerView
+     * @param motionEvent  motionEvent
+     */
+    public void onViewInterceptTouchEvent(final RecyclerView recyclerView, final MotionEvent motionEvent) {
+    }
+
     //==========================================================================================
-    // PeasyPresentationTemplate
+    // Peasy Presentation Template
     //==========================================================================================
 
     /**
@@ -1089,7 +1043,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @param <T> type of array list content
      */
     public static abstract class VerticalList<T> extends PeasyPresentationTemplate.VerticalList<T> {
-        public VerticalList(@NonNull Context context, RecyclerView recyclerView, ArrayList arrayList) {
+        public VerticalList(@NonNull Context context, RecyclerView recyclerView, ArrayList<T> arrayList) {
             super(context, recyclerView, arrayList);
         }
     }
@@ -1102,7 +1056,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @param <T> type of array list content
      */
     public static abstract class HorizontalList<T> extends PeasyPresentationTemplate.HorizontalList<T> {
-        public HorizontalList(@NonNull Context context, RecyclerView recyclerView, ArrayList arrayList) {
+        public HorizontalList(@NonNull Context context, RecyclerView recyclerView, ArrayList<T> arrayList) {
             super(context, recyclerView, arrayList);
         }
     }
@@ -1115,7 +1069,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @param <T> type of array list content
      */
     public static abstract class BasicGrid<T> extends PeasyPresentationTemplate.BasicGrid<T> {
-        public BasicGrid(@NonNull Context context, RecyclerView recyclerView, ArrayList arrayList, int columnSize) {
+        public BasicGrid(@NonNull Context context, RecyclerView recyclerView, ArrayList<T> arrayList, int columnSize) {
             super(context, recyclerView, arrayList, columnSize);
         }
     }
@@ -1128,7 +1082,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @param <T> type of array list content
      */
     public static abstract class VerticalStaggeredGrid<T> extends PeasyPresentationTemplate.VerticalStaggeredGrid<T> {
-        public VerticalStaggeredGrid(@NonNull Context context, RecyclerView recyclerView, ArrayList arrayList, int columnSize) {
+        public VerticalStaggeredGrid(@NonNull Context context, RecyclerView recyclerView, ArrayList<T> arrayList, int columnSize) {
             super(context, recyclerView, arrayList, columnSize);
         }
     }
@@ -1141,7 +1095,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @param <T> type of array list content
      */
     public static abstract class HorizontalStaggeredGrid<T> extends PeasyPresentationTemplate.HorizontalStaggeredGrid<T> {
-        public HorizontalStaggeredGrid(@NonNull Context context, RecyclerView recyclerView, ArrayList arrayList, int columnSize) {
+        public HorizontalStaggeredGrid(@NonNull Context context, RecyclerView recyclerView, ArrayList<T> arrayList, int columnSize) {
             super(context, recyclerView, arrayList, columnSize);
         }
     }

@@ -7,6 +7,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 
+import com.kopirealm.peasyrecyclerview.decor.PeasyGridDividerItemDecoration;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -16,26 +18,39 @@ public class PeasyPresentationTemplate {
     static String ExtraColumnSize = "column_size";
 
     /**
-     * To issue valid columns size
-     *
-     * @param columnSize must larger than {@value DefaultGridColumnSize}
-     * @return [DefaultGridColumnSize, columnSize|]
+     * @param columnSize provided columnSize [{@value DefaultGridColumnSize}, columnSize|]
+     * @return valid columns size
      */
     static int issueColumnSize(int columnSize) {
         return Math.max(Math.max(0, columnSize), DefaultGridColumnSize);
     }
 
     /**
-     * Bundle ExtraColumnSize {@value ExtraColumnSize} with provided columnSize
-     *
      * @param bundle     bundle
-     * @param columnSize must larger than {@value  DefaultGridColumnSize}
-     * @return bundle
+     * @param columnSize provided columnSize [{@value DefaultGridColumnSize}, columnSize|]
+     * @return bundle with value of {@value ExtraColumnSize}
      */
     static Bundle bundleColumnSize(Bundle bundle, int columnSize) {
         final Bundle extraData = (bundle != null) ? bundle : new Bundle();
         extraData.putInt(ExtraColumnSize, issueColumnSize(columnSize));
         return extraData;
+    }
+
+    /**
+     * @param bundle bundle with value of {@value ExtraColumnSize}
+     * @return value of {@value ExtraColumnSize}
+     */
+    static int getColumnSize(Bundle bundle) {
+        bundle = (bundle != null) ? bundle : new Bundle();
+        return bundle.getInt(PeasyPresentationTemplate.ExtraColumnSize, 1);
+    }
+
+    /**
+     * @param columnSize provided columnSize [{@value DefaultGridColumnSize}, columnSize|]
+     * @return standard {@link PeasyGridDividerItemDecoration}
+     */
+    static PeasyGridDividerItemDecoration issuePeasyGridDivider(Context context, int columnSize) {
+        return new PeasyGridDividerItemDecoration(context.getResources().getDimensionPixelSize(R.dimen.peasy_grid_divider_spacing), PeasyPresentationTemplate.issueColumnSize(columnSize));
     }
 
     //==========================================================================================
@@ -163,7 +178,7 @@ public class PeasyPresentationTemplate {
         @Override
         protected void configureRecyclerView(RecyclerView recyclerView) {
             super.configureRecyclerView(recyclerView);
-            super.asGridView(this.getColumnSize());
+            super.asVerticalStaggeredGridView(this.getColumnSize());
         }
 
         @Override
@@ -216,7 +231,7 @@ public class PeasyPresentationTemplate {
         @Override
         protected void configureRecyclerView(RecyclerView recyclerView) {
             super.configureRecyclerView(recyclerView);
-            this.asGridView(this.getColumnSize());
+            this.asHorizontalStaggeredGridView(this.getColumnSize());
         }
 
         @Override
