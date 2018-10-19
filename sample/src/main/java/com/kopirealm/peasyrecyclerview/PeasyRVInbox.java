@@ -237,7 +237,7 @@ public final class PeasyRVInbox extends PeasyRecyclerView<PeasyRVInbox.ModelInbo
 
     @Override
     public StaggeredGridLayoutManager asHorizontalStaggeredGridView(int columns) {
-        final StaggeredGridLayoutManager layoutManager = super.asVerticalStaggeredGridView(columns);
+        final StaggeredGridLayoutManager layoutManager = super.asHorizontalStaggeredGridView(columns);
         Log.d("[LOG]", getClass().getSimpleName() + "#" + "asHorizontalStaggeredGridView::" + this.getColumnSize());
         return layoutManager;
     }
