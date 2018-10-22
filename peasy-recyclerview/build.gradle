@@ -9,7 +9,7 @@ def mavenDistScript = "publish-maven.gradle"
 // Publish to Maven Central + JCenter via Bintray
 def bintrayDistScript = "publish-bintray.gradle"
 def useDistScript = noDistScript;
-// Generate JAVADOC, requireJAVADOC::boolean works under "release" buildTypes only
+// Generate JAVADOC, requireJAVADOC::boolean works with "AssembleRelease" process only
 def requireJAVADOC = false;
 
 ext {
@@ -18,7 +18,7 @@ ext {
     _targetSdkVersion = 28
     _minSdkVersion = 16
     _versionCode = 1
-    _versionName = "1.0.9"
+    _versionName = "1.0.10"
 }
 
 android {
@@ -33,12 +33,11 @@ android {
     }
     buildTypes {
         debug {
-            minifyEnabled true
-            useProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
