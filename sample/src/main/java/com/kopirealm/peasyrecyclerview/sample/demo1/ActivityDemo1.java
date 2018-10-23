@@ -12,10 +12,16 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.kopirealm.peasyrecyclerview.PeasyRecyclerView;
+import com.kopirealm.peasyrecyclerview.sample.FileReader;
 import com.kopirealm.peasyrecyclerview.sample.R;
+
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class ActivityDemo1 extends AppCompatActivity {
 
+    private JSONObject jsonDemo1;
     private TextView tvPresentation;
     private PeasyRecyclerView.Presentation inboxPresentation = null;
 
@@ -23,45 +29,58 @@ public class ActivityDemo1 extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_demo1);
+        readJSONDemo1();
         setupHintBar();
         setupPeasyRVInboxLayout();
     }
 
-    private void setupHintBar() {
-        findViewById(R.id.btnDismiss).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                removeHintBar();
-            }
-        });
-
-        new Handler(getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                removeHintBar();
-            }
-        }, 10 * 1000);
+    private void readJSONDemo1() {
+        jsonDemo1 = FileReader.readRawJsonObject(getApplicationContext(), R.raw.demo1);
     }
 
-    private void removeHintBar() {
+    private void setupHintBar() {
+        if (jsonDemo1 != null) {
+            ((TextView) findViewById(R.id.tvHint)).setText(jsonDemo1.optString("hint", ""));
+            findViewById(R.id.btnDismiss).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    removeHintBar(300);
+                }
+            });
+            new Handler(getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    removeHintBar(300);
+                }
+            }, 10 * 1000);
+        } else {
+            removeHintBar(0);
+        }
+    }
+
+    private void removeHintBar(long duration) {
         final View view = findViewById(R.id.llHintBar);
-        view.animate()
-                .scaleX(0)
-                .alpha(0.0f)
-                .setDuration(300)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        view.setVisibility(View.GONE);
-                    }
-                });
+        if (duration == 0) {
+            view.setVisibility(View.GONE);
+        } else {
+            view.animate()
+                    .scaleX(0)
+                    .alpha(0.0f)
+                    .setDuration(duration)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            view.setVisibility(View.GONE);
+                        }
+                    });
+        }
     }
 
     private void setupPeasyRVInboxLayout() {
         tvPresentation = findViewById(R.id.tvPresentation);
         final FloatingActionButton fab = findViewById(R.id.fab);
-        final PeasyRVInbox prvInbox = new PeasyRVInbox(this, (RecyclerView) findViewById(R.id.rvSample), fab, ModelInbox.forgingInboxMessage());
+        final PeasyRVInbox prvInbox = new PeasyRVInbox(this, (RecyclerView) findViewById(R.id.rvSample), fab, forgingInboxMessage());
         changePeasyRVInboxLayout(prvInbox);
         fab.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -93,7 +112,7 @@ public class ActivityDemo1 extends AppCompatActivity {
         } else if (inboxPresentation.equals(PeasyRecyclerView.Presentation.HorizontalStaggeredGrid)) {
             prvInbox.asHorizontalStaggeredGridView(5);
         }
-        prvInbox.setContent(ModelInbox.forgingInboxMessage());
+        prvInbox.setContent(forgingInboxMessage());
         tvPresentation.setText(inboxPresentation.name());
     }
 
@@ -102,10 +121,14 @@ public class ActivityDemo1 extends AppCompatActivity {
                 .setAction("RESET", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        prvInbox.setContent(ModelInbox.forgingInboxMessage());
+                        prvInbox.setContent(forgingInboxMessage());
                         prvInbox.setPositionToFirst();
                     }
                 }).show();
+    }
+
+    private ArrayList<ModelInbox> forgingInboxMessage() {
+        return ModelInbox.forgingInboxMessage(jsonDemo1);
     }
 }
 
