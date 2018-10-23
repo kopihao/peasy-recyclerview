@@ -17,10 +17,15 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".demo1.ActivityDemo1" />
+        <activity
+            android:name=".demo2.ActivityDemo2"
+            android:label="@string/title_activity_demo2"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
