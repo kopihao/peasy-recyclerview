@@ -9,9 +9,6 @@ import com.kopirealm.peasyrecyclerview.sample.R;
 
 public class ActivityDemo2 extends AppCompatActivity {
 
-    private SectionsPagerAdapter mSectionsPagerAdapter;
-    private ViewPager mViewPager;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,7 +21,7 @@ public class ActivityDemo2 extends AppCompatActivity {
         tabLayout.addTab(tabLayout.newTab().setIcon(R.mipmap.ic_basic_grid));
         tabLayout.addTab(tabLayout.newTab().setIcon(R.mipmap.ic_spannable_grid));
         final ViewPager viewPager = findViewById(R.id.pager);
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        final SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(mSectionsPagerAdapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
