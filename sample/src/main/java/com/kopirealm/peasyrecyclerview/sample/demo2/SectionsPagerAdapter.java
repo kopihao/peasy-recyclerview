@@ -6,8 +6,11 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-    public SectionsPagerAdapter(FragmentManager fm) {
+    private int totalSize = 0;
+
+    SectionsPagerAdapter(FragmentManager fm, int totalSize) {
         super(fm);
+        this.totalSize = totalSize;
     }
 
     @Override
@@ -17,6 +20,6 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 6;
+        return totalSize;
     }
 }
