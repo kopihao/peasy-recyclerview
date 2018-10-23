@@ -19,6 +19,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".demo2.AdvanceDemo"
+            android:label="@string/title_activity_advance_demo"></activity>
     </application>
 
 </manifest>

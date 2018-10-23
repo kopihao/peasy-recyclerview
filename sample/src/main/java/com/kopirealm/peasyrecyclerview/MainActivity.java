@@ -2,6 +2,7 @@ package com.kopirealm.peasyrecyclerview;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -10,6 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
+
+import com.kopirealm.peasyrecyclerview.demo2.AdvanceDemo;
 
 import java.util.ArrayList;
 
@@ -61,6 +64,10 @@ public class MainActivity extends AppCompatActivity {
                 changePeasyRVInboxLayout(prvInbox);
             }
         });
+
+        Intent intent = new Intent(this, AdvanceDemo.class);
+        startActivity(intent);
+        finish();
     }
 
     private void removeHintBar() {
