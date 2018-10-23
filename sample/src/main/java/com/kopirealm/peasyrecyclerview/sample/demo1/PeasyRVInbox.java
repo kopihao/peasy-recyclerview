@@ -1,4 +1,4 @@
-package com.kopirealm.peasyrecyclerview;
+package com.kopirealm.peasyrecyclerview.sample.demo1;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -21,6 +21,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.kopirealm.peasyrecyclerview.PeasyContentViewHolder;
+import com.kopirealm.peasyrecyclerview.PeasyFooterContent;
+import com.kopirealm.peasyrecyclerview.PeasyFooterViewHolder;
+import com.kopirealm.peasyrecyclerview.PeasyHeaderContent;
+import com.kopirealm.peasyrecyclerview.PeasyHeaderViewHolder;
+import com.kopirealm.peasyrecyclerview.PeasyRecyclerView;
+import com.kopirealm.peasyrecyclerview.PeasyViewHolder;
+import com.kopirealm.peasyrecyclerview.sample.R;
+
 import java.util.ArrayList;
 
 /**
@@ -36,17 +45,17 @@ import java.util.ArrayList;
  */
 
 //TODO This PeasyRecyclerView initialized as Vertical List
-//public final class PeasyRVInbox extends PeasyRecyclerView.VerticalList<PeasyRVInbox.ModelInbox> {
+//public final class PeasyRVInbox extends PeasyRecyclerView.VerticalList<ModelInbox> {
 //TODO This PeasyRecyclerView initialized as Horizontal List
-//public final class PeasyRVInbox extends PeasyRecyclerView.HorizontalList<PeasyRVInbox.ModelInbox> {
+//public final class PeasyRVInbox extends PeasyRecyclerView.HorizontalList<ModelInbox> {
 //TODO This PeasyRecyclerView initialized as Basic Grid
-//public final class PeasyRVInbox extends PeasyRecyclerView.BasicGrid<PeasyRVInbox.ModelInbox> {
+//public final class PeasyRVInbox extends PeasyRecyclerView.BasicGrid<ModelInbox> {
 //TODO This PeasyRecyclerView initialized as Vertical Staggered Grid
-//public final class PeasyRVInbox extends PeasyRecyclerView.VerticalStaggeredGrid<PeasyRVInbox.ModelInbox> {
+//public final class PeasyRVInbox extends PeasyRecyclerView.VerticalStaggeredGrid<ModelInbox> {
 //TODO This PeasyRecyclerView initialized as Horizontal Staggered Grid
-//public final class PeasyRVInbox extends PeasyRecyclerView.HorizontalStaggeredGrid<PeasyRVInbox.ModelInbox> {
+//public final class PeasyRVInbox extends PeasyRecyclerView.HorizontalStaggeredGrid<ModelInbox> {
 //TODO This PeasyRecyclerView initialized undefined presentation, it will initialize presentation during run time
-public final class PeasyRVInbox extends PeasyRecyclerView<PeasyRVInbox.ModelInbox> {
+public final class PeasyRVInbox extends PeasyRecyclerView<ModelInbox> {
 
     public PeasyRVInbox(@NonNull Context context, RecyclerView recyclerView, FloatingActionButton fab, ArrayList<ModelInbox> arrayList) {
         // TODO Initialization
@@ -57,7 +66,7 @@ public final class PeasyRVInbox extends PeasyRecyclerView<PeasyRVInbox.ModelInbo
 
     // TODO Header Content of PeasyRVInbox
     // private final PeasyHeaderContent<ModelInbox> headerContent = new PeasyHeaderContent<ModelInbox>(InboxHeaderViewHolder.VIEWTYPE_HEADER, null) {
-    private final PeasyHeaderContent<ModelInbox> headerContent = new PeasyHeaderContent<ModelInbox>(InboxHeaderViewHolder.VIEWTYPE_HEADER, PeasyRVInbox.ModelInbox.buildInboxHeader()) {
+    private final PeasyHeaderContent<ModelInbox> headerContent = new PeasyHeaderContent<ModelInbox>(InboxHeaderViewHolder.VIEWTYPE_HEADER, ModelInbox.buildInboxHeader()) {
         @Override
         protected PeasyHeaderViewHolder onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
             // TODO Do Nothing but initializing view holder with layout_id
@@ -75,7 +84,7 @@ public final class PeasyRVInbox extends PeasyRecyclerView<PeasyRVInbox.ModelInbo
 
     //  TODO Footer Content of PeasyRVInbox
     // private final PeasyFooterContent<ModelInbox> footerContent = new PeasyFooterContent<ModelInbox>(InboxFooterViewHolder.VIEWTYPE_FOOTER, null) {
-    private final PeasyFooterContent<ModelInbox> footerContent = new PeasyFooterContent<ModelInbox>(InboxFooterViewHolder.VIEWTYPE_FOOTER, PeasyRVInbox.ModelInbox.buildInboxFooter()) {
+    private final PeasyFooterContent<ModelInbox> footerContent = new PeasyFooterContent<ModelInbox>(InboxFooterViewHolder.VIEWTYPE_FOOTER, ModelInbox.buildInboxFooter()) {
         @Override
         protected PeasyFooterViewHolder onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
             // TODO Do Nothing but initializing view holder with layout_id
@@ -243,37 +252,6 @@ public final class PeasyRVInbox extends PeasyRecyclerView<PeasyRVInbox.ModelInbo
     }
 
     // TODO Define data object represent PeasyRVInbox item, provide to PeasyRecyclerView as T(generic type)
-    public final static class ModelInbox {
-
-        public enum InboxState {
-            Read, Unread, Header, Footer
-        }
-
-        String title = "";
-        String message = "";
-        String sender = "";
-        InboxState state = InboxState.Unread;
-
-        private ModelInbox(String title, String message, String sender, InboxState state) {
-            this.title = title;
-            this.message = message;
-            this.sender = sender + "@scmp.com";
-            this.state = state;
-        }
-
-        public static ModelInbox buildInboxMessage(String title, String message, String sender, boolean read) {
-            return new ModelInbox(title, message, sender, (read) ? InboxState.Read : InboxState.Unread);
-        }
-
-        public static ModelInbox buildInboxHeader() {
-            return new ModelInbox("", "", "", InboxState.Header);
-        }
-
-        public static ModelInbox buildInboxFooter() {
-            return new ModelInbox("", "", "", ModelInbox.InboxState.Footer);
-        }
-
-    }
 
 
     // TODO Define view holder to PeasyRVInbox Header, find its views
@@ -309,7 +287,6 @@ public final class PeasyRVInbox extends PeasyRecyclerView<PeasyRVInbox.ModelInbo
 
     }
 
-    // TODO Define view holder to PeasyRVInbox Content, find its views
     public final class InboxModelViewHolder extends PeasyContentViewHolder {
         public final static int LAYOUT_ID = R.layout.li_inbox_model;
 
