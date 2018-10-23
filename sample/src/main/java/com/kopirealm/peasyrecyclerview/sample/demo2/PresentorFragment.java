@@ -62,6 +62,19 @@ public class PresentorFragment extends Fragment
             switch (presentation) {
                 case VerticalList:
                     peasyRecyclerView = new SimpleVerticalListView(getContext(), recyclerView, arrayList, this);
+                    break;
+                case HorizontalList:
+                    peasyRecyclerView = new SimpleHorizontalListView(getContext(), recyclerView, arrayList, this);
+                    break;
+                case BasicGrid:
+                    peasyRecyclerView = new SimpleBasicGridView(getContext(), recyclerView, arrayList, this);
+                    break;
+                case VerticalStaggeredGrid:
+                    peasyRecyclerView = new SimpleVerticalStaggeredGridView(getContext(), recyclerView, arrayList, this);
+                    break;
+                case HorizontalStaggeredGrid:
+                    peasyRecyclerView = new SimpleHorizontalStaggeredGridView(getContext(), recyclerView, arrayList, this);
+                    break;
             }
         }
         header = rootView.findViewById(R.id.header);
