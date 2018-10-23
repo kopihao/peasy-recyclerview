@@ -29,8 +29,8 @@ public class ActivityDemo2 extends AppCompatActivity {
             tabLayout.addTab(tab);
         }
         final ViewPager viewPager = findViewById(R.id.pager);
-        final SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
-        viewPager.setAdapter(mSectionsPagerAdapter);
+        final PresentorPagerAdapter presentorPagerAdapter = new PresentorPagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
+        viewPager.setAdapter(presentorPagerAdapter);
         viewPager.setCurrentItem(Math.max(0, presentation.ordinal() - 1));
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {

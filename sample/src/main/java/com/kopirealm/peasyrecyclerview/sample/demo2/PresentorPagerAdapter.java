@@ -4,18 +4,18 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-public class SectionsPagerAdapter extends FragmentPagerAdapter {
+public class PresentorPagerAdapter extends FragmentPagerAdapter {
 
     private int totalSize = 0;
 
-    SectionsPagerAdapter(FragmentManager fm, int totalSize) {
+    PresentorPagerAdapter(FragmentManager fm, int totalSize) {
         super(fm);
         this.totalSize = totalSize;
     }
 
     @Override
     public Fragment getItem(int position) {
-        return PlaceholderFragment.newInstance(position + 1);
+        return PresentorFragment.newInstance(position + 1);
     }
 
     @Override
