@@ -57,8 +57,12 @@ public class PresentorFragment extends Fragment
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_presentator, container, false);
-        final RecyclerView recyclerView = rootView.findViewById(R.id.recyclerView);
+        header = rootView.findViewById(R.id.header);
+        first = rootView.findViewById(R.id.first);
+        last = rootView.findViewById(R.id.last);
+        state = rootView.findViewById(R.id.state);
         if (getContext() != null) {
+            final RecyclerView recyclerView = rootView.findViewById(R.id.recyclerView);
             switch (presentation) {
                 case VerticalList:
                     peasyRecyclerView = new SimpleVerticalListView(getContext(), recyclerView, arrayList, this);
@@ -77,12 +81,6 @@ public class PresentorFragment extends Fragment
                     break;
             }
         }
-        header = rootView.findViewById(R.id.header);
-        first = rootView.findViewById(R.id.first);
-        last = rootView.findViewById(R.id.last);
-        state = rootView.findViewById(R.id.state);
-        onContentChanged(peasyRecyclerView == null ? 0 : peasyRecyclerView.getProvidedContentCount());
-        onViewScrollStateChanged(recyclerView, SCROLL_STATE_IDLE);
         return rootView;
     }
 

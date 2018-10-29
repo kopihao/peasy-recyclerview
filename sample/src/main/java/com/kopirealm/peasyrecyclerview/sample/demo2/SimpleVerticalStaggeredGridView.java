@@ -15,6 +15,8 @@ import com.kopirealm.peasyrecyclerview.sample.R;
 
 import java.util.ArrayList;
 
+import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+
 public class SimpleVerticalStaggeredGridView extends PeasyRecyclerView.VerticalStaggeredGrid<String> {
 
     private PresentorListener listener;
@@ -23,6 +25,14 @@ public class SimpleVerticalStaggeredGridView extends PeasyRecyclerView.VerticalS
         // TODO Initialization
         super(context, recyclerView, arrayList, 3);
         this.listener = listener;
+        this.listener.onContentChanged(getProvidedContentCount());
+        this.listener.onViewScrollStateChanged(getRecyclerView(), SCROLL_STATE_IDLE);
+    }
+
+    @Override
+    public void onViewAttachedToWindow(@NonNull RecyclerView.ViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+        this.listener.onViewScrollStateChanged(getRecyclerView(), SCROLL_STATE_IDLE);
     }
 
     @Override
