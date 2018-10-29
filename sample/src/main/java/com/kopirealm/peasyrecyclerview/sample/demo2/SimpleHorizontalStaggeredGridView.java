@@ -34,7 +34,7 @@ public class SimpleHorizontalStaggeredGridView extends PeasyRecyclerView.Horizon
     @Override
     protected PeasyViewHolder onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
         // TODO Do Nothing but initializing view holder with layout_id
-        return new ContentViewHolder(ContentViewHolder.inflateView(inflater, parent, ContentViewHolder.LAYOUT_ID));
+        return new ContentViewHolder(inflateView(inflater, parent, ContentViewHolder.LAYOUT_ID));
     }
 
     @Override

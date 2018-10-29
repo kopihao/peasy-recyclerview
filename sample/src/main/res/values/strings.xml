@@ -7,4 +7,5 @@
     <string name="first_format">First : %1$s</string>
     <string name="last_format">Last : %1$s</string>
     <string name="state_format">%1$s</string>
+    <string name="shown_format">%1$s shown</string>
 </resources>

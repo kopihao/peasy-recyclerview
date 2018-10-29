@@ -97,6 +97,9 @@ public class PresentorFragment extends Fragment
             switch (newState) {
                 case SCROLL_STATE_IDLE:
                     state.setText(getString(R.string.state_format, "Idle"));
+                    if (recyclerView.getChildCount() != 0) {
+                        state.setText(getString(R.string.shown_format, "" + recyclerView.getChildCount()));
+                    }
                     break;
 
                 case SCROLL_STATE_DRAGGING:
