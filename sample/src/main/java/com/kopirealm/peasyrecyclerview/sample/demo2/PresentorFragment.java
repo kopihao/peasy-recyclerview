@@ -3,6 +3,7 @@ package com.kopirealm.peasyrecyclerview.sample.demo2;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -24,7 +25,7 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_SETTLING;
 
 public class PresentorFragment extends Fragment
-        implements PresentorListener {
+        implements PresentorListener, View.OnClickListener {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
 
@@ -85,6 +86,32 @@ public class PresentorFragment extends Fragment
             }
         }
         return rootView;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        final FloatingActionButton fabOpt0 = view.findViewById(R.id.fabOpt0);
+        final FloatingActionButton fabOpt1 = view.findViewById(R.id.fabOpt1);
+        final FloatingActionButton fabOpt2 = view.findViewById(R.id.fabOpt2);
+        fabOpt0.setOnClickListener(this);
+        fabOpt1.setOnClickListener(this);
+        fabOpt2.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.fabOpt0:
+                if (peasyRecyclerView.getFirstVisibleItemPosition() > 0 && !peasyRecyclerView.hasAllContentsVisible()) {
+                    peasyRecyclerView.smoothScrollToFirst();
+                }
+                break;
+            case R.id.fabOpt1:
+                break;
+            case R.id.fabOpt2:
+                break;
+        }
     }
 
     @Override
