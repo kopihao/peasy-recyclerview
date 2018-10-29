@@ -71,15 +71,15 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
 
     public PeasyRecyclerView(@NonNull Context context, @NonNull RecyclerView recyclerView, @NonNull ArrayList<T> arrayList, @NonNull Bundle extraData) {
         this.context = context;
-        this.recyclerView = recyclerView;
         this.extraData = extraData;
-        this.setContent(arrayList);
+        this.recyclerView = recyclerView;
+        this.recyclerView.setAdapter(this);
         this.onCreate(context, recyclerView, arrayList, getExtraData());
         this.enableNestedScroll(true);
-        this.configureRecyclerView(recyclerView);
         this.configureRecyclerViewTouchEvent();
         this.configureRecyclerViewScrollEvent();
-        this.recyclerView.setAdapter(this);
+        this.configureRecyclerView(recyclerView);
+        this.setContent(arrayList);
     }
 
     //=============================
