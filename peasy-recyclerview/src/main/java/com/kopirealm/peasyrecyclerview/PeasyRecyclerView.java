@@ -324,7 +324,14 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
         if (this.footerContent != null) {
             displayedContents.add(this.footerContent.getData());
         }
-        this.notifyDataSetChanged();
+        this.refreshView();
+    }
+
+    /**
+     * Notify provided data changes
+     */
+    public void refreshView() {
+        super.notifyDataSetChanged();
     }
 
     /**
