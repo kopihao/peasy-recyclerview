@@ -44,6 +44,9 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     }
 
     private Presentation presentation = Presentation.undefined;
+    private static final int DefaultGridColumnSize = 2;
+    private static String ExtraColumnSize = "column_size";
+
     private Context context;
     private RecyclerView recyclerView;
     private ArrayList<T> displayedContents;
@@ -820,7 +823,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
 
     /**
      * Present as Grid View
-     * Be noted, columns must not less than {@value PeasyPresentationTemplate#DefaultGridColumnSize}
+     * Be noted, columns must not less than {@value  DefaultGridColumnSize}
      * Default divider is {@link PeasyGridDividerItemDecoration}
      * <p>
      * <p>
@@ -835,17 +838,17 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
         resetItemDecorations();
         resetItemAnimator();
         final GridLayoutManager layoutManager = new GridLayoutManager(getContext(), issueColumnSize(columns));
-        PeasyPresentationTemplate.bundleColumnSize(getExtraData(), issueColumnSize(columns));
+        bundleColumnSize(getExtraData(), columns);
         getRecyclerView().setLayoutManager(layoutManager);
-        getRecyclerView().addItemDecoration(issuePeasyGridDivider(getContext(), columns));
+        getRecyclerView().addItemDecoration(issuePeasyGridDivider(columns));
         getRecyclerView().setItemAnimator(new DefaultItemAnimator());
         return layoutManager;
     }
 
     /**
      * Present as Staggered Grid View in Vertical Orientation
-     * Be noted, columns must not less than {@value PeasyPresentationTemplate#DefaultGridColumnSize}
-     * Default divider is {@link PeasyGridDividerItemDecoration} provided by {@link #issuePeasyGridDivider(Context, int)}
+     * Be noted, columns must not less than {@value DefaultGridColumnSize}
+     * Default divider is {@link PeasyGridDividerItemDecoration} provided by {@link
      * <p>
      * <p>
      * Execute {@link #resetItemDecorations()}
@@ -861,7 +864,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
 
     /**
      * Present as Staggered Grid View in Horizontal Orientation
-     * Be noted, columns must not less than {@value PeasyPresentationTemplate#DefaultGridColumnSize}
+     * Be noted, columns must not less than {@value DefaultGridColumnSize}
      * Default divider is {@link PeasyGridDividerItemDecoration}
      * <p>
      * <p>
@@ -878,8 +881,8 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
 
     /**
      * Present as Staggered Grid View
-     * Be noted, columns must not less than {@value PeasyPresentationTemplate#DefaultGridColumnSize}
-     * Default divider is {@link PeasyGridDividerItemDecoration} provided by {@link #issuePeasyGridDivider(Context, int)}
+     * Be noted, columns must not less than {@value DefaultGridColumnSize}
+     * Default divider is {@link PeasyGridDividerItemDecoration} provided by {@link PeasyRecyclerView#issuePeasyGridDivider(int)}
      * <p>
      * <p>
      * Execute {@link #resetItemDecorations()}
@@ -893,9 +896,9 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
         resetItemDecorations();
         resetItemAnimator();
         final StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(issueColumnSize(columns), orientation);
-        PeasyPresentationTemplate.bundleColumnSize(getExtraData(), issueColumnSize(columns));
+        bundleColumnSize(getExtraData(), columns);
         getRecyclerView().setLayoutManager(layoutManager);
-        getRecyclerView().addItemDecoration(issuePeasyGridDivider(getContext(), columns));
+        getRecyclerView().addItemDecoration(issuePeasyGridDivider(columns));
         getRecyclerView().setItemAnimator(new DefaultItemAnimator());
         return layoutManager;
     }
@@ -905,30 +908,37 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     //=============================
 
     /**
-     * @return column size
-     * @see PeasyPresentationTemplate#getColumnSize(Bundle)
+     * @param columnSize provided columnSize [{@value DefaultGridColumnSize}, columnSize|]
+     * @return valid columns size
+     */
+    static int issueColumnSize(int columnSize) {
+        return Math.max(Math.max(0, columnSize), DefaultGridColumnSize);
+    }
+
+    /**
+     * @param bundle     bundle
+     * @param columnSize provided columnSize [{@value DefaultGridColumnSize}, columnSize|]
+     * @return bundle with bundled value of {@value  ExtraColumnSize}
+     */
+    static Bundle bundleColumnSize(Bundle bundle, int columnSize) {
+        final Bundle extraData = (bundle != null) ? bundle : new Bundle();
+        extraData.putInt(ExtraColumnSize, issueColumnSize(columnSize));
+        return extraData;
+    }
+
+    /**
+     * @return bundled value of {@value  ExtraColumnSize}
      */
     public final int getColumnSize() {
-        return PeasyPresentationTemplate.getColumnSize(getExtraData());
+        return getExtraData().getInt(ExtraColumnSize, DefaultGridColumnSize);
     }
 
     /**
-     * @param columnSize input column size
-     * @return accepted column size
-     * @see PeasyPresentationTemplate#issueColumnSize(int)
+     * @param columnSize provided columnSize [{@value DefaultGridColumnSize}, columnSize|]
+     * @return standard {@link PeasyGridDividerItemDecoration}
      */
-    public final int issueColumnSize(int columnSize) {
-        return PeasyPresentationTemplate.issueColumnSize(columnSize);
-    }
-
-    /**
-     * @param context    context
-     * @param columnSize input column size
-     * @return PeasyGridDividerItemDecoration
-     * @see PeasyPresentationTemplate#issuePeasyGridDivider(Context, int)
-     */
-    public final PeasyGridDividerItemDecoration issuePeasyGridDivider(Context context, int columnSize) {
-        return PeasyPresentationTemplate.issuePeasyGridDivider(context, columnSize);
+    public final PeasyGridDividerItemDecoration issuePeasyGridDivider(int columnSize) {
+        return new PeasyGridDividerItemDecoration(context.getResources().getDimensionPixelSize(R.dimen.peasy_grid_divider_spacing), issueColumnSize(columnSize));
     }
 
     /**
