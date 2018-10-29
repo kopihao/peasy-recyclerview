@@ -5,12 +5,15 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kopirealm.peasyrecyclerview.PeasyRecyclerView;
+import com.kopirealm.peasyrecyclerview.PeasyViewHolder;
 import com.kopirealm.peasyrecyclerview.sample.R;
 
 import java.util.ArrayList;
@@ -127,5 +130,18 @@ public class PresentorFragment extends Fragment
         } catch (Exception e) {
             last.setText(getString(R.string.last_format, ""));
         }
+    }
+
+    @Override
+    public void onItemClick(View view, int viewType, int position, String item, PeasyViewHolder viewHolder) {
+        if (TextUtils.isEmpty(item)) return;
+        Toast.makeText(getContext(), "onItemClick" + item, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean onItemLongClick(View view, int viewType, int position, String item, PeasyViewHolder viewHolder) {
+        if (TextUtils.isEmpty(item)) return false;
+        Toast.makeText(getContext(), "onItemLongClick" + item, Toast.LENGTH_SHORT).show();
+        return true;
     }
 }

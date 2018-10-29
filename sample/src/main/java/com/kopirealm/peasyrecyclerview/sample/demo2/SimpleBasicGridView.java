@@ -67,6 +67,16 @@ public class SimpleBasicGridView extends PeasyRecyclerView.BasicGrid<String> {
         this.listener.onViewScrolled(recyclerView, dx, dy);
     }
 
+    @Override
+    public void onItemClick(View view, int viewType, int position, String item, PeasyViewHolder viewHolder) {
+        this.listener.onItemClick(view, viewType, position, item, viewHolder);
+    }
+
+    @Override
+    public boolean onItemLongClick(View view, int viewType, int position, String item, PeasyViewHolder viewHolder) {
+        return this.listener.onItemLongClick(view, viewType, position, item, viewHolder);
+    }
+
     static class ContentViewHolder extends PeasyContentViewHolder {
         static final int LAYOUT_ID = R.layout.li_demo2;
         TextView tvTitle;
