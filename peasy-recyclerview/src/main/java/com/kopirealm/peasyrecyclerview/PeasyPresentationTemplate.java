@@ -87,11 +87,6 @@ public class PeasyPresentationTemplate {
         }
 
         @Override
-        public void onCreate(@NonNull Context context, RecyclerView recyclerView, ArrayList<T> arrayList, Bundle extraData) {
-            super.onCreate(context, recyclerView, arrayList, extraData);
-        }
-
-        @Override
         protected void configureRecyclerView(RecyclerView recyclerView) {
             super.configureRecyclerView(recyclerView);
             super.asGridView(this.getColumnSize());
@@ -120,11 +115,6 @@ public class PeasyPresentationTemplate {
 
         VerticalStaggeredGrid(@NonNull Context context, RecyclerView recyclerView, ArrayList<T> arrayList, int columnSize) {
             super(context, recyclerView, arrayList, bundleColumnSize(new Bundle(), columnSize));
-        }
-
-        @Override
-        public void onCreate(@NonNull Context context, RecyclerView recyclerView, ArrayList<T> arrayList, Bundle extraData) {
-            super.onCreate(context, recyclerView, arrayList, extraData);
         }
 
         @Override
@@ -168,11 +158,6 @@ public class PeasyPresentationTemplate {
 
         HorizontalStaggeredGrid(@NonNull Context context, RecyclerView recyclerView, ArrayList<T> arrayList, int columnSize) {
             super(context, recyclerView, arrayList, bundleColumnSize(new Bundle(), columnSize));
-        }
-
-        @Override
-        public void onCreate(@NonNull Context context, RecyclerView recyclerView, ArrayList<T> arrayList, Bundle extraData) {
-            super.onCreate(context, recyclerView, arrayList, extraData);
         }
 
         @Override
