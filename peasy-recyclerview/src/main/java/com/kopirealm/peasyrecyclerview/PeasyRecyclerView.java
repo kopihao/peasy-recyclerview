@@ -668,25 +668,35 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     //=============================
 
     /**
+     * @return value from {@link RecyclerView#getChildCount()}
+     */
+    public final int getChildCount() {
+        return (getRecyclerView() == null) ? 0 : getRecyclerView().getChildCount();
+    }
+
+    /**
+     * @return value from {@link RecyclerView#getChildAt(int)}
+     */
+    public final View getChildAt(int index) {
+        return (getRecyclerView() == null) ? null : getRecyclerView().getChildAt(index);
+    }
+
+    /**
+     * @return value from {@link RecyclerView#getChildAdapterPosition(View)}
+     */
+    public final int getChildAdapterPosition(View child) {
+        if (child == null) return RecyclerView.NO_POSITION;
+        return (getRecyclerView() == null) ? RecyclerView.NO_POSITION : getRecyclerView().getChildAdapterPosition(child);
+    }
+
+    /**
      * Comprehensive findFirstCompletelyVisibleItemPosition() method
      *
      * @return first visible item position from Layout Manager
      */
-    public final int getFirstVisibleItemPosition() {
-        if (getLinearLayoutManager() != null) {
-            if (getLinearLayoutManager().getOrientation() == LinearLayoutManager.VERTICAL) {
-                return VerticalList.findFirstCompletelyVisibleItemPosition(getLinearLayoutManager());
-            } else if (getLinearLayoutManager().getOrientation() == LinearLayoutManager.HORIZONTAL) {
-                return HorizontalList.findFirstCompletelyVisibleItemPosition(getLinearLayoutManager());
-            }
-        } else if (getGridLayoutManager() != null) {
-            return BasicGrid.findFirstCompletelyVisibleItemPosition(getGridLayoutManager());
-        } else if (getStaggeredGridLayoutManager() != null) {
-            if (getStaggeredGridLayoutManager().getOrientation() == LinearLayoutManager.VERTICAL) {
-                return VerticalStaggeredGrid.findFirstCompletelyVisibleItemPositions(getStaggeredGridLayoutManager());
-            } else if (getStaggeredGridLayoutManager().getOrientation() == StaggeredGridLayoutManager.HORIZONTAL) {
-                return HorizontalStaggeredGrid.findFirstCompletelyVisibleItemPositions(getStaggeredGridLayoutManager());
-            }
+    public int getFirstVisibleItemPosition() {
+        if (getChildCount() >= 0) {
+            return getChildAdapterPosition(getChildAt(0));
         }
         return RecyclerView.NO_POSITION;
     }
@@ -696,21 +706,9 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      *
      * @return last visible item position from Layout Manager
      */
-    public final int getLastVisibleItemPosition() {
-        if (getLinearLayoutManager() != null) {
-            if (getLinearLayoutManager().getOrientation() == LinearLayoutManager.VERTICAL) {
-                return VerticalList.findLastCompletelyVisibleItemPosition(getLinearLayoutManager());
-            } else if (getLinearLayoutManager().getOrientation() == LinearLayoutManager.HORIZONTAL) {
-                return HorizontalList.findLastCompletelyVisibleItemPosition(getLinearLayoutManager());
-            }
-        } else if (getGridLayoutManager() != null) {
-            return BasicGrid.findLastCompletelyVisibleItemPosition(getGridLayoutManager());
-        } else if (getStaggeredGridLayoutManager() != null) {
-            if (getStaggeredGridLayoutManager().getOrientation() == StaggeredGridLayoutManager.VERTICAL) {
-                return VerticalStaggeredGrid.findLastCompletelyVisibleItemPositions(getStaggeredGridLayoutManager());
-            } else if (getStaggeredGridLayoutManager().getOrientation() == StaggeredGridLayoutManager.HORIZONTAL) {
-                return HorizontalStaggeredGrid.findLastCompletelyVisibleItemPositions(getStaggeredGridLayoutManager());
-            }
+    public int getLastVisibleItemPosition() {
+        if (getChildCount() >= 0) {
+            return getChildAdapterPosition(getChildAt(getChildCount() - 1));
         }
         return RecyclerView.NO_POSITION;
     }
@@ -718,7 +716,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     /**
      * @return true if all contents are visible within view port
      */
-    public final boolean hasAllContentsVisible() {
+    public boolean hasAllContentsVisible() {
         return (getFirstVisibleItemPosition() != RecyclerView.NO_POSITION && getLastVisibleItemPosition() != RecyclerView.NO_POSITION) && (getFirstVisibleItemPosition() == 0 && getLastVisibleItemPosition() == getLastDisplayedContentsIndex());
     }
 
@@ -759,7 +757,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     /**
      * @return null if no {@link StaggeredGridLayoutManager} instance found
      */
-    public StaggeredGridLayoutManager getStaggeredGridLayoutManager() {
+    public final StaggeredGridLayoutManager getStaggeredGridLayoutManager() {
         return getLayoutManager(getRecyclerView(), StaggeredGridLayoutManager.class);
     }
 
@@ -773,7 +771,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      *
      * @return LinearLayoutManager
      */
-    public final LinearLayoutManager asVerticalListView() {
+    public LinearLayoutManager asVerticalListView() {
         this.presentation = PeasyRecyclerView.Presentation.VerticalList;
         return asListView(LinearLayoutManager.VERTICAL);
     }
@@ -787,7 +785,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      *
      * @return LinearLayoutManager
      */
-    public final LinearLayoutManager asHorizontalListView() {
+    public LinearLayoutManager asHorizontalListView() {
         this.presentation = PeasyRecyclerView.Presentation.HorizontalList;
         return asListView(LinearLayoutManager.HORIZONTAL);
     }
@@ -903,7 +901,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @return column size
      * @see PeasyPresentationTemplate#getColumnSize(Bundle)
      */
-    public int getColumnSize() {
+    public final int getColumnSize() {
         return PeasyPresentationTemplate.getColumnSize(getExtraData());
     }
 
@@ -912,7 +910,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @return accepted column size
      * @see PeasyPresentationTemplate#issueColumnSize(int)
      */
-    private int issueColumnSize(int columnSize) {
+    public final int issueColumnSize(int columnSize) {
         return PeasyPresentationTemplate.issueColumnSize(columnSize);
     }
 
@@ -922,14 +920,14 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @return PeasyGridDividerItemDecoration
      * @see PeasyPresentationTemplate#issuePeasyGridDivider(Context, int)
      */
-    private PeasyGridDividerItemDecoration issuePeasyGridDivider(Context context, int columnSize) {
+    public final PeasyGridDividerItemDecoration issuePeasyGridDivider(Context context, int columnSize) {
         return PeasyPresentationTemplate.issuePeasyGridDivider(context, columnSize);
     }
 
     /**
      * Remove all added {@link RecyclerView.ItemDecoration}
      */
-    public void resetItemDecorations() {
+    public final void resetItemDecorations() {
         for (int i = 0; i < getRecyclerView().getItemDecorationCount(); i++) {
             try {
                 getRecyclerView().removeItemDecoration(getRecyclerView().getItemDecorationAt(i));
@@ -941,11 +939,23 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     /**
      * Remove all added {@link RecyclerView.ItemAnimator}
      */
-    public void resetItemAnimator() {
+    public final void resetItemAnimator() {
         try {
             getRecyclerView().setItemAnimator(new DefaultItemAnimator());
         } catch (Exception ignored) {
         }
+    }
+
+    /**
+     * inflate parent view with layoutId
+     *
+     * @param inflater inflater
+     * @param parent   parent
+     * @param layoutId layoutId
+     * @return View
+     */
+    public final View inflateView(LayoutInflater inflater, ViewGroup parent, int layoutId) {
+        return inflater.inflate(layoutId, parent, false);
     }
 
     //=============================
