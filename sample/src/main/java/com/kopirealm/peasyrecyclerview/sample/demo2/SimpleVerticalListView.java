@@ -20,6 +20,7 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 public class SimpleVerticalListView extends PeasyRecyclerView.VerticalList<String> {
 
     private PresentorListener listener;
+    private Integer lastState = null;
 
     public SimpleVerticalListView(@NonNull Context context, RecyclerView recyclerView, ArrayList<String> arrayList, @NonNull PresentorListener listener) {
         // TODO Initialization
@@ -32,7 +33,10 @@ public class SimpleVerticalListView extends PeasyRecyclerView.VerticalList<Strin
     @Override
     public void onViewAttachedToWindow(@NonNull RecyclerView.ViewHolder holder) {
         super.onViewAttachedToWindow(holder);
-        this.listener.onViewScrollStateChanged(getRecyclerView(), SCROLL_STATE_IDLE);
+        if (lastState == null) {
+            this.listener.onViewScrollStateChanged(getRecyclerView(), SCROLL_STATE_IDLE);
+            lastState = SCROLL_STATE_IDLE;
+        }
     }
 
     @Override
@@ -58,6 +62,7 @@ public class SimpleVerticalListView extends PeasyRecyclerView.VerticalList<Strin
     @Override
     public void onViewScrollStateChanged(RecyclerView recyclerView, int newState) {
         super.onViewScrollStateChanged(recyclerView, newState);
+        lastState = newState;
         this.listener.onViewScrollStateChanged(recyclerView, newState);
     }
 

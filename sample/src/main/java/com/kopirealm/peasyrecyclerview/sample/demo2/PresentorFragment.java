@@ -129,11 +129,9 @@ public class PresentorFragment extends Fragment
                         state.setText(getString(R.string.shown_format, "" + recyclerView.getChildCount()));
                     }
                     break;
-
                 case SCROLL_STATE_DRAGGING:
                     state.setText(getString(R.string.state_format, "Dragging"));
                     break;
-
                 case SCROLL_STATE_SETTLING:
                     state.setText(getString(R.string.state_format, "Settling"));
                     break;
