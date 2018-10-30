@@ -9,7 +9,7 @@ import android.view.View;
 public abstract class PeasyContentViewHolder extends PeasyViewHolder {
 
     public static final int VIEWTYPE_ID = PeasyContentViewHolder.class.hashCode();
-    @Deprecated
+
     public static final int VIEWTYPE_CONTENT = VIEWTYPE_ID;
 
     public PeasyContentViewHolder(View itemView) {

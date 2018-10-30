@@ -42,7 +42,6 @@ public abstract class PeasyViewHolder extends RecyclerView.ViewHolder {
 
     public static final int VIEWTYPE_NOTHING = Integer.MIN_VALUE;
 
-    @Deprecated
     public PeasyViewHolder(View itemView) {
         super(itemView);
     }
