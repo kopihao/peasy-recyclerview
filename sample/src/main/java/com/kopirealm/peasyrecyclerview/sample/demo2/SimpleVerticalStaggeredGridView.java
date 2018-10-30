@@ -26,7 +26,7 @@ public class SimpleVerticalStaggeredGridView extends PeasyRecyclerView.VerticalS
         // TODO Initialization
         super(context, recyclerView, arrayList, 3);
         this.listener = listener;
-        this.listener.onContentChanged(getProvidedContentCount());
+        this.listener.onContentChanged(getItemCount());
         this.listener.onViewScrollStateChanged(getRecyclerView(), SCROLL_STATE_IDLE);
     }
 

@@ -26,7 +26,7 @@ public class SimpleVerticalListView extends PeasyRecyclerView.VerticalList<Strin
         // TODO Initialization
         super(context, recyclerView, arrayList);
         this.listener = listener;
-        this.listener.onContentChanged(getProvidedContentCount());
+        this.listener.onContentChanged(getItemCount());
         this.listener.onViewScrollStateChanged(getRecyclerView(), SCROLL_STATE_IDLE);
     }
 

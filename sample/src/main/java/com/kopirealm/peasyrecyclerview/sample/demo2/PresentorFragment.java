@@ -53,7 +53,7 @@ public class PresentorFragment extends Fragment
             sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
             presentation = PeasyRecyclerView.Presentation.values()[sectionNumber];
         }
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 2; i++) {
             arrayList.add("" + i);
         }
     }
@@ -108,8 +108,14 @@ public class PresentorFragment extends Fragment
                 }
                 break;
             case R.id.fabOpt1:
+                if (!peasyRecyclerView.isEmpty()) {
+                    peasyRecyclerView.removeContent(peasyRecyclerView.getLastItemIndex());
+                    onContentChanged(peasyRecyclerView.getItemCount());
+                }
                 break;
             case R.id.fabOpt2:
+                peasyRecyclerView.addContent("" + peasyRecyclerView.getItemCount());
+                onContentChanged(peasyRecyclerView.getItemCount());
                 break;
         }
     }
