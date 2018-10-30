@@ -13,7 +13,7 @@ def useDistScript = noDistScript;
 def requireJAVADOC = false;
 
 ext {
-    _supportLibrary = '27.+'
+    _supportLibrary = '27.1.1'
     _compileSdkVersion = 27
     _targetSdkVersion = 27
     _minSdkVersion = 16
