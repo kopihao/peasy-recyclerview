@@ -49,8 +49,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
 
     private Context context;
     private RecyclerView recyclerView;
-    private ArrayList<T> displayedContents;
-    private ArrayList<T> providedContents;
+    private ArrayList<T> contents;
     private Bundle extraData = null;
     private PeasyHeaderContent<T> headerContent = null;
     private PeasyFooterContent<T> footerContent = null;
@@ -127,8 +126,8 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      *
      * @param fab     FloatingActionButton
      * @param enhance enhance FAB UX
-     * @see #enhanceFAB(RecyclerView, FloatingActionButton, int, int)
-     * @see #enhanceFAB(RecyclerView, FloatingActionButton, MotionEvent)
+     * @see #enhanceFAB(FloatingActionButton, int, int)
+     * @see #enhanceFAB(FloatingActionButton, MotionEvent)
      */
     public void anchorFAB(FloatingActionButton fab, boolean enhance) {
         this.fab = fab;
@@ -143,7 +142,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
             @Override
             public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
                 if (isEnhancedFAB() && getFab() != null) {
-                    enhanceFAB(rv, getFab(), e);
+                    enhanceFAB(getFab(), e);
                 }
                 onViewInterceptTouchEvent(rv, e);
                 return false;
@@ -171,7 +170,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
                 recyclerView.post(new Runnable() {
                     @Override
                     public void run() {
-                        enhanceFAB(recyclerView, getFab(), dx, dy);
+                        enhanceFAB(getFab(), dx, dy);
                         onViewScrolled(recyclerView, dx, dy);
                         synchronized (lockEOL) {
                             if (!lockEOL.get()) {
@@ -210,12 +209,11 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * Enhanced FAB UX Logic
      * Handle RecyclerView scrolling
      *
-     * @param recyclerView recyclerView
-     * @param fab          FloatingActionButton
-     * @param dx           scrolling dx
-     * @param dy           scrolling dy
+     * @param fab FloatingActionButton
+     * @param dx  scrolling dx
+     * @param dy  scrolling dy
      */
-    private void enhanceFAB(RecyclerView recyclerView, final FloatingActionButton fab, int dx, int dy) {
+    private void enhanceFAB(final FloatingActionButton fab, int dx, int dy) {
         if (isEnhancedFAB() && getFab() != null) {
             final FloatingActionButton mFloatingActionButton = this.fab;
             if (getLinearLayoutManager() != null) {
@@ -237,11 +235,10 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * Handle RecyclerView scrolled
      * If all item visible within view port, FAB will show
      *
-     * @param rv  RecyclerView
      * @param fab FloatingActionButton
      * @param e   MotionEvent
      */
-    private void enhanceFAB(RecyclerView rv, final FloatingActionButton fab, MotionEvent e) {
+    private void enhanceFAB(final FloatingActionButton fab, MotionEvent e) {
         if (hasAllContentsVisible()) {
             if (fab.getVisibility() != View.VISIBLE) {
                 fab.show();
@@ -268,18 +265,10 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     }
 
     /**
-     * @return current contents with {@link PeasyCoordinatorContent}
+     * @return current contents
      */
-    public ArrayList<T> getDisplayedContents() {
-        return new ArrayList<>(this.displayedContents);
-    }
-
-
-    /**
-     * @return current contents without {@link PeasyCoordinatorContent}
-     */
-    public ArrayList<T> getProvidedContents() {
-        return new ArrayList<>(this.providedContents);
+    public ArrayList<T> getContents() {
+        return this.contents;
     }
 
     /**
@@ -316,25 +305,61 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     //=============================
 
     /**
-     * @param content provided contents
+     * @param content provided content
      */
     public void setContent(final ArrayList<T> content) {
-        this.providedContents = (content == null) ? new ArrayList<T>() : new ArrayList<>(content);
-        this.displayedContents = (content == null) ? new ArrayList<T>() : new ArrayList<>(content);
+        this.contents = (content == null) ? new ArrayList<T>() : new ArrayList<>(content);
         if (this.headerContent != null) {
-            displayedContents.add(0, this.headerContent.getData());
+            this.contents.add(0, this.headerContent.getData());
         }
         if (this.footerContent != null) {
-            displayedContents.add(this.footerContent.getData());
+            this.contents.add(this.footerContent.getData());
         }
-        this.refreshView();
+        super.notifyDataSetChanged();
+        onContentChanged();
     }
 
     /**
-     * Notify provided data changes
+     * @param content provided content to add
      */
-    public void refreshView() {
-        super.notifyDataSetChanged();
+    public void addContent(T content) {
+        addContent(getItemCount(), content);
+    }
+
+    /**
+     * @param index   index to add
+     * @param content provided content to add
+     */
+    public void addContent(int index, T content) {
+        getContents().add(index, content);
+        super.notifyItemInserted(index);
+        onContentChanged();
+    }
+
+    /**
+     * @param content provided content to remove
+     */
+    public void removeContent(T content) {
+        removeContent(getContents().indexOf(content));
+    }
+
+    /**
+     * @param index index to remove
+     */
+    public void removeContent(int index) {
+        if (index == -1) return;
+        getContents().remove(index);
+        super.notifyItemRemoved(index);
+        onContentChanged();
+    }
+
+    /**
+     * When provided data changes
+     *
+     * @see #setContent(ArrayList)
+     * @see #addContent(Object)
+     */
+    public void onContentChanged() {
     }
 
     /**
@@ -390,7 +415,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     }
 
     /**
-     * @return true if reaching end of contents
+     * @return true if reaching end of content
      * @see #hasReachedEndOfList(int)
      */
     public final boolean hasReachedEndOfList() {
@@ -399,10 +424,10 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
 
     /**
      * @param threshold Minimum value is {@value DefaultEOLThreshold } , recommended value is [1,5],
-     * @return true if reaching end of contents within provided threshold
+     * @return true if reaching end of content within provided threshold
      */
     public final boolean hasReachedEndOfList(final int threshold) {
-        final int totalItemCount = getDisplayedContentCount();
+        final int totalItemCount = getItemCount();
         final int lastVisibleItem = getLastVisibleItemPosition();
         return (totalItemCount <= (lastVisibleItem + Math.max(DefaultEOLThreshold, threshold)));
     }
@@ -446,7 +471,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      */
     private int getHeaderViewType(int position) {
         if (headerContent != null) {
-            if (headerContent.getData() == getDisplayedContentAt(position) && (position == 0)) {
+            if (headerContent.getData() == getItem(position) && (position == 0)) {
                 return headerContent.getViewtype();
             }
         }
@@ -461,7 +486,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      */
     public int getFooterViewType(int position) {
         if (footerContent != null) {
-            if (footerContent.getData() == getDisplayedContentAt(position) && (position == getLastDisplayedContentsIndex())) {
+            if (footerContent.getData() == getItem(position) && (position == getLastItemIndex())) {
                 return footerContent.getViewtype();
             }
         }
@@ -476,12 +501,12 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
         if (PeasyFooterViewHolder.VIEWTYPE_NOTHING != getFooterViewType(position)) {
             return getFooterViewType(position);
         }
-        return getItemViewType(position, getDisplayedContentAt(position));
+        return getItemViewType(position, getItem(position));
     }
 
     /**
      * Enhanced Implementation Layer of {@link RecyclerView.Adapter#getItemViewType(int)}
-     * Define and Return view type of contents
+     * Define and Return view type of content
      *
      * @param position position
      * @param item     item
@@ -522,7 +547,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
 
     /**
      * Enhanced Implementation Layer of {@link RecyclerView.Adapter#onCreateViewHolder(ViewGroup, int)}
-     * Define and Return {@link PeasyViewHolder} of contents
+     * Define and Return {@link PeasyViewHolder} of content
      *
      * @param inflater
      * @param parent
@@ -555,17 +580,17 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
         if (holder == null) return;
         try {
             if (headerContent != null && holder.isHeaderView()) {
-                headerContent.onBindViewHolder(context, holder.asIs(PeasyHeaderViewHolder.class), position, getDisplayedContentAt(position));
+                headerContent.onBindViewHolder(context, holder.asIs(PeasyHeaderViewHolder.class), position, getItem(position));
             }
         } catch (Exception ignored) {
         }
         try {
             if (footerContent != null && holder.isFooterView()) {
-                footerContent.onBindViewHolder(context, holder.asIs(PeasyFooterViewHolder.class), position, getDisplayedContentAt(position));
+                footerContent.onBindViewHolder(context, holder.asIs(PeasyFooterViewHolder.class), position, getItem(position));
             }
         } catch (Exception ignored) {
         }
-        onBindViewHolder(context, holder, position, getDisplayedContentAt(position));
+        onBindViewHolder(context, holder, position, getItem(position));
     }
 
     /**
@@ -584,94 +609,35 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     //=============================
 
     /**
-     * @return value of {@link #getDisplayedContentCount()}
+     * @return content size
      */
-    @Deprecated
     @Override
-    public final int getItemCount() {
-        return getProvidedContentCount();
+    public int getItemCount() {
+        return this.contents == null ? 0 : this.contents.size();
     }
 
     /**
-     * @return Size of displayed contents with {@link PeasyCoordinatorContent}
+     * @return last index in content
      */
-    public final int getDisplayedContentCount() {
-        return (this.displayedContents == null) ? 0 : this.displayedContents.size();
-    }
-
-    /**
-     * @return Size of provided contents without {@link PeasyCoordinatorContent}
-     */
-    public final int getProvidedContentCount() {
-        return (this.providedContents == null) ? 0 : this.providedContents.size();
-    }
-
-    /**
-     * @return true if no contents displayed
-     */
-    public final boolean isEmpty() {
-        return getDisplayedContentCount() <= 0;
-    }
-
-    /**
-     * @return true if no contents provided
-     */
-    public final boolean isEmptyContent() {
-        return getProvidedContentCount() <= 0;
-    }
-
-    /**
-     * @return last index of displayed content with {@link PeasyCoordinatorContent}
-     */
-    public final int getLastDisplayedContentsIndex() {
-        return getDisplayedContentCount() <= 0 ? 0 : this.getDisplayedContentCount() - 1;
-    }
-
-    /**
-     * @return last index of provided content without {@link PeasyCoordinatorContent}
-     */
-    public final int getLastProvidedContentsIndex() {
-        return getProvidedContentCount() <= 0 ? 0 : this.getProvidedContentCount() - 1;
+    public int getLastItemIndex() {
+        return Math.max(0, this.getItemCount() - 1);
     }
 
     /**
      * @param position displayed content position
-     * @return value of {@link #getDisplayedContentAt(int)}
+     * @return content at position
      */
-    @Deprecated
     public final T getItem(int position) {
-        return getDisplayedContentAt(position);
+        return this.contents.get(position);
     }
 
     /**
-     * @param position displayed content position
-     * @return displayed content with {@link PeasyCoordinatorContent}
+     * @return content size is zero
      */
-    public final T getDisplayedContentAt(int position) {
-        return getDisplayedContentCount() <= 0 ? null : this.displayedContents.get(position);
+    public boolean isEmpty() {
+        return this.getItemCount() <= 0;
     }
 
-    /**
-     * @param position displayed content position
-     * @return displayed content with {@link PeasyCoordinatorContent}
-     */
-    public final T getProvidedItemAt(int position) {
-        return getProvidedContentCount() <= 0 ? null : this.providedContents.get(position);
-    }
-
-    /**
-     * @return last index of displayed content with {@link PeasyCoordinatorContent}
-     */
-    public final T getLastDisplayedContent() {
-        return getDisplayedContentAt(getLastDisplayedContentsIndex());
-    }
-
-    /**
-     * @return last index of provided content without {@link PeasyCoordinatorContent}
-     */
-    public final T getLastProvidedContent() {
-        return getProvidedItemAt(getLastProvidedContentsIndex());
-    }
 
     //=============================
     // Content Visibility
@@ -718,16 +684,18 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      */
     public int getLastVisibleItemPosition() {
         if (getChildCount() >= 0) {
-            return getChildAdapterPosition(getChildAt(getChildCount() - 1));
+            int lastPos = getChildAdapterPosition(getChildAt(getChildCount() - 1));
+            lastPos = (lastPos != -1) ? lastPos : getChildAdapterPosition(getChildAt(getChildCount() - 2));
+            return lastPos;
         }
         return RecyclerView.NO_POSITION;
     }
 
     /**
-     * @return true if all contents are visible within view port
+     * @return true if all content are visible within view port
      */
     public boolean hasAllContentsVisible() {
-        return (getFirstVisibleItemPosition() != RecyclerView.NO_POSITION && getLastVisibleItemPosition() != RecyclerView.NO_POSITION) && (getFirstVisibleItemPosition() == 0 && getLastVisibleItemPosition() == getLastDisplayedContentsIndex());
+        return (getFirstVisibleItemPosition() != RecyclerView.NO_POSITION && getLastVisibleItemPosition() != RecyclerView.NO_POSITION) && (getFirstVisibleItemPosition() == 0 && getLastVisibleItemPosition() == getLastItemIndex());
     }
 
     //=============================
