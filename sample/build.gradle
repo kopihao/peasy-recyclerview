@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 ext {
-    _supportLibrary = '28.0.0'
-    _compileSdkVersion = 28
-    _targetSdkVersion = 28
+    _supportLibrary = '27.+'
+    _compileSdkVersion = 27
+    _targetSdkVersion = 27
     _minSdkVersion = 16
     _versionCode = 1
-    _versionName = "1.0.10"
+    _versionName = "1.0.9"
 }
 
 android {
