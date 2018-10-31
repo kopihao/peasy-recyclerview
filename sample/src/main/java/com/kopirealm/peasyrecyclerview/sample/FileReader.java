@@ -27,7 +27,7 @@ public class FileReader {
         }
     }
 
-    public static String readRawFile(Context context, int id) {
+    private static String readRawFile(Context context, int id) {
         final InputStream inputStream = context.getResources().openRawResource(id);
         final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         int ctr;

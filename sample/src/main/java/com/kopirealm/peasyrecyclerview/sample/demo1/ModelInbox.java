@@ -6,7 +6,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 // TODO Define view holder to PeasyRVInbox Content, find its views
-public class ModelInbox {
+class ModelInbox {
 
     public enum InboxState {
         Read, Unread, Header, Footer
@@ -24,7 +24,7 @@ public class ModelInbox {
         this.state = state;
     }
 
-    static ModelInbox buildInboxMessage(String title, String message, String sender, boolean read) {
+    private static ModelInbox buildInboxMessage(String title, String message, String sender, boolean read) {
         return new ModelInbox(title, message, sender, (read) ? InboxState.Read : InboxState.Unread);
     }
 

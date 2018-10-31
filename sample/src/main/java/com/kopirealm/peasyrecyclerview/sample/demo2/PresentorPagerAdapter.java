@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 public class PresentorPagerAdapter extends FragmentPagerAdapter {
 
-    private int totalSize = 0;
+    private int totalSize;
 
     PresentorPagerAdapter(FragmentManager fm, int totalSize) {
         super(fm);

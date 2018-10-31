@@ -11,7 +11,7 @@ public abstract class PeasyFooterViewHolder extends PeasyViewHolder {
 
     public static final int VIEWTYPE_ID = PeasyFooterViewHolder.class.hashCode();
 
-    public static final int VIEWTYPE_FOOTER = VIEWTYPE_ID;
+    public static int VIEWTYPE_FOOTER = VIEWTYPE_ID;
 
     public PeasyFooterViewHolder(View itemView) {
         super(itemView);

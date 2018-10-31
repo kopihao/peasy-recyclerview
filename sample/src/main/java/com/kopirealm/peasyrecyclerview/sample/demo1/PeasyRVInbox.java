@@ -57,7 +57,7 @@ import java.util.ArrayList;
 //TODO This PeasyRecyclerView initialized undefined presentation, it will initialize presentation during run time
 public final class PeasyRVInbox extends PeasyRecyclerView<ModelInbox> {
 
-    public PeasyRVInbox(@NonNull Context context, RecyclerView recyclerView, FloatingActionButton fab, ArrayList<ModelInbox> arrayList) {
+    PeasyRVInbox(@NonNull Context context, RecyclerView recyclerView, FloatingActionButton fab, ArrayList<ModelInbox> arrayList) {
         // TODO Initialization
         super(context, recyclerView, arrayList);
         super.anchorFAB(fab);
@@ -111,7 +111,7 @@ public final class PeasyRVInbox extends PeasyRecyclerView<ModelInbox> {
     @Override
     protected PeasyViewHolder onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
         // TODO Do Nothing but initializing view holder with layout_id
-        if (InboxModelViewHolder.VIEWTYPE_CONTENT == viewType) {
+        if (InboxModelViewHolder.VIEWTYPE_ID == viewType) {
             return new InboxModelViewHolder(InboxModelViewHolder.inflateView(inflater, parent, InboxModelViewHolder.LAYOUT_ID));
         }
         return null;
@@ -120,7 +120,7 @@ public final class PeasyRVInbox extends PeasyRecyclerView<ModelInbox> {
     @Override
     protected int getItemViewType(int position, ModelInbox item) {
         // TODO Do Nothing but returning view type accordingly
-        return (item == null) ? PeasyViewHolder.VIEWTYPE_NOTHING : InboxModelViewHolder.VIEWTYPE_CONTENT;
+        return (item == null) ? InboxModelViewHolder.VIEWTYPE_NOTHING : InboxModelViewHolder.VIEWTYPE_CONTENT;
     }
 
     @Override
@@ -135,7 +135,7 @@ public final class PeasyRVInbox extends PeasyRecyclerView<ModelInbox> {
     public void onItemClick(final View v, int viewType, final int position, final ModelInbox item, PeasyViewHolder vh) {
         // TODO Do Nothing but defining click action on PeasyRVInbox item
         Log.d("[LOG]", getClass().getSimpleName() + "#" + "getColumnSize::" + this.getColumnSize());
-        if (viewType == InboxModelViewHolder.VIEWTYPE_CONTENT) {
+        if (viewType == InboxModelViewHolder.VIEWTYPE_ID) {
             new AlertDialog.Builder(getContext())
                     .setTitle(item.title)
                     .setMessage(item.message)
@@ -148,12 +148,12 @@ public final class PeasyRVInbox extends PeasyRecyclerView<ModelInbox> {
                     })
                     .show();
         } else {
-            if (viewType == InboxHeaderViewHolder.VIEWTYPE_HEADER) {
+            if (viewType == InboxHeaderViewHolder.VIEWTYPE_ID) {
                 if (vh != null && vh.isInstance(InboxHeaderViewHolder.class)) {
                     final InboxHeaderViewHolder viewHolder = (InboxHeaderViewHolder) vh;
                     Toast.makeText(getContext(), viewHolder.tvTitle.getText(), Toast.LENGTH_SHORT).show();
                 }
-            } else if (viewType == InboxFooterViewHolder.VIEWTYPE_FOOTER) {
+            } else if (viewType == InboxFooterViewHolder.VIEWTYPE_ID) {
                 if (vh != null && vh.isInstance(InboxFooterViewHolder.class)) {
                     final InboxFooterViewHolder viewHolder = (InboxFooterViewHolder) vh;
                     Toast.makeText(getContext(), viewHolder.tvTitle.getText(), Toast.LENGTH_SHORT).show();
@@ -251,49 +251,46 @@ public final class PeasyRVInbox extends PeasyRecyclerView<ModelInbox> {
         return layoutManager;
     }
 
-    // TODO Define data object represent PeasyRVInbox item, provide to PeasyRecyclerView as T(generic type)
-
-
     // TODO Define view holder to PeasyRVInbox Header, find its views
-    public final class InboxHeaderViewHolder extends PeasyHeaderViewHolder {
-        public final static int LAYOUT_ID = R.layout.li_inbox_header;
+    final class InboxHeaderViewHolder extends PeasyHeaderViewHolder {
+        final static int LAYOUT_ID = R.layout.li_inbox_header;
         final TextView tvTitle;
 
-        public InboxHeaderViewHolder(View itemView) {
+        InboxHeaderViewHolder(View itemView) {
             super(itemView);
             tvTitle = itemView.findViewById(R.id.tvTitle);
         }
 
         // TODO Optional practice to define view population within view holder
-        public void createView(ModelInbox item) {
+        void createView(ModelInbox item) {
             tvTitle.setText("This is Top");
         }
     }
 
     // TODO Define view holder to PeasyRVInbox Footer, find its views
     public final class InboxFooterViewHolder extends PeasyFooterViewHolder {
-        public final static int LAYOUT_ID = R.layout.li_inbox_footer;
+        final static int LAYOUT_ID = R.layout.li_inbox_footer;
         final TextView tvTitle;
 
-        public InboxFooterViewHolder(View itemView) {
+        InboxFooterViewHolder(View itemView) {
             super(itemView);
             tvTitle = itemView.findViewById(R.id.tvTitle);
         }
 
         // TODO Optional practice to define view population within view holder
-        public void createView(ModelInbox item) {
+        void createView(ModelInbox item) {
             tvTitle.setText("This is Bottom");
         }
-
     }
 
-    public final class InboxModelViewHolder extends PeasyContentViewHolder {
-        public final static int LAYOUT_ID = R.layout.li_inbox_model;
+    final class InboxModelViewHolder extends PeasyContentViewHolder {
+
+        final static int LAYOUT_ID = R.layout.li_inbox_model;
 
         final TextView tvTitle, tvMessage, tvSender;
         final LinearLayout llInboxContainer;
 
-        public InboxModelViewHolder(View itemView) {
+        InboxModelViewHolder(View itemView) {
             super(itemView);
             llInboxContainer = itemView.findViewById(R.id.llInboxContainer);
             tvTitle = itemView.findViewById(R.id.tvTitle);
@@ -302,7 +299,7 @@ public final class PeasyRVInbox extends PeasyRecyclerView<ModelInbox> {
         }
 
         // TODO Optional practice to define view population within view holder
-        public void createView(ModelInbox item) {
+        void createView(ModelInbox item) {
             if (item == null) return;
             if (item.state.equals(ModelInbox.InboxState.Unread)) {
                 tvTitle.setSingleLine(false);

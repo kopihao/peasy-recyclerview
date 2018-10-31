@@ -10,7 +10,7 @@ public abstract class PeasyContentViewHolder extends PeasyViewHolder {
 
     public static final int VIEWTYPE_ID = PeasyContentViewHolder.class.hashCode();
 
-    public static final int VIEWTYPE_CONTENT = VIEWTYPE_ID;
+    public static int VIEWTYPE_CONTENT = VIEWTYPE_ID;
 
     public PeasyContentViewHolder(View itemView) {
         super(itemView);

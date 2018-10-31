@@ -42,7 +42,7 @@ public class SimpleVerticalStaggeredGridView extends PeasyRecyclerView.VerticalS
     @Override
     protected int getItemViewType(int position, String item) {
         // TODO Do Nothing but returning view type accordingly
-        return (item == null) ? PeasyViewHolder.VIEWTYPE_NOTHING : ContentViewHolder.VIEWTYPE_ID;
+        return (item == null) ? ContentViewHolder.VIEWTYPE_NOTHING : ContentViewHolder.VIEWTYPE_ID;
     }
 
     @Override
@@ -82,11 +82,11 @@ public class SimpleVerticalStaggeredGridView extends PeasyRecyclerView.VerticalS
         return this.listener.onItemLongClick(view, viewType, position, item, viewHolder);
     }
 
-    static class ContentViewHolder extends PeasyContentViewHolder {
+    private static class ContentViewHolder extends PeasyContentViewHolder {
         static final int LAYOUT_ID = R.layout.li_demo2;
         TextView tvTitle;
 
-        public ContentViewHolder(View itemView) {
+        ContentViewHolder(View itemView) {
             super(itemView);
             final ViewGroup.LayoutParams lp = itemView.getLayoutParams();
             lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
@@ -95,7 +95,7 @@ public class SimpleVerticalStaggeredGridView extends PeasyRecyclerView.VerticalS
             tvTitle = itemView.findViewById(R.id.tvTitle);
         }
 
-        public void createView(Context context, String item) {
+        void createView(Context context, String item) {
             tvTitle.setText(item);
         }
     }
