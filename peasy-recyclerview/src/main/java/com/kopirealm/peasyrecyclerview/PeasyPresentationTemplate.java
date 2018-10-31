@@ -83,7 +83,7 @@ public class PeasyPresentationTemplate {
     public static abstract class BasicGrid<T> extends PeasyRecyclerView<T> {
 
         BasicGrid(@NonNull Context context, RecyclerView recyclerView, ArrayList<T> arrayList, int columnSize) {
-            super(context, recyclerView, arrayList, bundleColumnSize(new Bundle(), columnSize));
+            super(context, recyclerView, arrayList, PeasyConfigurations.bundleColumnSize(new Bundle(), columnSize));
         }
 
         @Override
@@ -114,7 +114,7 @@ public class PeasyPresentationTemplate {
     public static abstract class VerticalStaggeredGrid<T> extends PeasyRecyclerView<T> {
 
         VerticalStaggeredGrid(@NonNull Context context, RecyclerView recyclerView, ArrayList<T> arrayList, int columnSize) {
-            super(context, recyclerView, arrayList, bundleColumnSize(new Bundle(), columnSize));
+            super(context, recyclerView, arrayList, PeasyConfigurations.bundleColumnSize(new Bundle(), columnSize));
         }
 
         @Override
@@ -157,7 +157,7 @@ public class PeasyPresentationTemplate {
     public static abstract class HorizontalStaggeredGrid<T> extends PeasyRecyclerView<T> {
 
         HorizontalStaggeredGrid(@NonNull Context context, RecyclerView recyclerView, ArrayList<T> arrayList, int columnSize) {
-            super(context, recyclerView, arrayList, bundleColumnSize(new Bundle(), columnSize));
+            super(context, recyclerView, arrayList, PeasyConfigurations.bundleColumnSize(new Bundle(), columnSize));
         }
 
         @Override
