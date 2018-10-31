@@ -52,7 +52,7 @@ public abstract class PeasyViewHolder extends RecyclerView.ViewHolder {
      * @param binder   {@link PeasyViewHolder} itself
      * @param viewType viewType ID
      */
-    void bindWith(final PeasyRecyclerView binder, final int viewType) {
+    <T> void bindWith(final PeasyRecyclerView<T> binder, final int viewType) {
         this.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
