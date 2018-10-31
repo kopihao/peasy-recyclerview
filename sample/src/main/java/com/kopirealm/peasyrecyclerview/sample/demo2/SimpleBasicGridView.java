@@ -37,7 +37,7 @@ public class SimpleBasicGridView extends PeasyRecyclerView.BasicGrid<String> {
     }
 
     @Override
-    public void onViewCreated() {
+    public void onViewReady() {
         this.listener.onViewScrollStateChanged(getRecyclerView(), SCROLL_STATE_IDLE);
     }
 

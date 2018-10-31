@@ -37,7 +37,7 @@ public class SimpleVerticalListView extends PeasyRecyclerView.VerticalList<Strin
     }
 
     @Override
-    public void onViewCreated() {
+    public void onViewReady() {
         this.listener.onViewScrollStateChanged(getRecyclerView(), SCROLL_STATE_IDLE);
     }
 

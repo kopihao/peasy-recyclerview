@@ -90,24 +90,12 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
         this.configureRecyclerViewScrollEvent();
     }
 
-    /**
-     * On First time ViewHolder attached
-     */
-    public void onViewCreated() {
-    }
-
-    /**
-     * On ViewHolder Rendered
-     */
-    public void onViewHolderAttached(@NonNull RecyclerView.ViewHolder viewHolder) {
-    }
-
     @Override
     public final void onViewAttachedToWindow(@NonNull RecyclerView.ViewHolder viewHolder) {
         super.onViewAttachedToWindow(viewHolder);
         if (lastState == null) {
             lastState = RecyclerView.SCROLL_STATE_IDLE;
-            onViewCreated();
+            onViewReady();
         }
         onViewHolderAttached(viewHolder);
     }
@@ -184,7 +172,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
                                 final int eolThreshold = thresholdOfEOL;
                                 if (inDirection && hasReachedEndOfList(eolThreshold)) {
                                     lockEOL.set(!lockEOL.get());
-                                    onViewReachingEndOfList(recyclerView, eolThreshold);
+                                    onViewScrolledBottom(recyclerView, eolThreshold);
                                 }
                             }
                         }
@@ -408,11 +396,11 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
 
     /**
      * To set End Of List threshold
-     * Threshold must excedd {@value DefaultEOLThreshold} in order to trigger callback of {@link #onViewReachingEndOfList(RecyclerView, int)}
+     * Threshold must excedd {@value DefaultEOLThreshold} in order to trigger callback of {@link #onViewScrolledBottom(RecyclerView, int)}
      *
      * @param thresholdOfEOL
      * @see #hasReachedEndOfList(int)
-     * @see #onViewReachingEndOfList(RecyclerView, int)
+     * @see #onViewScrolledBottom(RecyclerView, int)
      */
     public void setThresholdOfEOL(int thresholdOfEOL) {
         if (thresholdOfEOL >= DefaultEOLThreshold) {
@@ -914,6 +902,18 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     //=============================
 
     /**
+     * On first time ViewHolder Rendered
+     */
+    public void onViewReady() {
+    }
+
+    /**
+     * On each timeViewHolder Rendered
+     */
+    public void onViewHolderAttached(@NonNull RecyclerView.ViewHolder viewHolder) {
+    }
+
+    /**
      * Enhanced Implementation Layer of {@link View.OnClickListener#onClick(View)}
      * Target on itemView of {@link PeasyViewHolder}
      * Here you should define recycler view member single click action
@@ -979,7 +979,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @param recyclerView recyclerView
      * @param threshold    threshold
      */
-    public void onViewReachingEndOfList(final RecyclerView recyclerView, final int threshold) {
+    public void onViewScrolledBottom(final RecyclerView recyclerView, final int threshold) {
     }
 
     /**

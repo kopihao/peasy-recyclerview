@@ -214,9 +214,9 @@ public final class PeasyRVInbox extends PeasyRecyclerView<ModelInbox> {
     }
 
     @Override
-    public void onViewReachingEndOfList(RecyclerView recyclerView, int threshold) {
+    public void onViewScrolledBottom(RecyclerView recyclerView, int threshold) {
         // TODO Everything during RecyclerView scrolled to reach End of List
-        super.onViewReachingEndOfList(recyclerView, threshold);
+        super.onViewScrolledBottom(recyclerView, threshold);
         showScrollTopSnackbar(recyclerView);
     }
 

@@ -37,7 +37,7 @@ public class SimpleHorizontalStaggeredGridView extends PeasyRecyclerView.Horizon
     }
 
     @Override
-    public void onViewCreated() {
+    public void onViewReady() {
         this.listener.onViewScrollStateChanged(getRecyclerView(), SCROLL_STATE_IDLE);
     }
 
