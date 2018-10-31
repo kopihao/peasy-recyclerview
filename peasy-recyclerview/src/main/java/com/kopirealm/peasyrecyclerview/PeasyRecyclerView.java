@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+
 /**
  * An Binder as well as a adapter of RecyclerView
  *
@@ -43,6 +45,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     private static final int DisabledEOLThreshold = -1;
     private int thresholdOfEOL = DisabledEOLThreshold;
     private final AtomicBoolean lockEOL = new AtomicBoolean(true);
+    private Integer lastState = null;
 
     //=============================
     // Constructor
@@ -57,12 +60,9 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
         this.extraData = extraData;
         this.recyclerView = recyclerView;
         this.recyclerView.setAdapter(this);
-        this.onCreate(context, recyclerView, arrayList, getExtraData());
-        this.enableNestedScroll(true);
-        this.configureRecyclerViewTouchEvent();
-        this.configureRecyclerViewScrollEvent();
         this.configureRecyclerView(recyclerView);
         this.setContent(arrayList);
+        this.onCreated(this);
     }
 
     //=============================
@@ -72,12 +72,9 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     /**
      * Executes lines of code before constructor ended
      *
-     * @param context      context
-     * @param recyclerView recyclerView
-     * @param arrayList    arrayList
-     * @param extraData    extraData
+     * @param peasyRecyclerView peasyRecyclerView
      */
-    public void onCreate(@NonNull Context context, RecyclerView recyclerView, ArrayList<T> arrayList, Bundle extraData) {
+    protected void onCreated(@NonNull PeasyRecyclerView peasyRecyclerView) {
     }
 
     /**
@@ -88,6 +85,31 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @param recyclerView recyclerView
      */
     protected void configureRecyclerView(RecyclerView recyclerView) {
+        this.enableNestedScroll(true);
+        this.configureRecyclerViewTouchEvent();
+        this.configureRecyclerViewScrollEvent();
+    }
+
+    /**
+     * On First time ViewHolder attached
+     */
+    public void onViewCreated() {
+    }
+
+    /**
+     * On ViewHolder Rendered
+     */
+    public void onViewHolderAttached(@NonNull RecyclerView.ViewHolder viewHolder) {
+    }
+
+    @Override
+    public final void onViewAttachedToWindow(@NonNull RecyclerView.ViewHolder viewHolder) {
+        super.onViewAttachedToWindow(viewHolder);
+        if (lastState == null) {
+            lastState = RecyclerView.SCROLL_STATE_IDLE;
+            onViewCreated();
+        }
+        onViewHolderAttached(viewHolder);
     }
 
     //=============================
@@ -176,9 +198,10 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
                 recyclerView.post(new Runnable() {
                     @Override
                     public void run() {
+                        lastState = newState;
                         onViewScrollStateChanged(recyclerView, newState);
                         synchronized (lockEOL) {
-                            if (lockEOL.get() && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                            if (lockEOL.get() && newState == SCROLL_STATE_IDLE) {
                                 lockEOL.set(!lockEOL.get());
                             }
                         }

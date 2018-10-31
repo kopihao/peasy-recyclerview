@@ -20,23 +20,25 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 public class SimpleHorizontalStaggeredGridView extends PeasyRecyclerView.HorizontalStaggeredGrid<String> {
 
     private PresentorListener listener;
-    private Integer lastState = null;
 
-    public SimpleHorizontalStaggeredGridView(@NonNull Context context, RecyclerView recyclerView, ArrayList<String> arrayList, @NonNull PresentorListener listener) {
+    SimpleHorizontalStaggeredGridView(@NonNull Context context, RecyclerView recyclerView, ArrayList<String> arrayList, @NonNull PresentorListener listener) {
         // TODO Initialization
         super(context, recyclerView, arrayList, 3);
         this.listener = listener;
-        this.listener.onContentChanged(getItemCount());
-        this.listener.onViewScrollStateChanged(getRecyclerView(), SCROLL_STATE_IDLE);
+        this.listener.onContentChanged(getItemCount(), getColumnSize());
     }
 
     @Override
-    public void onViewAttachedToWindow(@NonNull RecyclerView.ViewHolder holder) {
-        super.onViewAttachedToWindow(holder);
-        if (lastState == null) {
-            this.listener.onViewScrollStateChanged(getRecyclerView(), SCROLL_STATE_IDLE);
-            lastState = SCROLL_STATE_IDLE;
+    public void onContentChanged() {
+        super.onContentChanged();
+        if (this.listener != null) {
+            this.listener.onContentChanged(getItemCount(), getColumnSize());
         }
+    }
+
+    @Override
+    public void onViewCreated() {
+        this.listener.onViewScrollStateChanged(getRecyclerView(), SCROLL_STATE_IDLE);
     }
 
     @Override
@@ -62,7 +64,6 @@ public class SimpleHorizontalStaggeredGridView extends PeasyRecyclerView.Horizon
     @Override
     public void onViewScrollStateChanged(RecyclerView recyclerView, int newState) {
         super.onViewScrollStateChanged(recyclerView, newState);
-        lastState = newState;
         this.listener.onViewScrollStateChanged(recyclerView, newState);
     }
 

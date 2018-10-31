@@ -110,19 +110,30 @@ public class PresentorFragment extends Fragment
             case R.id.fabOpt1:
                 if (!peasyRecyclerView.isEmpty()) {
                     peasyRecyclerView.removeContent(peasyRecyclerView.getLastItemIndex());
-                    onContentChanged(peasyRecyclerView.getItemCount());
                 }
                 break;
             case R.id.fabOpt2:
                 peasyRecyclerView.addContent("" + peasyRecyclerView.getItemCount());
-                onContentChanged(peasyRecyclerView.getItemCount());
                 break;
         }
     }
 
     @Override
-    public void onContentChanged(int count) {
-        header.setText(getString(R.string.section_format, presentation, String.format(Locale.ENGLISH, "[%d]", count)));
+    public void onContentChanged(int count, int columns) {
+        switch (presentation) {
+            case VerticalList:
+            case HorizontalList:
+                header.setText(getString(R.string.section_format, presentation, String.format(Locale.ENGLISH, "[%d]", count)));
+                break;
+            case BasicGrid:
+            case VerticalStaggeredGrid:
+            case HorizontalStaggeredGrid:
+                header.setText(getString(R.string.section_format, presentation, String.format(Locale.ENGLISH, "[%d%%%d]", count, columns)));
+                break;
+            default:
+                header.setText(getString(R.string.section_format, presentation, ""));
+                break;
+        }
     }
 
     @Override
