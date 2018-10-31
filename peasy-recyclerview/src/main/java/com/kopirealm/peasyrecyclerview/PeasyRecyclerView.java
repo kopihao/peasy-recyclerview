@@ -238,7 +238,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @param e   MotionEvent
      */
     private void enhanceFAB(final FloatingActionButton fab, MotionEvent e) {
-        if (hasAllContentsVisible()) {
+        if (hasAllItemsShown()) {
             if (fab.getVisibility() != View.VISIBLE) {
                 fab.show();
             }
@@ -637,7 +637,6 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
         return this.getItemCount() <= 0;
     }
 
-
     //=============================
     // Content Visibility
     //=============================
@@ -665,24 +664,24 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     }
 
     /**
-     * Comprehensive findFirstCompletelyVisibleItemPosition() method
+     * Better alternative to findFirstCompletelyVisibleItemPosition() method
      *
      * @return first visible item position from Layout Manager
      */
     public int getFirstVisibleItemPosition() {
-        if (getChildCount() >= 0) {
+        if (getVisibleItemCount() >= 0) {
             return getChildAdapterPosition(getChildAt(0));
         }
         return RecyclerView.NO_POSITION;
     }
 
     /**
-     * Comprehensive findLastVisibleItemPosition() method
+     * Better alternative to findLastVisibleItemPosition() method
      *
      * @return last visible item position from Layout Manager
      */
     public int getLastVisibleItemPosition() {
-        if (getChildCount() >= 0) {
+        if (getVisibleItemCount() >= 0) {
             int lastPos = getChildAdapterPosition(getChildAt(getChildCount() - 1));
             lastPos = (lastPos != -1) ? lastPos : getChildAdapterPosition(getChildAt(getChildCount() - 2));
             return lastPos;
@@ -691,10 +690,17 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     }
 
     /**
-     * @return true if all content are visible within view port
+     * @return number items shown
      */
-    public boolean hasAllContentsVisible() {
-        return (getFirstVisibleItemPosition() != RecyclerView.NO_POSITION && getLastVisibleItemPosition() != RecyclerView.NO_POSITION) && (getFirstVisibleItemPosition() == 0 && getLastVisibleItemPosition() == getLastItemIndex());
+    public int getVisibleItemCount() {
+        return getChildCount();
+    }
+
+    /**
+     * @return true if everything displayed
+     */
+    public boolean hasAllItemsShown() {
+        return getLastVisibleItemPosition() == getLastItemIndex() && getFirstVisibleItemPosition() == 0;
     }
 
     //=============================

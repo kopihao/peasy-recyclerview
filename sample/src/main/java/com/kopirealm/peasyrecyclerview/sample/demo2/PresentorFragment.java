@@ -103,7 +103,7 @@ public class PresentorFragment extends Fragment
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.fabOpt0:
-                if (peasyRecyclerView.getFirstVisibleItemPosition() > 0 && !peasyRecyclerView.hasAllContentsVisible()) {
+                if (peasyRecyclerView.getFirstVisibleItemPosition() > 0 && !peasyRecyclerView.hasAllItemsShown()) {
                     peasyRecyclerView.smoothScrollToFirst();
                 }
                 break;
