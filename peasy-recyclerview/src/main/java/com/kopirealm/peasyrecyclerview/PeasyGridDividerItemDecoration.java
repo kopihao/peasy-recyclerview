@@ -1,5 +1,6 @@
-package com.kopirealm.peasyrecyclerview.decor;
+package com.kopirealm.peasyrecyclerview;
 
+import android.content.Context;
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -17,9 +18,13 @@ public class PeasyGridDividerItemDecoration extends RecyclerView.ItemDecoration 
 
     private boolean mNeedLeftSpacing = false;
 
+    public PeasyGridDividerItemDecoration(Context context, int gridSize) {
+        this(context.getResources().getDimensionPixelSize(R.dimen.peasy_grid_divider_spacing), gridSize);
+    }
+
     public PeasyGridDividerItemDecoration(int gridSpacingPx, int gridSize) {
         mSizeGridSpacingPx = gridSpacingPx;
-        mGridSize = gridSize;
+        mGridSize = PeasyConfigurations.issueColumnSize(gridSize);
     }
 
     @Override

@@ -7,7 +7,9 @@ class PeasyConfigurations {
     private static String ExtraColumnSize = "column_size";
 
     /**
-     * @param columnSize provided columnSize [{@value PeasyRecyclerView#DefaultGridColumnSize}, columnSize|]
+     * ]
+     *
+     * @param columnSize provided columnSize [{@value PeasyRecyclerView#DefaultGridColumnSize}, columnSize]
      * @return valid columns size
      */
     static int issueColumnSize(int columnSize) {
@@ -16,7 +18,7 @@ class PeasyConfigurations {
 
     /**
      * @param bundle     bundle
-     * @param columnSize provided columnSize [{@value PeasyRecyclerView#DefaultGridColumnSize}, columnSize|]
+     * @param columnSize provided columnSize [{@value PeasyRecyclerView#DefaultGridColumnSize}, columnSize]
      * @return bundle with bundled value of {@value  ExtraColumnSize}
      */
     static Bundle bundleColumnSize(Bundle bundle, int columnSize) {

@@ -3,6 +3,7 @@ package com.kopirealm.peasyrecyclerview;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -40,6 +41,12 @@ public class PeasyPresentationTemplate {
         static int findFirstCompletelyVisibleItemPosition(LinearLayoutManager layoutManager) {
             return layoutManager.findFirstCompletelyVisibleItemPosition();
         }
+
+        static LinearLayoutManager newLayoutManager(final Context context) {
+            final LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+            layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            return layoutManager;
+        }
     }
 
     /**
@@ -71,6 +78,12 @@ public class PeasyPresentationTemplate {
             return layoutManager.findFirstCompletelyVisibleItemPosition();
         }
 
+        static LinearLayoutManager newLayoutManager(final Context context) {
+            final LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+            layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            return layoutManager;
+        }
+
     }
 
     /**
@@ -100,6 +113,10 @@ public class PeasyPresentationTemplate {
 
         static int findFirstCompletelyVisibleItemPosition(LinearLayoutManager layoutManager) {
             return layoutManager.findFirstCompletelyVisibleItemPosition();
+        }
+
+        static GridLayoutManager newLayoutManager(final Context context, final int columns) {
+            return new GridLayoutManager(context, PeasyConfigurations.issueColumnSize(columns));
         }
 
     }
@@ -145,6 +162,10 @@ public class PeasyPresentationTemplate {
             return layoutManager.findFirstVisibleItemPositions(into)[0];
         }
 
+        static StaggeredGridLayoutManager newLayoutManager(final Context context, final int columns) {
+            return new StaggeredGridLayoutManager(PeasyConfigurations.issueColumnSize(columns), StaggeredGridLayoutManager.VERTICAL);
+        }
+
     }
 
     /**
@@ -186,6 +207,10 @@ public class PeasyPresentationTemplate {
         static int findFirstCompletelyVisibleItemPositions(StaggeredGridLayoutManager layoutManager) {
             int[] into = new int[layoutManager.getSpanCount()];
             return layoutManager.findFirstVisibleItemPositions(into)[0];
+        }
+
+        static StaggeredGridLayoutManager newLayoutManager(final Context context, final int columns) {
+            return new StaggeredGridLayoutManager(PeasyConfigurations.issueColumnSize(columns), StaggeredGridLayoutManager.HORIZONTAL);
         }
     }
 
