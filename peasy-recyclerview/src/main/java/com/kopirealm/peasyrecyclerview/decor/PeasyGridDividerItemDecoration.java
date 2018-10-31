@@ -24,43 +24,51 @@ public class PeasyGridDividerItemDecoration extends RecyclerView.ItemDecoration 
 
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-        drawDefaultDivider(outRect, view, parent, state);
+        final RecyclerView.LayoutParams layoutParams = ((RecyclerView.LayoutParams) view.getLayoutParams());
+        final int position = layoutParams.getViewAdapterPosition();
+        drawDividerWithOffset(outRect, view, parent, layoutParams, position);
     }
 
-    private void drawDefaultDivider(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+    private void drawDividerWithOffset(Rect outRect, View view, RecyclerView parent, RecyclerView.LayoutParams layoutParams, int position) {
         int frameWidth = (int) ((parent.getWidth() - (float) mSizeGridSpacingPx * (mGridSize - 1)) / mGridSize);
         int padding = parent.getWidth() / mGridSize - frameWidth;
-        int itemPosition = ((RecyclerView.LayoutParams) view.getLayoutParams()).getViewAdapterPosition();
-        if (itemPosition < mGridSize) {
-            outRect.top = 0;
-        } else {
-            outRect.top = mSizeGridSpacingPx;
-        }
-        if (itemPosition % mGridSize == 0) {
-            outRect.left = 0;
-            outRect.right = padding;
-            mNeedLeftSpacing = true;
-        } else if ((itemPosition + 1) % mGridSize == 0) {
-            mNeedLeftSpacing = false;
-            outRect.right = 0;
-            outRect.left = padding;
-        } else if (mNeedLeftSpacing) {
-            mNeedLeftSpacing = false;
-            outRect.left = mSizeGridSpacingPx - padding;
-            if ((itemPosition + 2) % mGridSize == 0) {
-                outRect.right = mSizeGridSpacingPx - padding;
-            } else {
-                outRect.right = mSizeGridSpacingPx / 2;
-            }
-        } else if ((itemPosition + 2) % mGridSize == 0) {
-            mNeedLeftSpacing = false;
-            outRect.left = mSizeGridSpacingPx / 2;
-            outRect.right = mSizeGridSpacingPx - padding;
-        } else {
-            mNeedLeftSpacing = false;
-            outRect.left = mSizeGridSpacingPx / 2;
-            outRect.right = mSizeGridSpacingPx / 2;
-        }
-        outRect.bottom = 0;
+        outRect.set(padding, padding, padding, padding);
     }
+
+//    private void drawDefaultDivider(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+//        int frameWidth = (int) ((parent.getWidth() - (float) mSizeGridSpacingPx * (mGridSize - 1)) / mGridSize);
+//        int padding = parent.getWidth() / mGridSize - frameWidth;
+//        int itemPosition = ((RecyclerView.LayoutParams) view.getLayoutParams()).getViewAdapterPosition();
+//        if (itemPosition < mGridSize) {
+//            outRect.top = 0;
+//        } else {
+//            outRect.top = mSizeGridSpacingPx;
+//        }
+//        if (itemPosition % mGridSize == 0) {
+//            outRect.left = 0;
+//            outRect.right = padding;
+//            mNeedLeftSpacing = true;
+//        } else if ((itemPosition + 1) % mGridSize == 0) {
+//            mNeedLeftSpacing = false;
+//            outRect.right = 0;
+//            outRect.left = padding;
+//        } else if (mNeedLeftSpacing) {
+//            mNeedLeftSpacing = false;
+//            outRect.left = mSizeGridSpacingPx - padding;
+//            if ((itemPosition + 2) % mGridSize == 0) {
+//                outRect.right = mSizeGridSpacingPx - padding;
+//            } else {
+//                outRect.right = mSizeGridSpacingPx / 2;
+//            }
+//        } else if ((itemPosition + 2) % mGridSize == 0) {
+//            mNeedLeftSpacing = false;
+//            outRect.left = mSizeGridSpacingPx / 2;
+//            outRect.right = mSizeGridSpacingPx - padding;
+//        } else {
+//            mNeedLeftSpacing = false;
+//            outRect.left = mSizeGridSpacingPx / 2;
+//            outRect.right = mSizeGridSpacingPx / 2;
+//        }
+//        outRect.bottom = 0;
+//    }
 }
