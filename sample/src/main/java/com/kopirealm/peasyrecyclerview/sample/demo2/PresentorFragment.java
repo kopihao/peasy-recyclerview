@@ -31,7 +31,7 @@ public class PresentorFragment extends Fragment
 
     private int sectionNumber = 0;
     private PeasyRecyclerView.Presentation presentation = PeasyRecyclerView.Presentation.undefined;
-    private PeasyRecyclerView peasyRecyclerView;
+    private PeasyRecyclerView<String> peasyRecyclerView;
     private ArrayList<String> arrayList = new ArrayList<>();
     private TextView header;
     private TextView first;
