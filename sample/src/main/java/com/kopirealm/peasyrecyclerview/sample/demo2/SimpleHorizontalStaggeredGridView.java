@@ -88,6 +88,10 @@ public class SimpleHorizontalStaggeredGridView extends PeasyRecyclerView.Horizon
 
         public ContentViewHolder(View itemView) {
             super(itemView);
+            ViewGroup.LayoutParams lp = itemView.getLayoutParams();
+            lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
+            lp.width = (150 + (int) (Math.abs(Math.random() * 500)));
             tvTitle = itemView.findViewById(R.id.tvTitle);
         }
 
