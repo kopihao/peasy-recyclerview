@@ -5,12 +5,12 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 
-import com.kopirealm.peasyrecyclerview.PeasyRecyclerView;
+import com.kopirealm.peasyrecyclerview.PeasyPresentation;
 import com.kopirealm.peasyrecyclerview.sample.R;
 
 public class ActivityDemo2 extends AppCompatActivity {
 
-    PeasyRecyclerView.Presentation presentation = PeasyRecyclerView.Presentation.VerticalList;
+    PeasyPresentation presentation = PeasyPresentation.VerticalList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

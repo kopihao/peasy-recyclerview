@@ -11,7 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import com.kopirealm.peasyrecyclerview.PeasyRecyclerView;
+import com.kopirealm.peasyrecyclerview.PeasyPresentation;
 import com.kopirealm.peasyrecyclerview.sample.FileReader;
 import com.kopirealm.peasyrecyclerview.sample.R;
 
@@ -23,7 +23,7 @@ public class ActivityDemo1 extends AppCompatActivity {
 
     private JSONObject jsonDemo1;
     private TextView tvPresentation;
-    private PeasyRecyclerView.Presentation inboxPresentation = null;
+    private PeasyPresentation inboxPresentation = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,18 +98,18 @@ public class ActivityDemo1 extends AppCompatActivity {
     }
 
     private void changePeasyRVInboxLayout(final PeasyRVInbox prvInbox) {
-        final int nextOrdinal = (inboxPresentation == null) ? 0 : (inboxPresentation.ordinal() + 1) % PeasyRecyclerView.Presentation.values().length;
-        inboxPresentation = PeasyRecyclerView.Presentation.values()[nextOrdinal];
-        inboxPresentation = (inboxPresentation.equals(PeasyRecyclerView.Presentation.undefined)) ? PeasyRecyclerView.Presentation.VerticalList : inboxPresentation;
-        if (inboxPresentation.equals(PeasyRecyclerView.Presentation.VerticalList)) {
+        final int nextOrdinal = (inboxPresentation == null) ? 0 : (inboxPresentation.ordinal() + 1) % PeasyPresentation.values().length;
+        inboxPresentation = PeasyPresentation.values()[nextOrdinal];
+        inboxPresentation = (inboxPresentation.equals(PeasyPresentation.Undefined)) ? PeasyPresentation.VerticalList : inboxPresentation;
+        if (inboxPresentation.equals(PeasyPresentation.VerticalList)) {
             prvInbox.asVerticalListView();
-        } else if (inboxPresentation.equals(PeasyRecyclerView.Presentation.HorizontalList)) {
+        } else if (inboxPresentation.equals(PeasyPresentation.HorizontalList)) {
             prvInbox.asHorizontalListView();
-        } else if (inboxPresentation.equals(PeasyRecyclerView.Presentation.BasicGrid)) {
+        } else if (inboxPresentation.equals(PeasyPresentation.BasicGrid)) {
             prvInbox.asGridView(3);
-        } else if (inboxPresentation.equals(PeasyRecyclerView.Presentation.VerticalStaggeredGrid)) {
+        } else if (inboxPresentation.equals(PeasyPresentation.VerticalStaggeredGrid)) {
             prvInbox.asVerticalStaggeredGridView(4);
-        } else if (inboxPresentation.equals(PeasyRecyclerView.Presentation.HorizontalStaggeredGrid)) {
+        } else if (inboxPresentation.equals(PeasyPresentation.HorizontalStaggeredGrid)) {
             prvInbox.asHorizontalStaggeredGridView(5);
         }
         prvInbox.setContent(forgingInboxMessage());

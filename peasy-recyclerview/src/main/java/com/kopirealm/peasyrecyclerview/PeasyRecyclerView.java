@@ -28,19 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
 
-    /**
-     * Available Presentations provided by PeasyRecyclerView
-     */
-    public enum Presentation {
-        undefined,
-        VerticalList,
-        HorizontalList,
-        BasicGrid,
-        VerticalStaggeredGrid,
-        HorizontalStaggeredGrid,
-    }
-
-    private Presentation presentation = Presentation.undefined;
+    private PeasyPresentation presentation = PeasyPresentation.Undefined;
     static final int DefaultGridColumnSize = 2;
 
     private Context context;
@@ -283,9 +271,9 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     }
 
     /**
-     * @return current {@link Presentation}
+     * @return current presentation
      */
-    public Presentation getPresentation() {
+    public PeasyPresentation getPresentation() {
         return this.presentation;
     }
 
@@ -752,7 +740,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @return LinearLayoutManager
      */
     public LinearLayoutManager asVerticalListView() {
-        this.presentation = PeasyRecyclerView.Presentation.VerticalList;
+        this.presentation = PeasyPresentation.VerticalList;
         resetItemDecorations();
         resetItemAnimator();
         final LinearLayoutManager layoutManager = PeasyRecyclerView.VerticalList.newLayoutManager(getContext());
@@ -772,7 +760,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @return LinearLayoutManager
      */
     public LinearLayoutManager asHorizontalListView() {
-        this.presentation = PeasyRecyclerView.Presentation.HorizontalList;
+        this.presentation = PeasyPresentation.HorizontalList;
         final LinearLayoutManager layoutManager = PeasyRecyclerView.HorizontalList.newLayoutManager(getContext());
         getRecyclerView().setLayoutManager(layoutManager);
         getRecyclerView().addItemDecoration(new DividerItemDecoration(getContext(), layoutManager.getOrientation()));
@@ -793,7 +781,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @return GridLayoutManager
      */
     public GridLayoutManager asGridView(int columns) {
-        this.presentation = PeasyRecyclerView.Presentation.BasicGrid;
+        this.presentation = PeasyPresentation.BasicGrid;
         resetItemDecorations();
         resetItemAnimator();
         final GridLayoutManager layoutManager = PeasyRecyclerView.BasicGrid.newLayoutManager(getContext(), columns);
@@ -817,7 +805,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @return StaggeredGridLayoutManager
      */
     public StaggeredGridLayoutManager asVerticalStaggeredGridView(final int columns) {
-        this.presentation = PeasyRecyclerView.Presentation.VerticalStaggeredGrid;
+        this.presentation = PeasyPresentation.VerticalStaggeredGrid;
         resetItemDecorations();
         resetItemAnimator();
         final StaggeredGridLayoutManager layoutManager = PeasyRecyclerView.VerticalStaggeredGrid.newLayoutManager(getContext(), columns);
@@ -841,7 +829,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @return StaggeredGridLayoutManager
      */
     public StaggeredGridLayoutManager asHorizontalStaggeredGridView(final int columns) {
-        this.presentation = PeasyRecyclerView.Presentation.HorizontalStaggeredGrid;
+        this.presentation = PeasyPresentation.HorizontalStaggeredGrid;
         resetItemDecorations();
         resetItemAnimator();
         final StaggeredGridLayoutManager layoutManager = PeasyRecyclerView.HorizontalStaggeredGrid.newLayoutManager(getContext(), columns);

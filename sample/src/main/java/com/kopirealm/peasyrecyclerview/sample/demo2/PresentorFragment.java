@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.kopirealm.peasyrecyclerview.PeasyPresentation;
 import com.kopirealm.peasyrecyclerview.PeasyRecyclerView;
 import com.kopirealm.peasyrecyclerview.PeasyViewHolder;
 import com.kopirealm.peasyrecyclerview.sample.R;
@@ -29,8 +30,7 @@ public class PresentorFragment extends Fragment
 
     private static final String ARG_SECTION_NUMBER = "section_number";
 
-    private int sectionNumber = 0;
-    private PeasyRecyclerView.Presentation presentation = PeasyRecyclerView.Presentation.undefined;
+    private PeasyPresentation presentation = PeasyPresentation.Undefined;
     private PeasyRecyclerView<String> peasyRecyclerView;
     private ArrayList<String> arrayList = new ArrayList<>();
     private TextView header;
@@ -50,8 +50,8 @@ public class PresentorFragment extends Fragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
-            presentation = PeasyRecyclerView.Presentation.values()[sectionNumber];
+            int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
+            presentation = PeasyPresentation.values()[sectionNumber];
         }
         for (int i = 0; i < 2; i++) {
             arrayList.add("" + i);

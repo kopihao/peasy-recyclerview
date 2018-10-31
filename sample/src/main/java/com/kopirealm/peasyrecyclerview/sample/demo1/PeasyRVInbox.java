@@ -26,6 +26,7 @@ import com.kopirealm.peasyrecyclerview.PeasyFooterContent;
 import com.kopirealm.peasyrecyclerview.PeasyFooterViewHolder;
 import com.kopirealm.peasyrecyclerview.PeasyHeaderContent;
 import com.kopirealm.peasyrecyclerview.PeasyHeaderViewHolder;
+import com.kopirealm.peasyrecyclerview.PeasyPresentation;
 import com.kopirealm.peasyrecyclerview.PeasyRecyclerView;
 import com.kopirealm.peasyrecyclerview.PeasyViewHolder;
 import com.kopirealm.peasyrecyclerview.sample.R;
@@ -103,8 +104,8 @@ public final class PeasyRVInbox extends PeasyRecyclerView<ModelInbox> {
     @Override
     public void setContent(ArrayList<ModelInbox> arrayList) {
         // TODO Do Nothing but providing content
-        super.setHeaderContent(getPresentation().equals(Presentation.VerticalList) ? headerContent : null);
-        super.setFooterContent(getPresentation().equals(Presentation.VerticalList) ? footerContent : null);
+        super.setHeaderContent(getPresentation().equals(PeasyPresentation.VerticalList) ? headerContent : null);
+        super.setFooterContent(getPresentation().equals(PeasyPresentation.VerticalList) ? footerContent : null);
         super.setContent(arrayList);
     }
 
