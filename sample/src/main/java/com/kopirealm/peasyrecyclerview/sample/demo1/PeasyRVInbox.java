@@ -207,7 +207,7 @@ public final class PeasyRVInbox extends PeasyRecyclerView<ModelInbox> {
     public void onViewScrolled(final RecyclerView recyclerView, int dx, int dy) {
         // TODO Everything during RecyclerView scrolling
         super.onViewScrolled(recyclerView, dx, dy);
-        if (hasReachedEndOfList(1)) {
+        if (hasScrolledBottom(1)) {
             notifyDataSetChanged();
             getFab().hide();
         }
