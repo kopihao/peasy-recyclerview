@@ -3,6 +3,7 @@ package com.kopirealm.peasyrecyclerview.sample.demo2;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 public class SimpleVerticalStaggeredGridView extends PeasyRecyclerView.VerticalStaggeredGrid<String> {
 
     private PresenterListener listener;
+    private SparseArray<Integer> grids = new SparseArray<>();
 
     SimpleVerticalStaggeredGridView(@NonNull Context context, RecyclerView recyclerView, ArrayList<String> arrayList, @NonNull PresenterListener listener) {
         // TODO Initialization
@@ -56,7 +58,14 @@ public class SimpleVerticalStaggeredGridView extends PeasyRecyclerView.VerticalS
     protected void onBindViewHolder(Context context, PeasyViewHolder holder, int position, String item) {
         // TODO Do Nothing but checking instance and populating item to view with view holder
         if (holder.isContentView() || holder.isInstance(ContentViewHolder.class)) {
-            holder.asIs(ContentViewHolder.class).createView(context, item);
+            final View itemView = holder.asIs(ContentViewHolder.class).createView(context, item);
+            final ViewGroup.LayoutParams lp = itemView.getLayoutParams();
+            lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
+            if (grids.get(position) == null) {
+                grids.put(position, (150 + (int) (Math.abs(Math.random() * 500))));
+            }
+            lp.height = grids.get(position);
         }
     }
 
@@ -106,15 +115,12 @@ public class SimpleVerticalStaggeredGridView extends PeasyRecyclerView.VerticalS
 
         ContentViewHolder(View itemView) {
             super(itemView);
-            final ViewGroup.LayoutParams lp = itemView.getLayoutParams();
-            lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
-            lp.height = (150 + (int) (Math.abs(Math.random() * 500)));
             tvTitle = itemView.findViewById(R.id.tvTitle);
         }
 
-        void createView(Context context, String item) {
+        View createView(Context context, String item) {
             tvTitle.setText(item);
+            return itemView;
         }
     }
 }

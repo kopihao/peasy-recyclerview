@@ -109,8 +109,9 @@ public class SimpleVerticalListView extends PeasyRecyclerView.VerticalList<Strin
             tvTitle = itemView.findViewById(R.id.tvTitle);
         }
 
-        void createView(Context context, String item) {
+        View createView(Context context, String item) {
             tvTitle.setText(item);
+            return itemView;
         }
     }
 }
