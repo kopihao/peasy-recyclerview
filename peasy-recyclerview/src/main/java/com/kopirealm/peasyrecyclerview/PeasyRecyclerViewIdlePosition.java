@@ -1,5 +1,5 @@
 package com.kopirealm.peasyrecyclerview;
 
-public enum PeasyScrollPosition {
+public enum PeasyRecyclerViewIdlePosition {
     TOP, BOTTOM,
 }

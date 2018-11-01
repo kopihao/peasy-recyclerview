@@ -43,10 +43,10 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     private boolean enhancedFAB = false;
     private static final int DefaultEOLThreshold = 1;
     private static final int DisabledEOLThreshold = -1;
-    private int thresholdOfEOL = DisabledEOLThreshold;
-    private final AtomicBoolean lockEOL = new AtomicBoolean(true);
+    private int thresholdEOL = DisabledEOLThreshold;
+    private final AtomicBoolean lockEOL = new AtomicBoolean(false);
     private Integer lastState = null;
-    private PeasyScrollPosition scrollPosition = PeasyScrollPosition.TOP;
+    private PeasyRecyclerViewIdlePosition scrollPosition = PeasyRecyclerViewIdlePosition.TOP;
 
     //=============================
     // Constructor
@@ -168,17 +168,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
                     public void run() {
                         enhanceFAB(getFab(), dx, dy);
                         onViewScrolled(recyclerView, dx, dy);
-                        synchronized (lockEOL) {
-                            if (!lockEOL.get()) {
-                                final boolean inDirection = (dx > 0) || (dy > 0);
-                                final int eolThreshold = thresholdOfEOL;
-                                if (inDirection && hasScrolledBottom(eolThreshold)) {
-                                    lockEOL.set(!lockEOL.get());
-                                    if (hasAllItemsShown()) return;
-                                    onViewScrolledToEnd(recyclerView, eolThreshold);
-                                }
-                            }
-                        }
+                        onViewScrolledToEnd(recyclerView, dx, dy);
                     }
                 });
             }
@@ -191,9 +181,17 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
                     public void run() {
                         lastState = newState;
                         onViewScrollStateChanged(recyclerView, newState);
-                        synchronized (lockEOL) {
-                            if (lockEOL.get() && newState == SCROLL_STATE_IDLE) {
-                                lockEOL.set(!lockEOL.get());
+                        if (newState == SCROLL_STATE_IDLE) {
+                            if (checkViewScrolledToFirst()) {
+                                onViewScrolledToFirst(recyclerView);
+                            }
+                            if (checkViewScrolledToLast()) {
+                                onViewScrolledToLast(recyclerView);
+                            }
+                            synchronized (lockEOL) {
+                                if (lockEOL.get()) {
+                                    lockEOL.set(!lockEOL.get());
+                                }
                             }
                         }
                     }
@@ -397,13 +395,13 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     }
 
     /**
-     * @param thresholdOfEOL threshold to detect EOL, must >= {@value DefaultEOLThreshold}
-     * @see #hasScrolledBottom(int) for logic
+     * @param thresholdOfEOL threshold to detect EOL, value must >= {@value DefaultEOLThreshold}
+     * @see #hasScrolledToEnd() for logic
      * @see #onViewScrolledToEnd(RecyclerView, int) for callback
      */
-    private void setThresholdOfEOL(int thresholdOfEOL) {
+    private void setThresholdEOL(int thresholdOfEOL) {
         this.lockEOL.set(!this.lockEOL.get());
-        this.thresholdOfEOL = thresholdOfEOL;
+        this.thresholdEOL = thresholdOfEOL;
     }
 
     /**
@@ -412,7 +410,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @param thresholdOfEOL threshold to detect EOL, must >= {@value DefaultEOLThreshold}
      */
     public void enableScrollEndDetection(int thresholdOfEOL) {
-        setThresholdOfEOL(Math.max(DefaultEOLThreshold, thresholdOfEOL));
+        setThresholdEOL(Math.max(DefaultEOLThreshold, thresholdOfEOL));
     }
 
     /**
@@ -421,25 +419,52 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @see #onViewScrolledToEnd(RecyclerView, int) [callback]
      */
     public void disableScrollEndDetection() {
-        setThresholdOfEOL(DisabledEOLThreshold);
+        setThresholdEOL(DisabledEOLThreshold);
     }
 
     /**
-     * @return true if reaching end of content
-     * @see #hasScrolledBottom(int)
+     * @param recyclerView recyclerView
+     * @param dx           scrolling dx
+     * @param dy           scrolling dy
      */
-    public final boolean hasScrolledBottom() {
-        return hasScrolledBottom(DefaultEOLThreshold);
+    private synchronized void onViewScrolledToEnd(final RecyclerView recyclerView, final int dx, final int dy) {
+        synchronized (lockEOL) {
+            if (!lockEOL.get()) {
+                final boolean inRightDirection = (dx > 0) || (dy > 0);
+                if (inRightDirection && hasScrolledToEnd()) {
+                    lockEOL.set(!lockEOL.get());
+                    if (hasAllItemsShown()) return;
+                    onViewScrolledToEnd(getRecyclerView(), thresholdEOL);
+                }
+            }
+        }
     }
 
     /**
-     * @param threshold Minimum value is {@value DefaultEOLThreshold } , recommended value is [1,5],
-     * @return true if reaching end of content within provided threshold
+     * @return true if view is long and idle where first item visible, vice versa
      */
-    public final boolean hasScrolledBottom(final int threshold) {
+    public final boolean checkViewScrolledToFirst() {
+        if (hasAllItemsShown()) return false;
+        return getFirstVisibleItemPosition() == 0;
+    }
+
+    /**
+     * @return true if view is long and idle where last item visible, vice versa
+     */
+    public final boolean checkViewScrolledToLast() {
+        if (hasAllItemsShown()) return false;
+        return getLastVisibleItemPosition() == getLastItemIndex();
+    }
+
+    /**
+     * @return true if view met the end of list with {@link #thresholdEOL} as threshold
+     * @see #thresholdEOL
+     * @see #onViewScrolled(RecyclerView, int, int)
+     */
+    public final boolean hasScrolledToEnd() {
         final int totalItemCount = getItemCount();
-        final int lastVisibleItem = getLastVisibleItemPosition();
-        return (totalItemCount <= (lastVisibleItem + Math.max(DefaultEOLThreshold, threshold)));
+        final int lastVisibleIndex = getLastVisibleItemPosition();
+        return (totalItemCount <= (lastVisibleIndex + Math.max(DefaultEOLThreshold, thresholdEOL)));
     }
 
     /**
@@ -678,7 +703,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @return first visible item position from Layout Manager
      */
     public int getFirstVisibleItemPosition() {
-        if (getVisibleItemCount() >= 0) {
+        if (getVisibleItemCount() > 0) {
             return getChildAdapterPosition(getChildAt(0));
         }
         return RecyclerView.NO_POSITION;
@@ -688,10 +713,10 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @return last visible item position from Layout Manager
      */
     public int getLastVisibleItemPosition() {
-        if (getVisibleItemCount() >= 0) {
-            int lastPos = getChildAdapterPosition(getChildAt(getChildCount() - 1));
-            lastPos = (lastPos != -1) ? lastPos : getChildAdapterPosition(getChildAt(getChildCount() - 2));
-            return lastPos;
+        if (getVisibleItemCount() > 0) {
+            int itemPos = getChildAdapterPosition(getChildAt(getChildCount() - 1));
+            itemPos = (itemPos != -1) ? itemPos : getChildAdapterPosition(getChildAt(getChildCount() - 2));
+            return itemPos;
         }
         return RecyclerView.NO_POSITION;
     }
@@ -984,28 +1009,33 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @param recyclerView recyclerView
      * @param threshold    threshold
      * @see RecyclerView.OnScrollListener#onScrolled(int, int) Enhanced Implementation
-     * @see #setThresholdOfEOL(int)
+     * @see #onViewScrolledToEnd(RecyclerView, int, int)
+     * @see #setThresholdEOL(int)
      * @see #enableScrollEndDetection(int)
      * @see #disableScrollEndDetection()
-     * @see #thresholdOfEOL
+     * @see #thresholdEOL
      */
     public void onViewScrolledToEnd(final RecyclerView recyclerView, final int threshold) {
     }
 
     /**
-     * Indicate the top of view is completely visible
+     * Indicate scrolled to position where first item is visible
      *
+     * @param recyclerView recyclerView
      * @see RecyclerView.OnScrollListener#onScrolled(int, int) Enhanced Implementation
+     * @see #checkViewScrolledToFirst()
      */
-    public void onViewScrolledTop() {
+    public void onViewScrolledToFirst(final RecyclerView recyclerView) {
     }
 
     /**
-     * Indicate the bottom of view is completely visible
+     * Indicate scrolled to position where last item is visible
      *
+     * @param recyclerView recyclerView
      * @see RecyclerView.OnScrollListener#onScrolled(int, int) Enhanced Implementation
+     * @see #checkViewScrolledToLast()
      */
-    public void onViewScrolledBottom() {
+    public void onViewScrolledToLast(final RecyclerView recyclerView) {
     }
 
     /**

@@ -7,7 +7,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +29,9 @@ public class PresentorFragment extends Fragment
         implements PresentorListener, View.OnClickListener {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
-    private static final int SCROLL_STATE_BOTTOM = 5;
+    private static final int SCROLL_STATE_TOP = 5;
+    private static final int SCROLL_STATE_BOTTOM = 6;
+    private static final int SCROLL_STATE_END = 7;
 
     private PeasyPresentation presentation = PeasyPresentation.Undefined;
     private PeasyRecyclerView<String> peasyRecyclerView;
@@ -142,21 +143,26 @@ public class PresentorFragment extends Fragment
     public void onViewScrollStateChanged(RecyclerView recyclerView, int newState) {
         try {
             switch (newState) {
-                case SCROLL_STATE_IDLE:
-                    state.setText(getString(R.string.state_format, "Idle"));
-                    if (recyclerView.getChildCount() != 0) {
-                        state.setText(getString(R.string.shown_format, "" + recyclerView.getChildCount()));
-                    }
-                    break;
                 case SCROLL_STATE_DRAGGING:
                     state.setText(getString(R.string.state_format, "Dragging"));
                     break;
                 case SCROLL_STATE_SETTLING:
                     state.setText(getString(R.string.state_format, "Settling"));
                     break;
+                case SCROLL_STATE_IDLE:
+                    state.setText(getString(R.string.state_format, "Idle"));
+                    if (recyclerView.getChildCount() != 0) {
+                        state.setText(getString(R.string.shown_format, "" + recyclerView.getChildCount()));
+                    }
+                    break;
+                case SCROLL_STATE_TOP:
+                    Toast.makeText(getContext(), "SCROLL_STATE_TOP", Toast.LENGTH_SHORT).show();
+                    break;
                 case SCROLL_STATE_BOTTOM:
-                    state.setText(getString(R.string.state_format, "Bottom"));
-                    Log.d("PRV", "End");
+                    Toast.makeText(getContext(), "SCROLL_STATE_BOTTOM", Toast.LENGTH_SHORT).show();
+                    break;
+                case SCROLL_STATE_END:
+                    Toast.makeText(getContext(), "SCROLL_STATE_END", Toast.LENGTH_SHORT).show();
                     break;
                 default:
                     throw new Exception("Unknown State");
@@ -181,8 +187,18 @@ public class PresentorFragment extends Fragment
     }
 
     @Override
-    public void onViewScrolledToEnd(RecyclerView recyclerView, int threshold) {
+    public void onViewScrolledToFirst(RecyclerView recyclerView) {
+        onViewScrollStateChanged(recyclerView, SCROLL_STATE_TOP);
+    }
+
+    @Override
+    public void onViewScrolledToLast(RecyclerView recyclerView) {
         onViewScrollStateChanged(recyclerView, SCROLL_STATE_BOTTOM);
+    }
+
+    @Override
+    public void onViewScrolledToEnd(RecyclerView recyclerView, int threshold) {
+        onViewScrollStateChanged(recyclerView, SCROLL_STATE_END);
     }
 
     @Override

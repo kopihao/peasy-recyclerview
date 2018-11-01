@@ -75,6 +75,18 @@ public class SimpleHorizontalListView extends PeasyRecyclerView.HorizontalList<S
     }
 
     @Override
+    public void onViewScrolledToFirst(RecyclerView recyclerView) {
+        super.onViewScrolledToFirst(recyclerView);
+        this.listener.onViewScrolledToFirst(recyclerView);
+    }
+
+    @Override
+    public void onViewScrolledToLast(RecyclerView recyclerView) {
+        super.onViewScrolledToLast(recyclerView);
+        this.listener.onViewScrolledToLast(recyclerView);
+    }
+
+    @Override
     public void onViewScrolledToEnd(RecyclerView recyclerView, int threshold) {
         super.onViewScrolledToEnd(recyclerView, threshold);
         this.listener.onViewScrolledToEnd(recyclerView, threshold);
