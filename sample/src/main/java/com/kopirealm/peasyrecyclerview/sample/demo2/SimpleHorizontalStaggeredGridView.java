@@ -24,7 +24,7 @@ public class SimpleHorizontalStaggeredGridView extends PeasyRecyclerView.Horizon
     SimpleHorizontalStaggeredGridView(@NonNull Context context, RecyclerView recyclerView, ArrayList<String> arrayList, @NonNull PresentorListener listener) {
         // TODO Initialization
         super(context, recyclerView, arrayList, 3);
-        setThresholdOfEOL(3);
+        enableScrollEndDetection(3);
         this.listener = listener;
         this.listener.onContentChanged(getItemCount(), getColumnSize());
     }

@@ -24,7 +24,7 @@ public class SimpleVerticalListView extends PeasyRecyclerView.VerticalList<Strin
     SimpleVerticalListView(@NonNull Context context, RecyclerView recyclerView, ArrayList<String> arrayList, @NonNull PresentorListener listener) {
         // TODO Initialization
         super(context, recyclerView, arrayList);
-        setThresholdOfEOL(3);
+        enableScrollEndDetection(3);
         this.listener = listener;
         this.listener.onContentChanged(getItemCount(), getColumnSize());
     }

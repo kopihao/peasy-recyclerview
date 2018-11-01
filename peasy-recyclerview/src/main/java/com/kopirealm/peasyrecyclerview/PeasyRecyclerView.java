@@ -46,6 +46,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     private int thresholdOfEOL = DisabledEOLThreshold;
     private final AtomicBoolean lockEOL = new AtomicBoolean(true);
     private Integer lastState = null;
+    private PeasyScrollPosition scrollPosition = PeasyScrollPosition.TOP;
 
     //=============================
     // Constructor
@@ -86,6 +87,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      */
     protected void configureRecyclerView(RecyclerView recyclerView) {
         this.enableNestedScroll(true);
+        this.disableScrollEndDetection();
         this.configureRecyclerViewTouchEvent();
         this.configureRecyclerViewScrollEvent();
     }
@@ -385,9 +387,8 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     //=============================
 
     /**
-     * Set {@link RecyclerView#setNestedScrollingEnabled}
-     *
-     * @param enable true to enable, vice versa
+     * @param enable true to enable nested scroll, vice versa
+     * @see RecyclerView#setNestedScrollingEnabled(boolean)
      */
     public void enableNestedScroll(boolean enable) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -396,18 +397,31 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     }
 
     /**
-     * To set End Of List threshold
-     * Threshold must exceed {@value DefaultEOLThreshold} in order to trigger callback of {@link #onViewScrolledToEnd(RecyclerView, int)}
-     *
-     * @param thresholdOfEOL
-     * @see #hasScrolledBottom(int)
-     * @see #onViewScrolledToEnd(RecyclerView, int)
+     * @param thresholdOfEOL threshold to detect EOL, must >= {@value DefaultEOLThreshold}
+     * @see #hasScrolledBottom(int) for logic
+     * @see #onViewScrolledToEnd(RecyclerView, int) for callback
      */
-    public void setThresholdOfEOL(int thresholdOfEOL) {
-        if (thresholdOfEOL >= DefaultEOLThreshold) {
-            this.lockEOL.set(!this.lockEOL.get());
-            this.thresholdOfEOL = thresholdOfEOL;
-        }
+    private void setThresholdOfEOL(int thresholdOfEOL) {
+        this.lockEOL.set(!this.lockEOL.get());
+        this.thresholdOfEOL = thresholdOfEOL;
+    }
+
+    /**
+     * {@link PeasyRecyclerView#onViewScrolledToEnd(RecyclerView, int)} enabled
+     *
+     * @param thresholdOfEOL threshold to detect EOL, must >= {@value DefaultEOLThreshold}
+     */
+    public void enableScrollEndDetection(int thresholdOfEOL) {
+        setThresholdOfEOL(Math.max(DefaultEOLThreshold, thresholdOfEOL));
+    }
+
+    /**
+     * {@link PeasyRecyclerView#onViewScrolledToEnd(RecyclerView, int)} disabled
+     *
+     * @see #onViewScrolledToEnd(RecyclerView, int) [callback]
+     */
+    public void disableScrollEndDetection() {
+        setThresholdOfEOL(DisabledEOLThreshold);
     }
 
     /**

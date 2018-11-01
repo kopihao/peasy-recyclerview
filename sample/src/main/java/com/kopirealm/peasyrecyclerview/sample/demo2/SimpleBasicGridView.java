@@ -24,7 +24,7 @@ public class SimpleBasicGridView extends PeasyRecyclerView.BasicGrid<String> {
     SimpleBasicGridView(@NonNull Context context, RecyclerView recyclerView, ArrayList<String> arrayList, @NonNull PresentorListener listener) {
         // TODO Initialization
         super(context, recyclerView, arrayList, 2);
-        setThresholdOfEOL(3);
+        enableScrollEndDetection(3);
         this.listener = listener;
         this.listener.onContentChanged(getItemCount(), getColumnSize());
     }
