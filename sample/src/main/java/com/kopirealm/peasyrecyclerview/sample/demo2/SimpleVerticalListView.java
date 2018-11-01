@@ -19,9 +19,9 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
 public class SimpleVerticalListView extends PeasyRecyclerView.VerticalList<String> {
 
-    private PresentorListener listener;
+    private PresenterListener listener;
 
-    SimpleVerticalListView(@NonNull Context context, RecyclerView recyclerView, ArrayList<String> arrayList, @NonNull PresentorListener listener) {
+    SimpleVerticalListView(@NonNull Context context, RecyclerView recyclerView, ArrayList<String> arrayList, @NonNull PresenterListener listener) {
         // TODO Initialization
         super(context, recyclerView, arrayList);
         enableScrollEndDetection(3);

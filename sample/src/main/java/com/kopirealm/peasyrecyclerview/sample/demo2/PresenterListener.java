@@ -5,7 +5,7 @@ import android.view.View;
 
 import com.kopirealm.peasyrecyclerview.PeasyViewHolder;
 
-public interface PresentorListener {
+public interface PresenterListener {
 
     void onContentChanged(int count, int columns);
 

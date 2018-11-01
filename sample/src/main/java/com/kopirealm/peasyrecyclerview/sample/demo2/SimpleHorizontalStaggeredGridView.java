@@ -19,9 +19,9 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
 public class SimpleHorizontalStaggeredGridView extends PeasyRecyclerView.HorizontalStaggeredGrid<String> {
 
-    private PresentorListener listener;
+    private PresenterListener listener;
 
-    SimpleHorizontalStaggeredGridView(@NonNull Context context, RecyclerView recyclerView, ArrayList<String> arrayList, @NonNull PresentorListener listener) {
+    SimpleHorizontalStaggeredGridView(@NonNull Context context, RecyclerView recyclerView, ArrayList<String> arrayList, @NonNull PresenterListener listener) {
         // TODO Initialization
         super(context, recyclerView, arrayList, 3);
         enableScrollEndDetection(3);

@@ -19,9 +19,9 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
 public class SimpleVerticalStaggeredGridView extends PeasyRecyclerView.VerticalStaggeredGrid<String> {
 
-    private PresentorListener listener;
+    private PresenterListener listener;
 
-    SimpleVerticalStaggeredGridView(@NonNull Context context, RecyclerView recyclerView, ArrayList<String> arrayList, @NonNull PresentorListener listener) {
+    SimpleVerticalStaggeredGridView(@NonNull Context context, RecyclerView recyclerView, ArrayList<String> arrayList, @NonNull PresenterListener listener) {
         // TODO Initialization
         super(context, recyclerView, arrayList, 3);
         enableScrollEndDetection(3);

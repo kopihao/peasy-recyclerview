@@ -25,8 +25,8 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_DRAGGING;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_SETTLING;
 
-public class PresentorFragment extends Fragment
-        implements PresentorListener, View.OnClickListener {
+public class PresenterFragment extends Fragment
+        implements PresenterListener, View.OnClickListener {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final int SCROLL_STATE_TOP = 5;
@@ -41,8 +41,8 @@ public class PresentorFragment extends Fragment
     private TextView last;
     private TextView state;
 
-    public static PresentorFragment newInstance(int sectionNumber) {
-        final PresentorFragment fragment = new PresentorFragment();
+    public static PresenterFragment newInstance(int sectionNumber) {
+        final PresenterFragment fragment = new PresenterFragment();
         final Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);

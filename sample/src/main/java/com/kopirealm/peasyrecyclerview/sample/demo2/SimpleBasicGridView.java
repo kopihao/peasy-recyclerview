@@ -19,9 +19,9 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
 public class SimpleBasicGridView extends PeasyRecyclerView.BasicGrid<String> {
 
-    private PresentorListener listener;
+    private PresenterListener listener;
 
-    SimpleBasicGridView(@NonNull Context context, RecyclerView recyclerView, ArrayList<String> arrayList, @NonNull PresentorListener listener) {
+    SimpleBasicGridView(@NonNull Context context, RecyclerView recyclerView, ArrayList<String> arrayList, @NonNull PresenterListener listener) {
         // TODO Initialization
         super(context, recyclerView, arrayList, 2);
         enableScrollEndDetection(3);
