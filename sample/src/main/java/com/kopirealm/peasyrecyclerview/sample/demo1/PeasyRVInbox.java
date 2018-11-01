@@ -62,7 +62,7 @@ public final class PeasyRVInbox extends PeasyRecyclerView<ModelInbox> {
         // TODO Initialization
         super(context, recyclerView, arrayList);
         super.anchorFAB(fab);
-        super.setThresholdOfEOL(2);
+        super.enableScrollEndDetection(2);
     }
 
     // TODO Header Content of PeasyRVInbox

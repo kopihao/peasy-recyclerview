@@ -913,20 +913,22 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     //=============================
 
     /**
-     * On first time ViewHolder Rendered
+     * First time ViewHolder Rendered
+     *
+     * @see #onViewAttachedToWindow(RecyclerView.ViewHolder) Enhanced Implementation
      */
     public void onViewReady() {
     }
 
     /**
-     * On each timeViewHolder Rendered
+     * Each time ViewHolder Rendered
+     *
+     * @see #onViewAttachedToWindow(RecyclerView.ViewHolder) Enhanced Implementation
      */
     public void onViewHolderAttached(@NonNull RecyclerView.ViewHolder viewHolder) {
     }
 
     /**
-     * Enhanced Implementation Layer of {@link View.OnClickListener#onClick(View)}
-     * Target on itemView of {@link PeasyViewHolder}
      * Here you should define recycler view member single click action
      *
      * @param view       view
@@ -934,14 +936,14 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @param position   position
      * @param item       item
      * @param viewHolder viewHolder
+     * @return true by default
+     * @see View.OnClickListener#onClick(View) Enhanced Implementation
      */
     public void onItemClick(final View view, final int viewType, final int position, final T item, final PeasyViewHolder viewHolder) {
     }
 
     /**
-     * Enhanced Implementation Layer of {@link View.OnLongClickListener#onLongClick(View)} (View)}
-     * Target on itemView of {@link PeasyViewHolder}
-     * Here you should define recycler view member long click action
+     * Indicate content is clicked with long tap
      *
      * @param view       view
      * @param viewType   viewType
@@ -949,66 +951,61 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @param item       item
      * @param viewHolder viewHolder
      * @return true by default
+     * @see View.OnLongClickListener#onLongClick(View)  Enhanced Implementation
      */
     public boolean onItemLongClick(final View view, final int viewType, final int position, final T item, final PeasyViewHolder viewHolder) {
         return true;
     }
 
     /**
-     * Enhanced Implementation Layer of {@link RecyclerView.OnScrollListener#onScrolled(RecyclerView, int, int)}
-     * Target on itemView of {@link PeasyRecyclerView#recyclerView}
-     * Here you should define recycler view on scroll action with dy, dx feedback
+     * Indicate view is scrolling
      *
      * @param recyclerView recyclerView
-     * @param dx           dx
-     * @param dy           dy
+     * @param dx           dx feedback
+     * @param dy           dy feedback
+     * @see RecyclerView.OnScrollListener#onScrolled(int, int) Enhanced Implementation
      */
     public void onViewScrolled(final RecyclerView recyclerView, final int dx, final int dy) {
     }
 
     /**
-     * Enhanced Implementation Layer of {@link RecyclerView.OnScrollListener#onScrollStateChanged(RecyclerView, int)}
-     * Target on {@link RecyclerView} of {@link PeasyRecyclerView }
-     * Here you should define recycler view on scroll action with state feedback
+     * Indicate view is provided new scroll state
      *
      * @param recyclerView recyclerView
-     * @param newState     newState
+     * @param newState     new scroll state
+     * @see RecyclerView.OnScrollListener#onScrollStateChanged(int) Enhanced Implementation
      */
     public void onViewScrollStateChanged(final RecyclerView recyclerView, final int newState) {
     }
 
     /**
-     * Enhanced Implementation Layer of {@link RecyclerView.OnScrollListener#onScrolled(RecyclerView, int, int)}
-     * Target on itemView of {@link PeasyRecyclerView#recyclerView}
-     * Here you should define recycler view on scroll action when it reach end of list
-     * [WARNING]
-     * This method will execute right after {@link #onViewScrolled(RecyclerView, int, int)}
-     * when {@link #thresholdOfEOL} is more than or equal {@value #DefaultEOLThreshold }
-     * Do not repeat duplication at {@link #onViewScrolled(RecyclerView, int, int)}
-     * This method will utilize {@link #lockEOL} to avoid feedback spamming.
+     * Indicate view scrolled to end of list
      *
      * @param recyclerView recyclerView
      * @param threshold    threshold
+     * @see RecyclerView.OnScrollListener#onScrolled(int, int) Enhanced Implementation
+     * @see #setThresholdOfEOL(int)
+     * @see #enableScrollEndDetection(int)
+     * @see #disableScrollEndDetection()
+     * @see #thresholdOfEOL
      */
     public void onViewScrolledToEnd(final RecyclerView recyclerView, final int threshold) {
     }
 
     /**
      * Indicate the top of view is completely visible
+     *
+     * @see RecyclerView.OnScrollListener#onScrolled(int, int) Enhanced Implementation
      */
-    public void onViewIdleAtTop() {
-    }
-
-    /**
-     * Indicate the body of view is completely visible
-     */
-    public void onViewIdleAtBody() {
+    public void onViewScrolledTop() {
     }
 
     /**
      * Indicate the bottom of view is completely visible
+     *
+     * @see RecyclerView.OnScrollListener#onScrolled(int, int) Enhanced Implementation
      */
-    public void onViewIdleAtBottom() {
+    public void onViewScrolledBottom() {
     }
 
     /**
