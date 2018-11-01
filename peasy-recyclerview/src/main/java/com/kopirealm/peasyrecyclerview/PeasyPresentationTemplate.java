@@ -80,7 +80,7 @@ public class PeasyPresentationTemplate {
 
         static LinearLayoutManager newLayoutManager(final Context context) {
             final LinearLayoutManager layoutManager = new LinearLayoutManager(context);
-            layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
             return layoutManager;
         }
 
