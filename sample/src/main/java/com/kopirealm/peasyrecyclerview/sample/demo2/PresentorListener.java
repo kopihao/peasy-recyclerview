@@ -9,6 +9,8 @@ public interface PresentorListener {
 
     void onContentChanged(int count, int columns);
 
+    void onViewScrolledToEnd(final RecyclerView recyclerView, final int threshold);
+
     void onViewScrollStateChanged(RecyclerView recyclerView, int newState);
 
     void onViewScrolled(RecyclerView recyclerView, int dx, int dy);

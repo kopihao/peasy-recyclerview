@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ public class PresentorFragment extends Fragment
         implements PresentorListener, View.OnClickListener {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
+    private static final int SCROLL_STATE_BOTTOM = 5;
 
     private PeasyPresentation presentation = PeasyPresentation.Undefined;
     private PeasyRecyclerView<String> peasyRecyclerView;
@@ -152,6 +154,10 @@ public class PresentorFragment extends Fragment
                 case SCROLL_STATE_SETTLING:
                     state.setText(getString(R.string.state_format, "Settling"));
                     break;
+                case SCROLL_STATE_BOTTOM:
+                    state.setText(getString(R.string.state_format, "Bottom"));
+                    Log.d("PRV", "End");
+                    break;
                 default:
                     throw new Exception("Unknown State");
             }
@@ -172,6 +178,11 @@ public class PresentorFragment extends Fragment
         } catch (Exception e) {
             last.setText(getString(R.string.last_format, ""));
         }
+    }
+
+    @Override
+    public void onViewScrolledToEnd(RecyclerView recyclerView, int threshold) {
+        onViewScrollStateChanged(recyclerView, SCROLL_STATE_BOTTOM);
     }
 
     @Override

@@ -172,7 +172,8 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
                                 final int eolThreshold = thresholdOfEOL;
                                 if (inDirection && hasScrolledBottom(eolThreshold)) {
                                     lockEOL.set(!lockEOL.get());
-                                    onViewScrolledBottom(recyclerView, eolThreshold);
+                                    if (hasAllItemsShown()) return;
+                                    onViewScrolledToEnd(recyclerView, eolThreshold);
                                 }
                             }
                         }
@@ -396,11 +397,11 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
 
     /**
      * To set End Of List threshold
-     * Threshold must exceed {@value DefaultEOLThreshold} in order to trigger callback of {@link #onViewScrolledBottom(RecyclerView, int)}
+     * Threshold must exceed {@value DefaultEOLThreshold} in order to trigger callback of {@link #onViewScrolledToEnd(RecyclerView, int)}
      *
      * @param thresholdOfEOL
      * @see #hasScrolledBottom(int)
-     * @see #onViewScrolledBottom(RecyclerView, int)
+     * @see #onViewScrolledToEnd(RecyclerView, int)
      */
     public void setThresholdOfEOL(int thresholdOfEOL) {
         if (thresholdOfEOL >= DefaultEOLThreshold) {
@@ -975,7 +976,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @param recyclerView recyclerView
      * @param threshold    threshold
      */
-    public void onViewScrolledBottom(final RecyclerView recyclerView, final int threshold) {
+    public void onViewScrolledToEnd(final RecyclerView recyclerView, final int threshold) {
     }
 
     /**

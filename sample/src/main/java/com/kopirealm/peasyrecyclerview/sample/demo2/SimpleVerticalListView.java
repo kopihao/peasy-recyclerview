@@ -24,6 +24,7 @@ public class SimpleVerticalListView extends PeasyRecyclerView.VerticalList<Strin
     SimpleVerticalListView(@NonNull Context context, RecyclerView recyclerView, ArrayList<String> arrayList, @NonNull PresentorListener listener) {
         // TODO Initialization
         super(context, recyclerView, arrayList);
+        setThresholdOfEOL(3);
         this.listener = listener;
         this.listener.onContentChanged(getItemCount(), getColumnSize());
     }
@@ -71,6 +72,12 @@ public class SimpleVerticalListView extends PeasyRecyclerView.VerticalList<Strin
     public void onViewScrolled(RecyclerView recyclerView, int dx, int dy) {
         super.onViewScrolled(recyclerView, dx, dy);
         this.listener.onViewScrolled(recyclerView, dx, dy);
+    }
+
+    @Override
+    public void onViewScrolledToEnd(RecyclerView recyclerView, int threshold) {
+        super.onViewScrolledToEnd(recyclerView, threshold);
+        this.listener.onViewScrolledToEnd(recyclerView, threshold);
     }
 
     @Override
