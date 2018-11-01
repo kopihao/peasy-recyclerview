@@ -463,7 +463,6 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     public final boolean checkViewScrolledToFirst() {
         if (hasAllItemsShown()) return false;
         return getFirstCompletelyVisibleItemPosition() == 0;
-        // return getFirstVisibleItemPosition() == 0;
     }
 
     /**
@@ -472,7 +471,6 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     public final boolean checkViewScrolledToLast() {
         if (hasAllItemsShown()) return false;
         return getLastCompletelyVisibleItemPosition() == getLastItemIndex();
-        // return getLastVisibleItemPosition() == getLastItemIndex();
     }
 
     /**
