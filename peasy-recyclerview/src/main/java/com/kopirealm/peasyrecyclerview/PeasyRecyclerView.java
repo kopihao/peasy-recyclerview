@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
@@ -654,7 +655,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @param position
      * @param item
      */
-    protected abstract void onBindViewHolder(final Context context, final PeasyViewHolder holder, final int position, final T item);
+    protected abstract void onBindViewHolder(final Context context, final PeasyViewHolder holder, final int position, @Nullable final T item);
 
     //=============================
     // Content Provider

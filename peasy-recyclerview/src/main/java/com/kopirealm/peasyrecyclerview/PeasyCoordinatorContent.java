@@ -1,10 +1,9 @@
 package com.kopirealm.peasyrecyclerview;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-
-import java.util.ArrayList;
 
 /**
  * Blueprint of special Content that has its unique Coordination within view
@@ -32,9 +31,6 @@ public abstract class PeasyCoordinatorContent<VH extends PeasyViewHolder, D> {
 
     protected abstract VH onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType);
 
-    protected abstract void onBindViewHolder(Context context, VH holder, int position, D item);
-
-    protected void onBindViewHolder(Context context, VH holder, int position, ArrayList<D> items) {
-    }
+    protected abstract void onBindViewHolder(Context context, VH holder, int position, @Nullable D item);
 
 }
