@@ -7,7 +7,7 @@ import com.kopirealm.peasyrecyclerview.PeasyViewHolder;
 
 public interface PresenterListener {
 
-    void onContentChanged(int count, int columns);
+    void onContentChanged(final RecyclerView recyclerView, int count, int columns);
 
     void onViewScrolledToFirst(final RecyclerView recyclerView);
 

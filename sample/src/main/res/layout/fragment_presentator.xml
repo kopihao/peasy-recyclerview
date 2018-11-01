@@ -25,12 +25,13 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@android:color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/summary"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/header" />
 
     <LinearLayout
+        android:id="@+id/summary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorSummaryBar"
@@ -72,7 +73,8 @@
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        android:visibility="visible">
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fabOpt0"

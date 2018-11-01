@@ -93,13 +93,18 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     }
 
     @Override
-    public final void onViewAttachedToWindow(@NonNull RecyclerView.ViewHolder viewHolder) {
+    public final void onViewAttachedToWindow(@NonNull final RecyclerView.ViewHolder viewHolder) {
         super.onViewAttachedToWindow(viewHolder);
-        if (lastState == null) {
-            lastState = RecyclerView.SCROLL_STATE_IDLE;
-            onViewReady();
-        }
-        onViewHolderAttached(viewHolder);
+        getRecyclerView().post(new Runnable() {
+            @Override
+            public void run() {
+                if (lastState == null) {
+                    lastState = RecyclerView.SCROLL_STATE_IDLE;
+                    onViewReady();
+                }
+                onViewHolderAttached(viewHolder);
+            }
+        });
     }
 
     //=============================
@@ -312,7 +317,7 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
             this.contents.add(this.footerContent.getData());
         }
         super.notifyDataSetChanged();
-        onContentChanged();
+        notifyContentChanged();
     }
 
     /**
@@ -328,8 +333,8 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      */
     public void addContent(int index, T content) {
         getContents().add(index, content);
-        super.notifyItemInserted(index);
-        onContentChanged();
+        super.notifyDataSetChanged();
+        notifyContentChanged();
     }
 
     /**
@@ -345,8 +350,20 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
     public void removeContent(int index) {
         if (index == -1) return;
         getContents().remove(index);
-        super.notifyItemRemoved(index);
-        onContentChanged();
+        super.notifyDataSetChanged();
+        notifyContentChanged();
+    }
+
+    /**
+     * When provided data changes
+     */
+    private void notifyContentChanged() {
+        getRecyclerView().post(new Runnable() {
+            @Override
+            public void run() {
+                onContentChanged();
+            }
+        });
     }
 
     /**
@@ -445,7 +462,8 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      */
     public final boolean checkViewScrolledToFirst() {
         if (hasAllItemsShown()) return false;
-        return getFirstVisibleItemPosition() == 0;
+        return getFirstCompletelyVisibleItemPosition() == 0;
+        // return getFirstVisibleItemPosition() == 0;
     }
 
     /**
@@ -453,7 +471,8 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      */
     public final boolean checkViewScrolledToLast() {
         if (hasAllItemsShown()) return false;
-        return getLastVisibleItemPosition() == getLastItemIndex();
+        return getLastCompletelyVisibleItemPosition() == getLastItemIndex();
+        // return getLastVisibleItemPosition() == getLastItemIndex();
     }
 
     /**
@@ -699,40 +718,113 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
         return (getRecyclerView() == null) ? RecyclerView.NO_POSITION : getRecyclerView().getChildAdapterPosition(child);
     }
 
+
+    /**
+     * @return value of getFirstCompletelyVisibleItemPosition() from corresponding {@link RecyclerView.LayoutManager}
+     */
+    public int getFirstCompletelyVisibleItemPosition() {
+        switch (presentation) {
+            case VerticalList:
+                return VerticalList.findFirstCompletelyVisibleItemPosition(getLinearLayoutManager());
+            case HorizontalList:
+                return HorizontalList.findFirstCompletelyVisibleItemPosition(getLinearLayoutManager());
+            case BasicGrid:
+                return BasicGrid.findFirstCompletelyVisibleItemPosition(getGridLayoutManager());
+            case VerticalStaggeredGrid:
+                return VerticalStaggeredGrid.findFirstCompletelyVisibleItemPosition(getStaggeredGridLayoutManager());
+            case HorizontalStaggeredGrid:
+                return HorizontalStaggeredGrid.findFirstCompletelyVisibleItemPosition(getStaggeredGridLayoutManager());
+        }
+        return RecyclerView.NO_POSITION;
+    }
+
+    /**
+     * @return value of getFirstCompletelyVisibleItemPosition() from corresponding {@link RecyclerView.LayoutManager}
+     */
+    public int getLastCompletelyVisibleItemPosition() {
+        switch (presentation) {
+            case VerticalList:
+                return VerticalList.findLastCompletelyVisibleItemPosition(getLinearLayoutManager());
+            case HorizontalList:
+                return HorizontalList.findLastCompletelyVisibleItemPosition(getLinearLayoutManager());
+            case BasicGrid:
+                return BasicGrid.findLastCompletelyVisibleItemPosition(getGridLayoutManager());
+            case VerticalStaggeredGrid:
+                return VerticalStaggeredGrid.findLastCompletelyVisibleItemPosition(getStaggeredGridLayoutManager());
+            case HorizontalStaggeredGrid:
+                return HorizontalStaggeredGrid.findLastCompletelyVisibleItemPosition(getStaggeredGridLayoutManager());
+        }
+        return RecyclerView.NO_POSITION;
+    }
+
     /**
      * @return first visible item position from Layout Manager
      */
     public int getFirstVisibleItemPosition() {
-        if (getVisibleItemCount() > 0) {
-            return getChildAdapterPosition(getChildAt(0));
+        switch (presentation) {
+            case VerticalList:
+                return VerticalList.findFirstVisibleItemPosition(getLinearLayoutManager());
+            case HorizontalList:
+                return HorizontalList.findFirstVisibleItemPosition(getLinearLayoutManager());
+            case BasicGrid:
+                return BasicGrid.findFirstVisibleItemPosition(getGridLayoutManager());
+            case VerticalStaggeredGrid:
+                return VerticalStaggeredGrid.findFirstVisibleItemPosition(getStaggeredGridLayoutManager());
+            case HorizontalStaggeredGrid:
+                return HorizontalStaggeredGrid.findFirstVisibleItemPosition(getStaggeredGridLayoutManager());
         }
         return RecyclerView.NO_POSITION;
+//        if (getVisibleItemCount() > 0) {
+//            return getChildAdapterPosition(getChildAt(0));
+//        }
+//        return RecyclerView.NO_POSITION;
     }
 
     /**
      * @return last visible item position from Layout Manager
      */
     public int getLastVisibleItemPosition() {
-        if (getVisibleItemCount() > 0) {
-            int itemPos = getChildAdapterPosition(getChildAt(getChildCount() - 1));
-            itemPos = (itemPos != -1) ? itemPos : getChildAdapterPosition(getChildAt(getChildCount() - 2));
-            return itemPos;
+        switch (presentation) {
+            case VerticalList:
+                return VerticalList.findLastVisibleItemPosition(getLinearLayoutManager());
+            case HorizontalList:
+                return HorizontalList.findLastVisibleItemPosition(getLinearLayoutManager());
+            case BasicGrid:
+                return BasicGrid.findLastVisibleItemPosition(getGridLayoutManager());
+            case VerticalStaggeredGrid:
+                return VerticalStaggeredGrid.findLastVisibleItemPosition(getStaggeredGridLayoutManager());
+            case HorizontalStaggeredGrid:
+                return HorizontalStaggeredGrid.findLastVisibleItemPosition(getStaggeredGridLayoutManager());
         }
         return RecyclerView.NO_POSITION;
+//        if (getVisibleItemCount() > 0) {
+//            int itemPos = getChildAdapterPosition(getChildAt(getChildCount() - 1));
+//            itemPos = (itemPos != -1) ? itemPos : getChildAdapterPosition(getChildAt(getChildCount() - 2));
+//            return itemPos;
+//        }
+//        return RecyclerView.NO_POSITION;
     }
 
     /**
      * @return number items shown
      */
     public int getVisibleItemCount() {
-        return getChildCount();
+        return getRecyclerView().getChildCount();
     }
 
     /**
      * @return true if everything displayed
      */
     public boolean hasAllItemsShown() {
-        return getLastVisibleItemPosition() == getLastItemIndex() && getFirstVisibleItemPosition() == 0;
+        return (!isEmpty())
+                //matchedFirst
+                && (getFirstVisibleItemPosition() == getFirstCompletelyVisibleItemPosition())
+                //matchedLast
+                && (getLastVisibleItemPosition() == getLastCompletelyVisibleItemPosition())
+                //validFirst
+                && (getFirstCompletelyVisibleItemPosition() == 0)
+                //validLast
+                && (getLastCompletelyVisibleItemPosition() == getLastItemIndex());
     }
 
     //=============================

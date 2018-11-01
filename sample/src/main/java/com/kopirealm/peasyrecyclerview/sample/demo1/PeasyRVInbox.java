@@ -41,7 +41,7 @@ import java.util.ArrayList;
  * How to handle header and footer contents easily
  * How to handle FAB button effortlessly
  * How to take advantage on reduce boilerplate implementation:
- * eg. getItem, getItemCount, findFirstCompletelyVisibleItemPosition, findLastCompletelyVisibleItemPosition
+ * eg. getItem, getItemCount, getFirstCompletelyVisibleItemPosition, getLastCompletelyVisibleItemPosition
  * Enjoy intuitive, flatten and focused code design!
  */
 

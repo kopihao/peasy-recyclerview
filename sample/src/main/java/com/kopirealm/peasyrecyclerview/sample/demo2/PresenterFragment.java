@@ -122,7 +122,7 @@ public class PresenterFragment extends Fragment
     }
 
     @Override
-    public void onContentChanged(int count, int columns) {
+    public void onContentChanged(final RecyclerView recyclerView, int count, int columns) {
         switch (presentation) {
             case VerticalList:
             case HorizontalList:
@@ -137,6 +137,7 @@ public class PresenterFragment extends Fragment
                 header.setText(getString(R.string.section_format, presentation, ""));
                 break;
         }
+        onViewScrollStateChanged(recyclerView, SCROLL_STATE_IDLE);
     }
 
     @Override
@@ -151,8 +152,9 @@ public class PresenterFragment extends Fragment
                     break;
                 case SCROLL_STATE_IDLE:
                     state.setText(getString(R.string.state_format, "Idle"));
-                    if (recyclerView.getChildCount() != 0) {
-                        state.setText(getString(R.string.shown_format, "" + recyclerView.getChildCount()));
+                    state.setText(getString(R.string.shown_format, "" + peasyRecyclerView.getVisibleItemCount()));
+                    if (peasyRecyclerView.hasAllItemsShown()) {
+                        state.setText(getString(R.string.shown_format, "ALL " + peasyRecyclerView.getVisibleItemCount()));
                     }
                     break;
                 case SCROLL_STATE_TOP:
@@ -175,12 +177,12 @@ public class PresenterFragment extends Fragment
     @Override
     public void onViewScrolled(RecyclerView recyclerView, int dx, int dy) {
         try {
-            first.setText(getString(R.string.first_format, "" + peasyRecyclerView.getFirstVisibleItemPosition()));
+            first.setText(getString(R.string.first_format, String.format(Locale.ENGLISH, "%d | %d", peasyRecyclerView.getFirstVisibleItemPosition(), peasyRecyclerView.getFirstCompletelyVisibleItemPosition())));
         } catch (Exception e) {
             first.setText(getString(R.string.first_format, ""));
         }
         try {
-            last.setText(getString(R.string.last_format, "" + peasyRecyclerView.getLastVisibleItemPosition()));
+            last.setText(getString(R.string.last_format, String.format(Locale.ENGLISH, "%d | %d", peasyRecyclerView.getLastVisibleItemPosition(), peasyRecyclerView.getLastCompletelyVisibleItemPosition())));
         } catch (Exception e) {
             last.setText(getString(R.string.last_format, ""));
         }

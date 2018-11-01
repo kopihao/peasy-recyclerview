@@ -15,8 +15,6 @@ import com.kopirealm.peasyrecyclerview.sample.R;
 
 import java.util.ArrayList;
 
-import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
-
 public class SimpleHorizontalStaggeredGridView extends PeasyRecyclerView.HorizontalStaggeredGrid<String> {
 
     private PresenterListener listener;
@@ -26,20 +24,20 @@ public class SimpleHorizontalStaggeredGridView extends PeasyRecyclerView.Horizon
         super(context, recyclerView, arrayList, 3);
         enableScrollEndDetection(3);
         this.listener = listener;
-        this.listener.onContentChanged(getItemCount(), getColumnSize());
+        this.listener.onContentChanged(getRecyclerView(), getItemCount(), getColumnSize());
     }
 
     @Override
     public void onContentChanged() {
         super.onContentChanged();
         if (this.listener != null) {
-            this.listener.onContentChanged(getItemCount(), getColumnSize());
+            this.listener.onContentChanged(getRecyclerView(), getItemCount(), getColumnSize());
         }
     }
 
     @Override
     public void onViewReady() {
-        this.listener.onViewScrollStateChanged(getRecyclerView(), SCROLL_STATE_IDLE);
+        this.listener.onViewScrollStateChanged(getRecyclerView(), RecyclerView.SCROLL_STATE_IDLE);
     }
 
     @Override
