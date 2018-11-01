@@ -32,14 +32,14 @@ public class PeasyPresentationTemplate {
             super.asVerticalListView();
         }
 
+        static int findFirstCompletelyVisibleItemPosition(LinearLayoutManager layoutManager) {
+            return layoutManager.findFirstCompletelyVisibleItemPosition();
+        }
+
         static int findLastCompletelyVisibleItemPosition(LinearLayoutManager layoutManager) {
             int position = layoutManager.findLastCompletelyVisibleItemPosition();
             position = (position == RecyclerView.NO_POSITION) ? layoutManager.findLastVisibleItemPosition() : position;
             return position;
-        }
-
-        static int findFirstCompletelyVisibleItemPosition(LinearLayoutManager layoutManager) {
-            return layoutManager.findFirstCompletelyVisibleItemPosition();
         }
 
         static LinearLayoutManager newLayoutManager(final Context context) {
@@ -68,14 +68,14 @@ public class PeasyPresentationTemplate {
             super.asHorizontalListView();
         }
 
+        static int findFirstCompletelyVisibleItemPosition(LinearLayoutManager layoutManager) {
+            return layoutManager.findFirstCompletelyVisibleItemPosition();
+        }
+
         static int findLastCompletelyVisibleItemPosition(LinearLayoutManager layoutManager) {
             int position = layoutManager.findLastCompletelyVisibleItemPosition();
             position = (position == RecyclerView.NO_POSITION) ? layoutManager.findLastVisibleItemPosition() : position;
             return position;
-        }
-
-        static int findFirstCompletelyVisibleItemPosition(LinearLayoutManager layoutManager) {
-            return layoutManager.findFirstCompletelyVisibleItemPosition();
         }
 
         static LinearLayoutManager newLayoutManager(final Context context) {
@@ -105,14 +105,14 @@ public class PeasyPresentationTemplate {
             super.asGridView(this.getColumnSize());
         }
 
+        static int findFirstCompletelyVisibleItemPosition(LinearLayoutManager layoutManager) {
+            return layoutManager.findFirstCompletelyVisibleItemPosition();
+        }
+
         static int findLastCompletelyVisibleItemPosition(LinearLayoutManager layoutManager) {
             int position = layoutManager.findLastCompletelyVisibleItemPosition();
             position = (position == RecyclerView.NO_POSITION) ? layoutManager.findLastVisibleItemPosition() : position;
             return position;
-        }
-
-        static int findFirstCompletelyVisibleItemPosition(LinearLayoutManager layoutManager) {
-            return layoutManager.findFirstCompletelyVisibleItemPosition();
         }
 
         static GridLayoutManager newLayoutManager(final Context context, final int columns) {
@@ -140,26 +140,21 @@ public class PeasyPresentationTemplate {
             super.asVerticalStaggeredGridView(this.getColumnSize());
         }
 
-        static int findLastCompletelyVisibleItemPositions(StaggeredGridLayoutManager layoutManager) {
-            int[] into = new int[layoutManager.getSpanCount()];
-            into = layoutManager.findLastCompletelyVisibleItemPositions(into);
-            int position = RecyclerView.NO_POSITION;
-            {   // FIND MAX
-                Arrays.sort(into);
-                for (int anInto : into) {
-                    if (anInto == RecyclerView.NO_POSITION) continue; // No interest in this value
-                    if (anInto > position) {
-                        position = anInto; // Continue to replace if larger value met
-                    }
-                }
-                position = Math.max(RecyclerView.NO_POSITION, position);
-            }
-            return position;
-        }
-
-        static int findFirstCompletelyVisibleItemPositions(StaggeredGridLayoutManager layoutManager) {
+        static int findFirstCompletelyVisibleItemPosition(StaggeredGridLayoutManager layoutManager) {
             int[] into = new int[layoutManager.getSpanCount()];
             return layoutManager.findFirstVisibleItemPositions(into)[0];
+        }
+
+        static int findLastCompletelyVisibleItemPosition(StaggeredGridLayoutManager layoutManager) {
+            final int[] into = new int[layoutManager.getSpanCount()];
+            layoutManager.findLastCompletelyVisibleItemPositions(into);
+            Arrays.sort(into);
+            int position = RecyclerView.NO_POSITION;
+            for (int value : into) {
+                // Continue to replace until larger value met, assumed max value is last index of item
+                position = Math.max(position, value);
+            }
+            return position;
         }
 
         static StaggeredGridLayoutManager newLayoutManager(final Context context, final int columns) {
@@ -187,26 +182,21 @@ public class PeasyPresentationTemplate {
             this.asHorizontalStaggeredGridView(this.getColumnSize());
         }
 
-        static int findLastCompletelyVisibleItemPositions(StaggeredGridLayoutManager layoutManager) {
-            int[] into = new int[layoutManager.getSpanCount()];
-            into = layoutManager.findLastCompletelyVisibleItemPositions(into);
-            int position = RecyclerView.NO_POSITION;
-            {   // FIND MAX
-                Arrays.sort(into);
-                for (int anInto : into) {
-                    if (anInto == RecyclerView.NO_POSITION) continue; // No interest in this value
-                    if (anInto > position) {
-                        position = anInto; // Continue to replace if larger value met
-                    }
-                }
-                position = Math.max(RecyclerView.NO_POSITION, position);
-            }
-            return position;
-        }
-
-        static int findFirstCompletelyVisibleItemPositions(StaggeredGridLayoutManager layoutManager) {
+        static int findFirstCompletelyVisibleItemPosition(StaggeredGridLayoutManager layoutManager) {
             int[] into = new int[layoutManager.getSpanCount()];
             return layoutManager.findFirstVisibleItemPositions(into)[0];
+        }
+
+        static int findLastCompletelyVisibleItemPosition(StaggeredGridLayoutManager layoutManager) {
+            final int[] into = new int[layoutManager.getSpanCount()];
+            layoutManager.findLastCompletelyVisibleItemPositions(into);
+            Arrays.sort(into);
+            int position = RecyclerView.NO_POSITION;
+            for (int value : into) {
+                // Continue to replace until larger value met, assumed max value is last index of item
+                position = Math.max(position, value);
+            }
+            return position;
         }
 
         static StaggeredGridLayoutManager newLayoutManager(final Context context, final int columns) {
