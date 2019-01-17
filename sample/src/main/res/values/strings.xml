@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Peasy RecyclerView</string>
-    <string name="title_activity_demo2">ActivityDemo2</string>
+    <string name="title_activity_demo1">Demo Phase 1</string>
+    <string name="title_activity_demo2">Demo Phase 2</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Presentation : %1$s %2$s</string>
     <string name="count_format">Count : %1$s</string>
