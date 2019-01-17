@@ -56,7 +56,9 @@ public abstract class PeasyViewHolder extends RecyclerView.ViewHolder {
         this.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final int position = getLayoutPosition();
+                int position = getLayoutPosition();
+                position = (position <= binder.getLastItemIndex()) ? position : getAdapterPosition();
+                position = (position <= binder.getLastItemIndex()) ? position : RecyclerView.NO_POSITION;
                 if (position != RecyclerView.NO_POSITION) {
                     binder.onItemClick(v, viewType, position, binder.getItem(position), getInstance());
                 }
@@ -65,7 +67,9 @@ public abstract class PeasyViewHolder extends RecyclerView.ViewHolder {
         this.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                final int position = getLayoutPosition();
+                int position = getLayoutPosition();
+                position = (position <= binder.getLastItemIndex()) ? position : getAdapterPosition();
+                position = (position <= binder.getLastItemIndex()) ? position : RecyclerView.NO_POSITION;
                 if (getLayoutPosition() != RecyclerView.NO_POSITION) {
                     return binder.onItemLongClick(v, viewType, position, binder.getItem(position), getInstance());
                 }

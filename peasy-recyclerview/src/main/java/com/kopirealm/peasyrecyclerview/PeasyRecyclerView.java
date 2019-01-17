@@ -681,7 +681,11 @@ public abstract class PeasyRecyclerView<T> extends RecyclerView.Adapter {
      * @return content at position
      */
     public final T getItem(int position) {
-        return this.contents.get(position);
+        try {
+            return this.contents.get(position);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**

@@ -47,8 +47,8 @@ android {
         def distributionPath = "../${fileExtension}";
         libraryVariants.all { variant ->
             variant.outputs.all { output ->
+                def distributionMode = "${variant.buildType.name}"
                 if (outputFile != null && outputFileName.endsWith("${fileExtension}")) {
-                    def distributionMode = "${variant.buildType.name}"
                     if ("${variant.flavorName}"?.trim()) {
                         distributionMode = "${variant.flavorName}-" + distributionMode
                     }
@@ -57,15 +57,18 @@ android {
                 }
             }
             variant.assemble.doLast { assemble ->
-                // copy the apk in another directory, add here your
-                // logic to customize the destination folder
-                copy {
-                    from variant.outputs*.outputFile
-                    into "${distributionPath}/${timestamp}/${variant.flavorName}"
-                }
-                // if you don't want to delete the file after copying it comment the line below
-                if ("${useDistScript}" == "${noDistScript}") {
-                    delete variant.outputs*.outputFile
+                def distributionMode = "${variant.buildType.name}"
+                if ("release" == "${distributionMode}") {
+                    // copy the apk in another directory, add here your
+                    // logic to customize the destination folder
+                    copy {
+                        from variant.outputs*.outputFile
+                        into "${distributionPath}/${timestamp}/${variant.flavorName}"
+                    }
+                    // if you don't want to delete the file after copying it comment the line below
+                    if ("${useDistScript}" == "${noDistScript}") {
+                        delete variant.outputs*.outputFile
+                    }
                 }
             }
         }
