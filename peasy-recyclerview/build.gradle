@@ -18,7 +18,7 @@ ext {
     _targetSdkVersion = 27
     _minSdkVersion = 16
     _versionCode = 1
-    _versionName = "1.0.11"
+    _versionName = "1.0.12"
 }
 
 android {
